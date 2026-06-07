@@ -7,15 +7,15 @@ import type {
   TrialPhase,
 } from "../api/types";
 import type { SessionStats } from "../App";
+import { getConditionPresentation } from "../conditionPresentation";
 import FeedbackPanel from "./FeedbackPanel";
 import IdeophoneCard from "./IdeophoneCard";
-
-const FEEDBACK_AUTO_ADVANCE_MS = 900;
 
 type TrialPlayerProps = {
   sessionUuid: string;
   round: RoundResponse;
   sessionStats: SessionStats;
+  totalRounds: number;
   onNeedNextRound: () => void;
   onBackToStart: () => void;
   onAnswered: (result: AnswerResultResponse) => void;
@@ -26,6 +26,7 @@ export default function TrialPlayer({
   sessionUuid,
   round,
   sessionStats,
+  totalRounds,
   onNeedNextRound,
   onBackToStart,
   onAnswered,
@@ -39,10 +40,10 @@ export default function TrialPlayer({
   const choiceStartedAtRef = useRef<number | null>(null);
   const roundTokenRef = useRef(0);
   const rightDelayTimeoutRef = useRef<number | null>(null);
-  const feedbackTimeoutRef = useRef<number | null>(null);
   const targetTranslation = getTargetTranslation(round);
   const otherTranslation = round.translations?.other?.trim();
   const roundProblem = getRoundProblem(round, targetTranslation);
+  const presentation = getConditionPresentation(round.conditionName);
 
   useEffect(() => {
     if (roundProblem) {
@@ -117,34 +118,19 @@ export default function TrialPlayer({
     setPlaybackMessage(message);
   }
 
+  function handleNextTrial() {
+    setPhase("loading");
+    onNeedNextRound();
+  }
+
   useEffect(
     () => () => {
       if (rightDelayTimeoutRef.current !== null) {
         window.clearTimeout(rightDelayTimeoutRef.current);
       }
-      if (feedbackTimeoutRef.current !== null) {
-        window.clearTimeout(feedbackTimeoutRef.current);
-      }
     },
     [],
   );
-
-  useEffect(() => {
-    if (phase !== "feedback" || !answerResult) {
-      return undefined;
-    }
-
-    feedbackTimeoutRef.current = window.setTimeout(() => {
-      onNeedNextRound();
-    }, FEEDBACK_AUTO_ADVANCE_MS);
-
-    return () => {
-      if (feedbackTimeoutRef.current !== null) {
-        window.clearTimeout(feedbackTimeoutRef.current);
-        feedbackTimeoutRef.current = null;
-      }
-    };
-  }, [answerResult, onNeedNextRound, phase]);
 
   if (roundProblem) {
     return (
@@ -169,17 +155,49 @@ export default function TrialPlayer({
   const isChoice = phase === "choice" || phase === "submitting";
   const hasFeedback = phase === "feedback" && answerResult !== null;
   const cardsAreChoices = isChoice;
+  const currentRoundNumber = Math.min(
+    totalRounds,
+    sessionStats.answered + (hasFeedback ? 0 : 1),
+  );
+  const answeredPercent =
+    totalRounds > 0
+      ? Math.min(100, Math.round((sessionStats.answered / totalRounds) * 100))
+      : 0;
 
   return (
     <section className="trial-stage" aria-live="polite">
+      <div className="trial-progress" aria-label="Session progress">
+        <div className="progress-summary">
+          <strong>
+            Round {currentRoundNumber} / {totalRounds}
+          </strong>
+          <span>
+            Session score: {sessionStats.correct} / {sessionStats.answered}
+          </span>
+          <span>{answeredPercent}% answered</span>
+        </div>
+        <div
+          className="progress-track"
+          role="progressbar"
+          aria-label="Answered rounds"
+          aria-valuemin={0}
+          aria-valuemax={totalRounds}
+          aria-valuenow={Math.min(sessionStats.answered, totalRounds)}
+        >
+          <span style={{ width: `${answeredPercent}%` }} />
+        </div>
+      </div>
+
       <div className="trial-copy">
         <p>Listen to these two Japanese words.</p>
         <p className="small-copy">
           {isChoice
             ? "Click a stimulus to select it."
             : hasFeedback
-              ? "Feedback recorded. Continuing..."
-              : "Watch or listen to both before choosing."}
+              ? "Feedback recorded. Review it before continuing."
+              : phase === "loading"
+                ? "Loading the next backend round."
+                : "Watch or listen to both before choosing."}
         </p>
       </div>
 
@@ -198,6 +216,8 @@ export default function TrialPlayer({
               mediaVisible={isLeftPlaying || isChoice || hasFeedback}
               mode={cardsAreChoices ? "button" : "display"}
               option={round.left}
+              positionLabel="A"
+              presentation={presentation}
               visible={isLeftPlaying || isChoice || hasFeedback}
               onEnded={handleLeftEnded}
               onError={handlePlaybackError}
@@ -211,6 +231,8 @@ export default function TrialPlayer({
               mediaVisible={isRightPlaying || isChoice || hasFeedback}
               mode={cardsAreChoices ? "button" : "display"}
               option={round.right}
+              positionLabel="B"
+              presentation={presentation}
               visible={isRightPlaying || isChoice || hasFeedback}
               onEnded={handleRightEnded}
               onError={handlePlaybackError}
@@ -243,13 +265,25 @@ export default function TrialPlayer({
       ) : null}
 
       {phase === "submitting" ? <p className="notice-text">Submitting...</p> : null}
+      {phase === "loading" ? (
+        <p className="notice-text">Loading next round...</p>
+      ) : null}
       {submitError ? <p className="error-text centered">{submitError}</p> : null}
       {hasFeedback ? (
-        <FeedbackPanel
-          result={answerResult}
-          round={round}
-          sessionStats={sessionStats}
-        />
+        <>
+          <FeedbackPanel
+            result={answerResult}
+            round={round}
+            sessionStats={sessionStats}
+          />
+          <button
+            className="primary-button feedback-next-button"
+            type="button"
+            onClick={handleNextTrial}
+          >
+            Next trial
+          </button>
+        </>
       ) : null}
     </section>
   );

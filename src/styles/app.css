@@ -184,7 +184,7 @@ button {
 
 .trial-stage {
   min-height: 760px;
-  padding-top: 4.25rem;
+  padding-top: 1.75rem;
   text-align: center;
 }
 
@@ -199,6 +199,42 @@ button {
   font-size: 8rem;
   font-weight: 300;
   line-height: 1;
+}
+
+.trial-progress {
+  display: grid;
+  gap: 0.7rem;
+  margin: 0 0 2rem;
+  padding: 0.8rem 0;
+  border-block: 1px solid #b9b7b2;
+  text-align: left;
+}
+
+.progress-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.7rem 1rem;
+  color: #444444;
+  font-size: 0.95rem;
+}
+
+.progress-summary strong {
+  color: #202124;
+}
+
+.progress-track {
+  height: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #b9b7b2;
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  background: #e90b3f;
+  transition: width 180ms ease;
 }
 
 .trial-copy {
@@ -259,9 +295,54 @@ button {
   background: #ffffff;
 }
 
+.stimulus-media-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stimulus-display {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 100%;
+}
+
+.placeholder-display {
+  gap: 0.35rem;
+  color: #2f2f2f;
+}
+
+.placeholder-mark {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border: 2px solid #202124;
+  border-radius: 50%;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.placeholder-label {
+  color: #565656;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.script-display {
+  padding: 0.5rem;
+  font-size: 2.6rem;
+  font-weight: 700;
+  line-height: 1.1;
+  overflow-wrap: anywhere;
+}
+
 .media-play-button {
   position: relative;
-  z-index: 2;
+  z-index: 3;
   min-height: 40px;
   padding: 0.55rem 1rem;
   border: 2px solid #202124;
@@ -347,6 +428,10 @@ button {
   font-size: 1.6rem;
 }
 
+.feedback-next-button {
+  margin-top: 1rem;
+}
+
 .feedback-grid {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -388,9 +473,10 @@ button {
 
 .score-section {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
-  margin: 3rem auto 0;
+  width: min(100%, 760px);
+  margin: 1.5rem auto 0;
 }
 
 .score-column {
@@ -496,6 +582,17 @@ td {
   margin-top: 1.5rem;
 }
 
+.completion-tabs {
+  display: flex;
+  justify-content: center;
+  width: fit-content;
+  margin: 1.25rem auto 0;
+  border: 1px solid #9b9b9b;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f8f8f8;
+}
+
 .error-panel {
   margin-top: 4rem;
   padding: 2rem;
@@ -544,10 +641,6 @@ td {
 
   .question-text {
     font-size: 1.45rem;
-  }
-
-  .score-section {
-    grid-template-columns: 1fr;
   }
 
   .attempt-list li {

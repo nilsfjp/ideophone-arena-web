@@ -127,7 +127,7 @@ Browser devtools Network tab shows POST /api/game/sessions with conditionName CO
 - [x] The selected ideophone ID comes from backend data.
 - [x] The frontend does not calculate correctness as authority.
 - [x] Immediate feedback is displayed using backend response.
-- [x] Feedback does not require a manual next-trial click.
+- [x] Feedback remains visible until the user clicks Next trial.
 - [x] Response time is sent if implemented.
 - [x] The app can advance to the next trial.
 - [x] API or media errors show a recoverable error message.
@@ -136,8 +136,11 @@ Files to inspect:
 
 ```text
 src/components/TrialPlayer.tsx
-src/components/StimulusPlayer.tsx
+src/components/StimulusPlayback.tsx
+src/components/StimulusDisplay.tsx
 src/components/IdeophoneCard.tsx
+src/conditionPresentation.ts
+src/stimulusMedia.ts
 src/api/client.ts
 ```
 
@@ -154,6 +157,8 @@ Browser proof:
 
 2026-06-05 evidence: browser proof answered 30 rounds as `browser_loop_1780627390120`. First round choices were `Select gosogoso` and `Select katakata`; selected `Select gosogoso`; backend feedback was visible as `Correct`. The helper required and passed the pre-game sound check, auto-advanced through completion, and exited successfully. A live CDP DOM check on the updated trial tab showed two translation lines stacked vertically with the same left position and width, two fixed-size stimulus cards, zero muted stimulus media elements, and no `.kana-text` overlays.
 
+2026-06-07 source update: feedback now stays visible with the research note until a manual `Next trial` click. The browser-loop helper was updated to assert that behavior before continuing.
+
 ## Stimuli/media
 
 - [x] Stimulus URLs returned by backend are resolved correctly.
@@ -163,6 +168,7 @@ Browser proof:
 - [x] Missing media does not crash the whole app.
 - [x] Audio/video playback errors are visible or at least do not block answer submission permanently.
 - [x] Stimulus display remains acceptable for the demo.
+- [x] Visible stimulus presentation is React-rendered instead of relying on baked-in `.mp4` visuals.
 
 Proof:
 
@@ -171,6 +177,8 @@ Browser devtools Network tab shows successful /stimuli/... media requests.
 ```
 
 2026-06-05 evidence: browser proof observed 360 `/stimuli/` requests, 360 successful stimulus responses, and `mutedStimulusCount: 0`. Local Vite development now proxies `/stimuli` to `http://localhost:8081`, while absolute backend URLs remain supported through `src/api/client.ts`. Stimulus media is fetched through the centralized bearer-aware backend helper before playback. `StimulusPlayer` explicitly plays video/audio stimuli unmuted at full volume and stops on autoplay blockage with a manual Play control instead of silently advancing. `IdeophoneCard` no longer overlays frontend kana text on backend-served media, so triangle/control stimuli are not crossed by browser-rendered kana.
+
+2026-06-07 source update: `conditionPresentation.ts`, `StimulusDisplay`, and `StimulusPlayback` split condition mapping, React-owned visual presentation, and hidden media playback. For `CONDITION_1_SOKUON`, the active trial renders neutral React placeholders while legacy `.mp4` media remains playback-only. The browser-loop helper now asserts two React placeholders and no visible legacy media in the choice phase.
 
 ## Completion behavior
 
@@ -217,10 +225,10 @@ src/api/types.ts
 ## Leaderboard and recent attempts
 
 - [x] Leaderboard calls `GET /api/leaderboard`.
-- [x] Leaderboard is visible from start, completion, or another obvious place.
+- [x] Leaderboard is visible from completion.
 - [x] Leaderboard loading failure does not break the game.
 - [x] Recent attempts call `GET /api/game/me/attempts` with bearer token.
-- [x] Recent attempts are visible from completion or authenticated state.
+- [x] Recent attempts are visible from completion.
 - [x] Empty leaderboard/history states are handled.
 - [x] Displayed user data is minimal and safe.
 - [x] Leaderboard/history labels match backend meaning.
@@ -236,6 +244,8 @@ Browser proof:
 ```
 
 2026-06-05 evidence: browser proof confirmed `leaderboardVisible: true` and `recentAttemptsVisible: true` after completion. `src/components/Leaderboard.tsx` renders empty/error states without blocking the game surface.
+
+2026-06-07 source update: leaderboard/recent attempts are no longer mounted below the active trial. Completion owns those views through the leaderboard/recent-attempt tabs.
 
 ## Error handling and loading states
 
@@ -257,7 +267,7 @@ Use browser devtools and test:
 - completed session
 ```
 
-2026-06-05 evidence: browser proof had `relevantConsoleErrorCount: 0`. It reported four `net::ERR_ABORTED` fetches for leaderboard/recent-attempt requests during page reload/navigation, but the run exited successfully, reached completion, and rendered leaderboard plus recent attempts, so no failed API request left the UI in an infinite spinner. Error UI paths are present in `AuthForm`, `App`, `TrialPlayer`, `StimulusPlayer`, and `Leaderboard`.
+2026-06-05 evidence: browser proof had `relevantConsoleErrorCount: 0`. It reported four `net::ERR_ABORTED` fetches for leaderboard/recent-attempt requests during page reload/navigation, but the run exited successfully, reached completion, and rendered leaderboard plus recent attempts, so no failed API request left the UI in an infinite spinner. Error UI paths are present in `AuthForm`, `App`, `TrialPlayer`, `StimulusPlayback`, and `Leaderboard`.
 
 ## Build and lint
 

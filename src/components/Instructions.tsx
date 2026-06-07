@@ -40,8 +40,8 @@ export default function Instructions({
 
       <p>
         Click one stimulus to submit your answer. Feedback appears immediately
-        after the backend records the response, then the next trial starts
-        automatically.
+        after the backend records the response. Review the note, then click Next
+        trial when you are ready to continue.
       </p>
 
       <p>Demo setup is locked to CONDITION_1_SOKUON, difficulty 1.</p>

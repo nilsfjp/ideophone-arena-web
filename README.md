@@ -56,6 +56,14 @@ plus recent attempts without leaving the app in a stuck loading state. The same
 proof observed successful backend-served `/stimuli/` media requests and no muted
 stimulus media elements.
 
+Current game-loop UX keeps answer feedback and the research note visible until
+the user clicks `Next trial`. Leaderboard and recent attempts are shown from the
+completion screen rather than below the active trial.
+
+Stimulus playback is separated from visible presentation. Legacy `.mp4` files
+may still provide sound, but React renders the visible audio placeholder or
+script layer through the condition presentation boundary.
+
 Remaining blocker: none for the frontend demo path while the backend is running
 on port `8081`.
 
@@ -67,10 +75,11 @@ Browser path:
 4. Start New Game.
 5. Watch the fixation, left stimulus, right stimulus, and choice phase.
 6. Choose one ideophone.
-7. Confirm backend feedback appears.
-8. Finish the session and see the completion summary.
-9. Scroll to the leaderboard or recent attempts section.
-10. Start a new game and confirm the demo setup resets cleanly.
+7. Confirm backend feedback and the research note stay visible.
+8. Click `Next trial` to continue.
+9. Finish the session and see the completion summary.
+10. Use the completion tabs for leaderboard or recent attempts.
+11. Start a new game and confirm the demo setup resets cleanly.
 
 ## Scripts
 

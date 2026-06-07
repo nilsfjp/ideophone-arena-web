@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { fetchBackendBlob } from "../api/client";
 
 const FALLBACK_DURATION_MS = 1200;
+const MEDIA_FETCH_TIMEOUT_MS = 10000;
 
-type StimulusPlayerProps = {
+type StimulusPlaybackProps = {
   src?: string;
   playing: boolean;
   autoplayToken?: number;
@@ -11,13 +12,13 @@ type StimulusPlayerProps = {
   onError?: (message: string) => void;
 };
 
-export default function StimulusPlayer({
+export default function StimulusPlayback({
   src,
   playing,
   autoplayToken,
   onEnded,
   onError,
-}: StimulusPlayerProps) {
+}: StimulusPlaybackProps) {
   const mediaRef = useRef<HTMLAudioElement | HTMLVideoElement | null>(null);
   const finishedRef = useRef(false);
   const onEndedRef = useRef(onEnded);
@@ -45,12 +46,16 @@ export default function StimulusPlayer({
   useEffect(() => {
     let isMounted = true;
     let objectUrl = "";
+    const abortController = new AbortController();
 
     if (!src) {
       return undefined;
     }
 
-    fetchBackendBlob(src)
+    fetchBackendBlob(src, {
+      signal: abortController.signal,
+      timeoutMs: MEDIA_FETCH_TIMEOUT_MS,
+    })
       .then((blob) => {
         if (!isMounted) {
           return;
@@ -74,6 +79,7 @@ export default function StimulusPlayer({
 
     return () => {
       isMounted = false;
+      abortController.abort();
       if (objectUrl) {
         URL.revokeObjectURL(objectUrl);
       }
@@ -198,6 +204,7 @@ export default function StimulusPlayer({
     return fallbackButton;
   }
 
+  // These media files may be legacy video derivatives; React owns the visible stimulus display.
   if (isVideo) {
     return (
       <>
@@ -205,7 +212,7 @@ export default function StimulusPlayer({
           ref={(node) => {
             mediaRef.current = node;
           }}
-          className="stimulus-media"
+          className="stimulus-media stimulus-media-hidden"
           playsInline
           preload="auto"
           src={mediaSrc}

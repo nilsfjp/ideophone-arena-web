@@ -24,6 +24,7 @@ const DEMO_SESSION_REQUEST: StartSessionRequest = {
   difficultyLevel: 1,
   conditionName: "CONDITION_1_SOKUON",
 };
+const DEMO_TOTAL_ROUNDS = 30;
 
 type AuthState = {
   username: string;
@@ -32,6 +33,7 @@ type AuthState = {
 
 type AppView = "auth" | "instructions" | "game";
 type SoundCheckStatus = "idle" | "checking" | "ready" | "error";
+type CompletionScoreView = "leaderboard" | "attempts";
 
 export type SessionStats = {
   answered: number;
@@ -75,6 +77,8 @@ export default function App() {
   const [soundCheckStatus, setSoundCheckStatus] =
     useState<SoundCheckStatus>("idle");
   const [soundCheckError, setSoundCheckError] = useState("");
+  const [completionScoreView, setCompletionScoreView] =
+    useState<CompletionScoreView>("leaderboard");
 
   function handleAuthenticated(response: AuthResponse) {
     setAuthToken(response.token);
@@ -102,6 +106,7 @@ export default function App() {
     setLatestResult(null);
     setSessionStats(EMPTY_SESSION_STATS);
     setScoreRefreshKey(0);
+    setCompletionScoreView("leaderboard");
   }, []);
 
   const handleBackToStart = useCallback(() => {
@@ -112,6 +117,7 @@ export default function App() {
     setSessionStats(EMPTY_SESSION_STATS);
     setError("");
     setView("instructions");
+    setCompletionScoreView("leaderboard");
   }, []);
 
   const handleAuthExpired = useCallback(
@@ -184,6 +190,7 @@ export default function App() {
     setRound(null);
     setSession(null);
     setScoreRefreshKey(0);
+    setCompletionScoreView("leaderboard");
 
     try {
       const createdSession = await startSession(DEMO_SESSION_REQUEST);
@@ -227,13 +234,6 @@ export default function App() {
     }
   }
 
-  function scrollToProgress(targetId: string) {
-    document.getElementById(targetId)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }
-
   function renderMain() {
     if (!auth || view === "auth") {
       return <AuthForm onAuthenticated={handleAuthenticated} />;
@@ -265,43 +265,89 @@ export default function App() {
         : "The session finished cleanly.";
 
       return (
-        <section className="complete-panel">
-          <h1>Session complete</h1>
-          <p>{finalMessage}</p>
+        <>
+          <section className="complete-panel">
+            <h1>Session complete</h1>
+            <p>{finalMessage}</p>
 
-          <dl className="completion-summary">
-            <dt>Session score</dt>
-            <dd>{finalScore}</dd>
-            <dt>Session answered</dt>
-            <dd>{sessionStats.answered}</dd>
-            <dt>Account total correct</dt>
-            <dd>{latestResult ? latestResult.totalCorrect : "Unavailable"}</dd>
-            <dt>Account total answered</dt>
-            <dd>{latestResult ? latestResult.totalAnswered : "Unavailable"}</dd>
-          </dl>
+            <dl className="completion-summary">
+              <dt>Session score</dt>
+              <dd>{finalScore}</dd>
+              <dt>Session answered</dt>
+              <dd>{sessionStats.answered}</dd>
+              <dt>Account total correct</dt>
+              <dd>{latestResult ? latestResult.totalCorrect : "Unavailable"}</dd>
+              <dt>Account total answered</dt>
+              <dd>{latestResult ? latestResult.totalAnswered : "Unavailable"}</dd>
+            </dl>
 
-          <div className="completion-actions">
-            <button className="primary-button" type="button" onClick={handleStart}>
-              Play again
-            </button>
-            <button
-              className="secondary-button"
-              type="button"
-              onClick={() => scrollToProgress("leaderboard-title")}
-            >
-              View leaderboard
-            </button>
-            {auth ? (
+            <div className="completion-actions">
+              <button className="primary-button" type="button" onClick={handleStart}>
+                Play again
+              </button>
               <button
                 className="secondary-button"
                 type="button"
-                onClick={() => scrollToProgress("attempts-title")}
+                onClick={() => setCompletionScoreView("leaderboard")}
               >
-                View my attempts
+                View leaderboard
+              </button>
+              {auth ? (
+                <button
+                  className="secondary-button"
+                  type="button"
+                  onClick={() => setCompletionScoreView("attempts")}
+                >
+                  View my attempts
+                </button>
+              ) : null}
+            </div>
+          </section>
+
+          <div
+            className="completion-tabs"
+            role="tablist"
+            aria-label="Completion score views"
+          >
+            <button
+              aria-controls="leaderboard-panel"
+              aria-selected={completionScoreView === "leaderboard"}
+              className={
+                completionScoreView === "leaderboard"
+                  ? "tab-button active"
+                  : "tab-button"
+              }
+              role="tab"
+              type="button"
+              onClick={() => setCompletionScoreView("leaderboard")}
+            >
+              Leaderboard
+            </button>
+            {auth ? (
+              <button
+                aria-controls="attempts-panel"
+                aria-selected={completionScoreView === "attempts"}
+                className={
+                  completionScoreView === "attempts"
+                    ? "tab-button active"
+                    : "tab-button"
+                }
+                role="tab"
+                type="button"
+                onClick={() => setCompletionScoreView("attempts")}
+              >
+                Recent attempts
               </button>
             ) : null}
           </div>
-        </section>
+
+          <Leaderboard
+            isAuthenticated={Boolean(auth)}
+            refreshKey={scoreRefreshKey}
+            view={completionScoreView}
+            onAuthExpired={handleAuthExpired}
+          />
+        </>
       );
     }
 
@@ -316,6 +362,7 @@ export default function App() {
           round={round}
           sessionStats={sessionStats}
           sessionUuid={session.sessionUuid}
+          totalRounds={DEMO_TOTAL_ROUNDS}
           onAnswered={handleAnswered}
           onAuthExpired={handleAuthExpired}
           onNeedNextRound={() => void loadNextRound(session.sessionUuid)}
@@ -369,11 +416,6 @@ export default function App() {
           <p className="error-text centered">{error}</p>
         ) : null}
         {renderMain()}
-        <Leaderboard
-          isAuthenticated={Boolean(auth)}
-          refreshKey={scoreRefreshKey}
-          onAuthExpired={handleAuthExpired}
-        />
       </main>
     </div>
   );

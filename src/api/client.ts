@@ -25,6 +25,11 @@ type ApiErrorBody = {
   validationErrors?: Record<string, string>;
 };
 
+type FetchBackendBlobOptions = {
+  signal?: AbortSignal;
+  timeoutMs?: number;
+};
+
 export class ApiError extends Error {
   status: number;
   body: unknown;
@@ -62,23 +67,56 @@ export function backendUrl(path: string) {
   return `${API_BASE_URL}${normalizedPath}`;
 }
 
-export async function fetchBackendBlob(path: string) {
+export async function fetchBackendBlob(
+  path: string,
+  options: FetchBackendBlobOptions = {},
+) {
   const token = getAuthToken();
   const headers = new Headers();
+  const abortController = new AbortController();
+  const timeoutMs = options.timeoutMs ?? 0;
+  let timeoutId: ReturnType<typeof window.setTimeout> | undefined;
 
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
+  function abortFromCaller() {
+    abortController.abort();
+  }
+
+  if (options.signal) {
+    if (options.signal.aborted) {
+      abortController.abort();
+    } else {
+      options.signal.addEventListener("abort", abortFromCaller, { once: true });
+    }
+  }
+
+  if (timeoutMs > 0) {
+    timeoutId = window.setTimeout(() => abortController.abort(), timeoutMs);
+  }
+
   let response: Response;
   try {
-    response = await fetch(backendUrl(path), { headers });
+    response = await fetch(backendUrl(path), {
+      headers,
+      signal: abortController.signal,
+    });
   } catch (caught) {
+    const abortedByTimeout = abortController.signal.aborted && !options.signal?.aborted;
     throw new ApiError(
       0,
-      `Backend unavailable at ${API_BASE_URL || "the Vite proxy"}`,
+      abortedByTimeout
+        ? `Backend media request timed out after ${timeoutMs}ms`
+        : `Backend unavailable at ${API_BASE_URL || "the Vite proxy"}`,
       caught,
     );
+  } finally {
+    if (timeoutId !== undefined) {
+      window.clearTimeout(timeoutId);
+    }
+    options.signal?.removeEventListener("abort", abortFromCaller);
   }
 
   if (!response.ok) {

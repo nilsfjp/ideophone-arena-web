@@ -61,7 +61,7 @@ export default function FeedbackPanel({
         <span>{researchNote.text}</span>
       </aside>
 
-      <p className="notice-text">Next trial starts automatically.</p>
+      <p className="notice-text">Use Next trial when you are ready to continue.</p>
     </section>
   );
 }

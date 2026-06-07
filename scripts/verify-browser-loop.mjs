@@ -361,9 +361,14 @@ async function run() {
   if (!finalText.includes("Leaderboard")) {
     throw new Error("Leaderboard is not visible after completion");
   }
-  if (!finalText.includes("Recent Attempts")) {
-    throw new Error("Recent attempts are not visible after completion");
+  if (!(await clickText(ws, "Recent attempts"))) {
+    throw new Error("Recent attempts tab is not clickable after completion");
   }
+  await waitFor(
+    async () => (await bodyText(ws)).includes("Recent Attempts"),
+    "recent attempts panel",
+  );
+  const attemptsText = await bodyText(ws);
   if (stimulusRequests.length === 0) {
     throw new Error("No /stimuli/ media requests were observed");
   }
@@ -435,7 +440,7 @@ async function run() {
         sessionRequest: sessionRequests[0],
         completionVisible: completed,
         leaderboardVisible: finalText.includes("Leaderboard"),
-        recentAttemptsVisible: finalText.includes("Recent Attempts"),
+        recentAttemptsVisible: attemptsText.includes("Recent Attempts"),
         staleControlCount: Array.isArray(staleControls)
           ? staleControls.length
           : 0,
@@ -504,6 +509,49 @@ async function answerCurrentRound(ws, expectFixation) {
     throw new Error(`Expected 2 ideophone choices, found ${choices.length}`);
   }
 
+  const activeProgressText = await evaluate(
+    ws,
+    "document.querySelector('.trial-progress')?.innerText ?? ''",
+  );
+  if (
+    !activeProgressText.includes("Round") ||
+    !activeProgressText.includes("Session score")
+  ) {
+    throw new Error(`Progress display is missing or incomplete: ${activeProgressText}`);
+  }
+
+  const activeDashboardVisible = await evaluate(
+    ws,
+    "Boolean(document.querySelector('.score-section'))",
+  );
+  if (activeDashboardVisible) {
+    throw new Error("Leaderboard/recent attempts section is visible during active gameplay");
+  }
+
+  const presentationProof = await evaluate(
+    ws,
+    `(() => ({
+      displayCount: document.querySelectorAll(".stimulus-display").length,
+      placeholderCount: document.querySelectorAll(".placeholder-display").length,
+      hiddenMediaCount: document.querySelectorAll(".stimulus-media-hidden").length,
+      visibleMediaCount: [...document.querySelectorAll(".stimulus-media")]
+        .filter((media) => getComputedStyle(media).opacity !== "0").length,
+    }))()`,
+  );
+  if (presentationProof.displayCount !== 2) {
+    throw new Error(
+      `Expected 2 React stimulus displays, found ${presentationProof.displayCount}`,
+    );
+  }
+  if (presentationProof.placeholderCount !== 2) {
+    throw new Error(
+      `Audio-only condition should render 2 React placeholders, found ${presentationProof.placeholderCount}`,
+    );
+  }
+  if (presentationProof.visibleMediaCount > 0) {
+    throw new Error("Legacy stimulus media is visible during active gameplay");
+  }
+
   const selectedKana = await evaluate(
     ws,
     `(() => {
@@ -533,10 +581,26 @@ async function answerCurrentRound(ws, expectFixation) {
   if (!feedbackText.includes("Account total")) {
     throw new Error("Feedback did not label backend account totals");
   }
+  if (!/Research (note|contrast)/.test(feedbackText)) {
+    throw new Error("Feedback did not include the research note");
+  }
+
+  await sleep(1200);
+  const feedbackStillVisible = await evaluate(
+    ws,
+    "Boolean(document.querySelector('.feedback') && document.querySelector('.feedback-next-button'))",
+  );
+  if (!feedbackStillVisible) {
+    throw new Error("Feedback did not stay visible until Next trial");
+  }
+  if (!(await clickText(ws, "Next trial"))) {
+    throw new Error("Next trial button not found");
+  }
 
   return {
     choices,
     selectedKana,
     feedback: feedbackText.includes("Correct") ? "Correct" : "Incorrect",
+    presentation: presentationProof,
   };
 }
