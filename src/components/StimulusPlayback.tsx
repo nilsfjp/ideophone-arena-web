@@ -204,7 +204,8 @@ export default function StimulusPlayback({
     return fallbackButton;
   }
 
-  // These media files may be legacy video derivatives; React owns the visible stimulus display.
+  // Stimuli are per-word audio; the video branch is a defensive fallback and stays hidden
+  // because React owns the visible stimulus display.
   if (isVideo) {
     return (
       <>

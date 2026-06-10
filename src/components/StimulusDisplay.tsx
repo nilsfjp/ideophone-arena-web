@@ -1,8 +1,4 @@
 import type { ConditionPresentation } from "../conditionPresentation";
-import {
-  getCanonicalDisplayForm,
-  getPreAnswerDisplayForm,
-} from "../conditionPresentation";
 import type { IdeophoneOption } from "../api/types";
 
 type StimulusDisplayProps = {
@@ -24,7 +20,7 @@ export default function StimulusDisplay({
     return (
       <span className="stimulus-display revealed-display">
         <span className="card-side-label">{positionLabel}</span>
-        <span className="script-display-text">{getCanonicalDisplayForm(option)}</span>
+        <span className="script-display-text">{option.canonicalForm}</span>
         {option.romaji ? (
           <span className="romaji-display-text">{option.romaji}</span>
         ) : null}
@@ -37,9 +33,7 @@ export default function StimulusDisplay({
     return (
       <span className="stimulus-display script-display">
         <span className="card-side-label">{positionLabel}</span>
-        <span className="script-display-text">
-          {getPreAnswerDisplayForm(option, presentation)}
-        </span>
+        <span className="script-display-text">{option.displayForm}</span>
       </span>
     );
   }

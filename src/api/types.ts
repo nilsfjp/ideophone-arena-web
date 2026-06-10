@@ -37,6 +37,8 @@ export type GameSessionResponse = {
 export type IdeophoneOption = {
   ideophoneId: number;
   kana?: string;
+  displayForm?: string;
+  canonicalForm?: string;
   romaji?: string;
   canonicalScript?: string;
   modality?: Modality;

@@ -1,5 +1,4 @@
 import type { AnswerResultResponse, IdeophoneOption, RoundResponse } from "../api/types";
-import { getCanonicalDisplayForm } from "../conditionPresentation";
 
 type FeedbackPanelProps = {
   result: AnswerResultResponse;
@@ -83,7 +82,7 @@ function getChoiceSummary(
   const side = getSide(round, option);
 
   return {
-    displayForm: option ? getCanonicalDisplayForm(option) : fallbackKana(kind, result),
+    displayForm: option?.canonicalForm ?? fallbackKana(kind, result),
     meaning: getMeaning(round, result, option, kind),
     romaji: option?.romaji ?? "Unavailable",
     side,

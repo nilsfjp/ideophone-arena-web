@@ -8,6 +8,7 @@ import type {
 } from "../api/types";
 import type { SessionStats } from "../App";
 import { getConditionPresentation } from "../conditionPresentation";
+import { getRoundProblem } from "../roundValidation";
 import FeedbackPanel from "./FeedbackPanel";
 import IdeophoneCard from "./IdeophoneCard";
 
@@ -302,22 +303,6 @@ function getTargetTranslation(round: RoundResponse) {
     round.translations?.target ??
     ""
   ).trim();
-}
-
-function getRoundProblem(round: RoundResponse, targetTranslation: string) {
-  if (!round.roundId) {
-    return "The backend returned a round without a valid roundId.";
-  }
-
-  if (!targetTranslation) {
-    return "The backend returned a round without targetTranslation.";
-  }
-
-  if (!round.left?.ideophoneId || !round.right?.ideophoneId) {
-    return "The backend returned a round without two valid ideophone choices.";
-  }
-
-  return "";
 }
 
 function getPostAnswerMeaning(
