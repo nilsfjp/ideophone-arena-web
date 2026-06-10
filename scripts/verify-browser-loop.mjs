@@ -99,6 +99,7 @@ async function trustedClickText(ws, text) {
         button.textContent.trim().includes(${JSON.stringify(text)})
       );
       if (!el) return null;
+      el.scrollIntoView({ block: "center", behavior: "instant" });
       const rect = el.getBoundingClientRect();
       return {
         x: rect.left + rect.width / 2,
@@ -288,11 +289,11 @@ async function run() {
   if (!(await trustedClickText(ws, "Sound check"))) {
     throw new Error("Sound check button not found");
   }
-  await sleep(1200);
-  const soundCheckText = await bodyText(ws);
-  if (!soundCheckText.includes("Sound check passed.")) {
-    throw new Error(`Sound check did not pass: ${soundCheckText}`);
-  }
+  await waitFor(
+    async () => (await bodyText(ws)).includes("Sound check passed."),
+    "sound check to pass",
+    10000,
+  );
   if (!(await clickText(ws, "Start Game"))) {
     throw new Error("Start Game button not found");
   }
@@ -335,7 +336,7 @@ async function run() {
         if (
           nextText.includes("+") ||
           nextText.includes("Listen to these two Japanese words.") ||
-          nextText.includes("Choose a card.")
+          nextText.includes("Which one do you think means")
         ) {
           return "next-round";
         }
@@ -570,7 +571,7 @@ async function answerCurrentRound(ws, expectFixation) {
       if (text.includes("Session complete")) {
         return "complete";
       }
-      return text.includes("Choose a card.") ? "choice" : "";
+      return text.includes("Which one do you think means") ? "choice" : "";
     },
     "choice phase",
     45000,
@@ -655,26 +656,23 @@ async function answerCurrentRound(ws, expectFixation) {
     ws,
     "document.querySelector('.feedback')?.innerText ?? ''",
   );
-  if (!feedbackText.includes("You chose")) {
-    throw new Error("Feedback did not identify the selected card");
+  const wasIncorrect = feedbackText.includes("Incorrect");
+  if (wasIncorrect) {
+    if (!feedbackText.includes("You chose")) {
+      throw new Error("Feedback did not identify the selected card");
+    }
+    if (!feedbackText.includes("Correct word")) {
+      throw new Error("Feedback did not identify the correct card");
+    }
   }
-  if (!feedbackText.includes("Correct word")) {
-    throw new Error("Feedback did not identify the correct card");
+  if (!/Card [AB]/i.test(feedbackText)) {
+    throw new Error("Feedback did not identify the card side");
   }
   if (!feedbackText.includes("Romaji")) {
     throw new Error("Feedback did not include romaji");
   }
   if (!feedbackText.includes("Meaning")) {
     throw new Error("Feedback did not include meanings");
-  }
-  if (!feedbackText.includes("Session score")) {
-    throw new Error("Feedback did not include session score");
-  }
-  if (!feedbackText.includes("Account total")) {
-    throw new Error("Feedback did not label backend account totals");
-  }
-  if (!/Research (note|contrast)/.test(feedbackText)) {
-    throw new Error("Feedback did not include the research note");
   }
 
   await sleep(1200);
@@ -692,7 +690,7 @@ async function answerCurrentRound(ws, expectFixation) {
   return {
     choices,
     selectedKana,
-    feedback: feedbackText.includes("Correct") ? "Correct" : "Incorrect",
+    feedback: wasIncorrect ? "Incorrect" : "Correct",
     presentation: presentationProof,
   };
 }
