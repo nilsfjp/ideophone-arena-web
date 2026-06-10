@@ -1,5 +1,7 @@
 const baseUrl = process.argv[2] ?? "http://127.0.0.1:5174/";
 const cdpVersionUrl = process.argv[3] ?? "http://127.0.0.1:9224/json/version";
+// Optional viewport width (e.g. 375 for the mobile run); omit for desktop.
+const viewportWidth = process.argv[4] ? Number(process.argv[4]) : null;
 
 const username = `browser_loop_${Date.now()}`;
 const email = `${username}@example.test`;
@@ -255,6 +257,14 @@ async function run() {
   await send(ws, "Page.enable");
   await send(ws, "Network.enable");
   await send(ws, "Log.enable");
+  if (viewportWidth) {
+    await send(ws, "Emulation.setDeviceMetricsOverride", {
+      width: viewportWidth,
+      height: 812,
+      deviceScaleFactor: 1,
+      mobile: viewportWidth < 600,
+    });
+  }
   await send(ws, "Page.navigate", { url: baseUrl });
   await waitFor(
     () => evaluate(ws, "document.readyState === 'complete'"),
@@ -297,6 +307,10 @@ async function run() {
   if (!(await clickText(ws, "Start Game"))) {
     throw new Error("Start Game button not found");
   }
+
+  // Install before the first round mounts so round 1 yields one geometry
+  // sample for each of the five phases.
+  await installGeometrySampler(ws);
 
   await waitForSessionRequest();
 
@@ -428,6 +442,9 @@ async function run() {
     );
   }
 
+  const phaseGeometry = await evaluate(ws, "window.__phaseGeometry ?? null");
+  assertGeometryStable(phaseGeometry);
+
   const relevantFailures = failedRequests.filter(
     (request) =>
       !request.url.includes("/@vite/") &&
@@ -439,6 +456,8 @@ async function run() {
     JSON.stringify(
       {
         username,
+        viewportWidth: viewportWidth ?? "desktop default",
+        phaseGeometry,
         answeredRoundCount: answeredRounds.length,
         firstRound: answeredRounds[0],
         sessionRequest: sessionRequests[0],
@@ -472,6 +491,110 @@ run().catch(async (error) => {
   console.error(error);
   process.exit(1);
 });
+
+// Records each phase's first bounding boxes (document coordinates) for the
+// trial stage, the reserved board, and both card slots. Phases are detected
+// from the same visibility toggles the UI uses; the rAF loop stops once all
+// five phases have a sample (all within round 1, since phases are sequential).
+async function installGeometrySampler(ws) {
+  await evaluate(
+    ws,
+    `(() => {
+      if (window.__phaseGeometry) return true;
+      window.__phaseGeometry = {};
+      const toBox = (el) => {
+        const r = el.getBoundingClientRect();
+        return {
+          x: Math.round(r.x + scrollX),
+          y: Math.round(r.y + scrollY),
+          width: Math.round(r.width),
+          height: Math.round(r.height),
+        };
+      };
+      const isVisible = (el) =>
+        Boolean(el) && getComputedStyle(el).visibility !== "hidden";
+      const sample = () => {
+        const stage = document.querySelector(".trial-stage");
+        const board = document.querySelector(".trial-board");
+        const cards = document.querySelectorAll(".stimulus-row .ideophone-card");
+        if (stage && board && cards.length === 2) {
+          const [cardA, cardB] = cards;
+          const cardAVisible = !cardA.classList.contains("empty");
+          const cardBVisible = !cardB.classList.contains("empty");
+          let phase = "";
+          if (document.querySelector(".feedback")) phase = "feedback";
+          else if (isVisible(document.querySelector(".question-text"))) phase = "choice";
+          else if (isVisible(document.querySelector(".fixation-cross"))) phase = "fixation";
+          else if (cardAVisible && !cardBVisible) phase = "left-playing";
+          else if (cardBVisible && !cardAVisible) phase = "right-playing";
+          if (phase && !window.__phaseGeometry[phase]) {
+            window.__phaseGeometry[phase] = {
+              stage: toBox(stage),
+              board: toBox(board),
+              cardA: toBox(cardA),
+              cardB: toBox(cardB),
+            };
+          }
+        }
+        if (Object.keys(window.__phaseGeometry).length < 5) {
+          requestAnimationFrame(sample);
+        }
+      };
+      requestAnimationFrame(sample);
+      return true;
+    })()`,
+  );
+}
+
+// Invariant 5: phase changes toggle visibility only, never document flow. The
+// board and both card slots must hold one box across all five phases; the
+// stage may only extend downward at feedback (the feedback panel and Next
+// round button append below the board). Tolerance of 2px absorbs sub-pixel
+// rounding in getBoundingClientRect.
+const GEOMETRY_TOLERANCE_PX = 2;
+
+function assertGeometryStable(geometry) {
+  const phases = ["fixation", "left-playing", "right-playing", "choice", "feedback"];
+  const missing = phases.filter((phase) => !geometry?.[phase]);
+  if (missing.length > 0) {
+    throw new Error(`Geometry sampler missed phases: ${missing.join(", ")}`);
+  }
+
+  const reference = geometry.fixation;
+  for (const phase of phases) {
+    for (const slot of ["board", "cardA", "cardB"]) {
+      for (const prop of ["x", "y", "width", "height"]) {
+        const delta = Math.abs(geometry[phase][slot][prop] - reference[slot][prop]);
+        if (delta > GEOMETRY_TOLERANCE_PX) {
+          throw new Error(
+            `Layout shift: ${slot}.${prop} moved ${delta}px between fixation and ${phase} ` +
+              `(${reference[slot][prop]} -> ${geometry[phase][slot][prop]})`,
+          );
+        }
+      }
+    }
+
+    for (const prop of ["x", "y", "width"]) {
+      const delta = Math.abs(geometry[phase].stage[prop] - reference.stage[prop]);
+      if (delta > GEOMETRY_TOLERANCE_PX) {
+        throw new Error(
+          `Layout shift: stage.${prop} moved ${delta}px between fixation and ${phase}`,
+        );
+      }
+    }
+    const heightDelta = geometry[phase].stage.height - reference.stage.height;
+    if (phase !== "feedback" && Math.abs(heightDelta) > GEOMETRY_TOLERANCE_PX) {
+      throw new Error(
+        `Layout shift: stage.height changed ${heightDelta}px between fixation and ${phase}`,
+      );
+    }
+    if (phase === "feedback" && heightDelta < -GEOMETRY_TOLERANCE_PX) {
+      throw new Error(
+        `Layout shift: stage shrank ${heightDelta}px at feedback`,
+      );
+    }
+  }
+}
 
 async function waitForSessionRequest() {
   await waitFor(
@@ -589,6 +712,34 @@ async function answerCurrentRound(ws, expectFixation) {
   if (!Array.isArray(choices) || choices.length !== 2) {
     throw new Error(`Expected 2 ideophone choices, found ${choices.length}`);
   }
+  // Invariant 7: pre-feedback card labels identify position only.
+  for (const label of choices) {
+    if (!/^Choose card [AB]$/.test(label)) {
+      throw new Error(`Card label leaks identity before feedback: "${label}"`);
+    }
+  }
+
+  // Invariant 1: the canonical choice question, with the question mark.
+  const questionProof = await evaluate(
+    ws,
+    `(() => {
+      const question = document.querySelector(".question-text");
+      if (!question) return null;
+      return {
+        text: question.innerText.trim(),
+        visible: getComputedStyle(question).visibility !== "hidden",
+      };
+    })()`,
+  );
+  if (!questionProof?.visible) {
+    throw new Error("Choice question is not visible during the choice phase");
+  }
+  if (
+    !questionProof.text.startsWith("Which one do you think means ") ||
+    !questionProof.text.endsWith("?")
+  ) {
+    throw new Error(`Choice question is not canonical: "${questionProof.text}"`);
+  }
 
   const activeProgressText = await evaluate(
     ws,
@@ -613,7 +764,8 @@ async function answerCurrentRound(ws, expectFixation) {
     ws,
     `(() => ({
       displayCount: document.querySelectorAll(".stimulus-display").length,
-      placeholderCount: document.querySelectorAll(".placeholder-display").length,
+      placeholderCount: [...document.querySelectorAll(".placeholder-display")]
+        .filter((face) => getComputedStyle(face).visibility !== "hidden").length,
       hiddenMediaCount: document.querySelectorAll(".stimulus-media-hidden").length,
       visibleMediaCount: [...document.querySelectorAll(".stimulus-media")]
         .filter((media) => getComputedStyle(media).opacity !== "0").length,
@@ -626,24 +778,24 @@ async function answerCurrentRound(ws, expectFixation) {
   }
   if (presentationProof.placeholderCount !== 2) {
     throw new Error(
-      `Audio-only condition should render 2 React placeholders, found ${presentationProof.placeholderCount}`,
+      `Audio-only condition should show 2 visible neutral placeholders, found ${presentationProof.placeholderCount}`,
     );
   }
   if (presentationProof.visibleMediaCount > 0) {
     throw new Error("Legacy stimulus media is visible during active gameplay");
   }
 
-  const selectedKana = await evaluate(
+  const selectedLabel = await evaluate(
     ws,
     `(() => {
       const firstChoice = document.querySelector(".stimulus-row button");
       if (!firstChoice) return "";
-      const kana = firstChoice.getAttribute("aria-label") ?? firstChoice.textContent;
+      const label = firstChoice.getAttribute("aria-label") ?? firstChoice.textContent;
       firstChoice.click();
-      return kana.trim();
+      return label.trim();
     })()`,
   );
-  if (!selectedKana) {
+  if (!selectedLabel) {
     throw new Error("Could not select an ideophone option");
   }
 
@@ -689,7 +841,7 @@ async function answerCurrentRound(ws, expectFixation) {
 
   return {
     choices,
-    selectedKana,
+    selectedLabel,
     feedback: wasIncorrect ? "Incorrect" : "Correct",
     presentation: presentationProof,
   };
