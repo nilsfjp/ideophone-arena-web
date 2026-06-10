@@ -60,9 +60,12 @@ Current game-loop UX keeps answer feedback and the research note visible until
 the user clicks `Next round`. Leaderboard and recent attempts are shown from the
 completion screen rather than below the active round.
 
-Stimulus playback is separated from visible presentation. Legacy `.mp4` files
-may still provide sound, but React renders the visible audio placeholder or
-script layer through the condition presentation boundary.
+Stimulus playback is separated from visible presentation. The backend serves
+per-word audio files (`/stimuli/audio/<file>.m4a`) for playback, and React
+renders the visible layer from backend-provided fields: the neutral A/B
+placeholder (Audio only) or the round's `displayForm` verbatim (Script match
+and Script mismatch). Feedback reveals `canonicalForm`, romaji, and meaning.
+The frontend never converts or detects kana.
 
 Script Lab selection is available before session start with exactly three
 backend-supported presentation options: Audio only, Script match, and Script
@@ -93,6 +96,7 @@ Browser path:
 ```bash
 npm run dev
 npm run build
+npm run test
 npm run preview
 node scripts/verify-presentation-logic.mjs
 ```

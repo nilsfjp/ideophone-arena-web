@@ -42,9 +42,20 @@ CONDITION_3_SOKUON
 Do not expose `TEXT_ONLY`, numeric condition values, or arbitrary difficulty
 selection. `difficultyLevel` remains fixed to `1`.
 
-Round responses expose `left.kana`, `left.romaji`, `left.canonicalScript`,
-`right.kana`, `right.romaji`, and `right.canonicalScript`. React owns visible
-placeholder/script presentation; legacy `.mp4` media is playback source only.
+Round responses expose, for both `left` and `right`: `kana`, `displayForm`,
+`canonicalForm`, `romaji`, `canonicalScript`, `stimulusFile`, and `stimulusUrl`.
+
+- `displayForm` is the authoritative visible script for the pre-answer card in
+  the script conditions. The frontend renders it verbatim and never converts,
+  detects, or recomputes kana from other fields (experiment invariant 3).
+  Mismatch rounds arrive with `displayForm` already flipped by the backend.
+- `canonicalForm` is the canonical-script form revealed at feedback together
+  with romaji and meaning.
+- If `displayForm` (script conditions) or `canonicalForm` (any supported
+  condition) is missing or blank, the frontend shows the round-problem error
+  state instead of guessing a display form.
+- `stimulusUrl` points at per-word audio, e.g. `/stimuli/audio/a0h-gosogoso.m4a`.
+  Trial pacing is driven by the media `ended` event.
 
 ## Authentication
 

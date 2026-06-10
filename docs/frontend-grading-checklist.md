@@ -144,6 +144,7 @@ src/components/StimulusPlayback.tsx
 src/components/StimulusDisplay.tsx
 src/components/IdeophoneCard.tsx
 src/conditionPresentation.ts
+src/roundValidation.ts
 src/stimulusMedia.ts
 src/api/client.ts
 ```
@@ -175,9 +176,9 @@ Browser proof:
 - [x] Audio/video playback errors are visible or at least do not block answer submission permanently.
 - [x] Stimulus display remains acceptable for the demo.
 - [x] Visible stimulus presentation is React-rendered instead of relying on baked-in `.mp4` visuals.
-- [x] Audio only renders neutral A/B placeholders before answer and reveals canonical display details after answer.
-- [x] Script match renders canonical script before answer.
-- [x] Script mismatch renders opposite script before answer when kana conversion is possible and falls back safely otherwise.
+- [x] Audio only renders neutral A/B placeholders before answer and reveals `canonicalForm`, romaji, and meaning after answer.
+- [x] Script match renders the backend `displayForm` (canonical script) verbatim before answer.
+- [x] Script mismatch renders the backend `displayForm` (pre-flipped script) verbatim before answer; the frontend performs no kana conversion or detection, and a round missing `displayForm`/`canonicalForm` surfaces the round-problem error state.
 
 Proof:
 
@@ -192,6 +193,12 @@ Browser devtools Network tab shows successful /stimuli/... media requests.
 2026-06-07 Phase 2 source update: `conditionPresentation.ts` now derives canonical and opposite visible forms from `canonicalScript` plus kana conversion. `StimulusDisplay` reveals canonical form, romaji, and meaning after answer.
 
 2026-06-07 proof update: `node scripts/verify-presentation-logic.mjs` verifies Audio only, Script match, Script mismatch, unknown-condition fallback, HU-to-hiragana canonical display, KD-to-katakana canonical display, and opposite-script conversion for mismatch mode.
+
+2026-06-10 S1 source update (supersedes the 2026-06-07 kana-conversion design): the kana conversion/detection heuristics in `conditionPresentation.ts` are deleted — they inverted the script manipulation. The backend now serves `displayForm` (visible pre-answer script, pre-flipped for mismatch) and `canonicalForm` (feedback reveal) on each round option, and `StimulusDisplay` renders them verbatim. `src/roundValidation.ts` rejects rounds missing those fields through the round-problem error state instead of falling back. Stimulus playback consumes per-word audio (`/stimuli/audio/<file>.m4a`) through the existing blob/`ended`-event path.
+
+2026-06-10 S1 proof update: `npm run test` (vitest, new) covers condition mapping, per-condition `displayForm`/placeholder rendering, `canonicalForm` reveal, and the missing-field round-problem path. `node scripts/verify-presentation-logic.mjs` now also scans `src/` for forbidden kana-conversion identifiers and asserts via rendered markup that pre-answer script text equals the backend `displayForm` verbatim (including the `じゃあじゃあ` → `ジャージャー` long-vowel case per-character conversion cannot produce) and that Audio only shows placeholders pre-answer.
+
+2026-06-10 browser proof: `node scripts/verify-browser-loop.mjs` passed a full 30-round Audio-only session against backend 8081 (2 React placeholders per choice phase, 0 muted media, 180 successful per-word `/stimuli/audio/*.m4a` responses; the additional `net::ERR_ABORTED` entries are React StrictMode dev double-mounts aborting the duplicate blob fetch). The helper itself was refreshed for current UI text ("Which one do you think means", uppercase `Card A/B` via CSS, single feedback card on correct answers) and now scrolls buttons into view before trusted clicks. A CDP pass per script condition confirmed pre-answer DOM equals backend `displayForm` verbatim — Script match: `["ごそごそ","カタカタ"]`; Script mismatch: `["ゴソゴソ","かたかた"]`, i.e. the katakana-canonical word `katakata` correctly flips to hiragana (the previously inverted case) — and that feedback reveals `canonicalForm` + romaji, with no horizontal overflow at a 375px viewport.
 
 Manual Edge proof still needed for rendered Phase 2 presentation:
 
