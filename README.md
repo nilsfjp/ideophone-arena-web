@@ -57,8 +57,12 @@ proof observed successful backend-served `/stimuli/` media requests and no muted
 stimulus media elements.
 
 Current game-loop UX keeps answer feedback and the research note visible until
-the user clicks `Next round`. Leaderboard and recent attempts are shown from the
-completion screen rather than below the active round.
+the user clicks `Next round` (the button appears in the reserved question slot at
+feedback). Leaderboard and recent attempts are shown from the completion screen
+rather than below the active round. The leaderboard is paginated
+(`GET /api/leaderboard?page&size`, contract change 2026-06-11): the frontend
+reads the wrapper's `entries` and shows a Previous/Next pager when the backend
+reports more than one page.
 
 Stimulus playback is separated from visible presentation. The backend serves
 per-word audio files (`/stimuli/audio/<file>.m4a`) for playback, and React

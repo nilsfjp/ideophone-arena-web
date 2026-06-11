@@ -1,7 +1,10 @@
+import { writeFile } from "node:fs/promises";
+
 const baseUrl = process.argv[2] ?? "http://127.0.0.1:5174/";
 const cdpVersionUrl = process.argv[3] ?? "http://127.0.0.1:9224/json/version";
 // Optional viewport width (e.g. 375 for the mobile run); omit for desktop.
 const viewportWidth = process.argv[4] ? Number(process.argv[4]) : null;
+const viewportLabel = viewportWidth ? `${viewportWidth}px` : "desktop";
 
 const username = `browser_loop_${Date.now()}`;
 const email = `${username}@example.test`;
@@ -16,6 +19,8 @@ const requestMeta = new Map();
 const sessionRequests = [];
 const protectedRequests = [];
 const stimulusRequests = [];
+const screenshots = [];
+const feedbackShotsTaken = new Set();
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -161,6 +166,16 @@ async function submitCurrentForm(ws) {
 
 async function bodyText(ws) {
   return evaluate(ws, "document.body.innerText");
+}
+
+async function captureScreenshot(ws, name) {
+  const path = `/tmp/${name}-${viewportLabel}.png`;
+  const { data } = await send(ws, "Page.captureScreenshot", {
+    format: "png",
+    captureBeyondViewport: true,
+  });
+  await writeFile(path, Buffer.from(data, "base64"));
+  screenshots.push(path);
 }
 
 async function run() {
@@ -379,6 +394,9 @@ async function run() {
   if (!finalText.includes("Leaderboard")) {
     throw new Error("Leaderboard is not visible after completion");
   }
+
+  const leaderboardProof = await verifyLeaderboard(ws);
+
   if (!(await clickText(ws, "Recent attempts"))) {
     throw new Error("Recent attempts tab is not clickable after completion");
   }
@@ -445,6 +463,21 @@ async function run() {
   const phaseGeometry = await evaluate(ws, "window.__phaseGeometry ?? null");
   assertGeometryStable(phaseGeometry);
 
+  // Narrow-viewport audit: the document must not overflow horizontally.
+  const overflowProof = await evaluate(
+    ws,
+    `(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      innerWidth: window.innerWidth,
+    }))()`,
+  );
+  if (overflowProof.scrollWidth > overflowProof.innerWidth) {
+    throw new Error(
+      `Horizontal overflow: scrollWidth ${overflowProof.scrollWidth} > ` +
+        `innerWidth ${overflowProof.innerWidth}`,
+    );
+  }
+
   const relevantFailures = failedRequests.filter(
     (request) =>
       !request.url.includes("/@vite/") &&
@@ -463,6 +496,9 @@ async function run() {
         sessionRequest: sessionRequests[0],
         completionVisible: completed,
         leaderboardVisible: finalText.includes("Leaderboard"),
+        leaderboard: leaderboardProof,
+        overflowProof,
+        screenshots,
         recentAttemptsVisible: attemptsText.includes("Recent Attempts"),
         staleControlCount: Array.isArray(staleControls)
           ? staleControls.length
@@ -516,8 +552,10 @@ async function installGeometrySampler(ws) {
       const sample = () => {
         const stage = document.querySelector(".trial-stage");
         const board = document.querySelector(".trial-board");
+        const questionSlot = document.querySelector(".question-slot");
+        const nextButton = document.querySelector(".feedback-next-button");
         const cards = document.querySelectorAll(".stimulus-row .ideophone-card");
-        if (stage && board && cards.length === 2) {
+        if (stage && board && questionSlot && nextButton && cards.length === 2) {
           const [cardA, cardB] = cards;
           const cardAVisible = !cardA.classList.contains("empty");
           const cardBVisible = !cardB.classList.contains("empty");
@@ -533,6 +571,9 @@ async function installGeometrySampler(ws) {
               board: toBox(board),
               cardA: toBox(cardA),
               cardB: toBox(cardB),
+              questionSlot: toBox(questionSlot),
+              nextButton: toBox(nextButton),
+              nextButtonVisible: isVisible(nextButton),
             };
           }
         }
@@ -562,7 +603,7 @@ function assertGeometryStable(geometry) {
 
   const reference = geometry.fixation;
   for (const phase of phases) {
-    for (const slot of ["board", "cardA", "cardB"]) {
+    for (const slot of ["board", "cardA", "cardB", "questionSlot"]) {
       for (const prop of ["x", "y", "width", "height"]) {
         const delta = Math.abs(geometry[phase][slot][prop] - reference[slot][prop]);
         if (delta > GEOMETRY_TOLERANCE_PX) {
@@ -593,7 +634,130 @@ function assertGeometryStable(geometry) {
         `Layout shift: stage shrank ${heightDelta}px at feedback`,
       );
     }
+
+    // The Next round button lives inside the reserved question slot: visible
+    // only at feedback, and its box must sit within the slot's box so its
+    // appearance cannot move anything.
+    if (geometry[phase].nextButtonVisible !== (phase === "feedback")) {
+      throw new Error(
+        `Next round button visibility is wrong at ${phase}: ` +
+          `${geometry[phase].nextButtonVisible}`,
+      );
+    }
+    if (phase === "feedback") {
+      const slot = geometry[phase].questionSlot;
+      const button = geometry[phase].nextButton;
+      const fitsSlot =
+        button.x >= slot.x - GEOMETRY_TOLERANCE_PX &&
+        button.y >= slot.y - GEOMETRY_TOLERANCE_PX &&
+        button.x + button.width <= slot.x + slot.width + GEOMETRY_TOLERANCE_PX &&
+        button.y + button.height <= slot.y + slot.height + GEOMETRY_TOLERANCE_PX;
+      if (!fitsSlot) {
+        throw new Error(
+          `Next round button is not inside the reserved question slot at feedback: ` +
+            `button ${JSON.stringify(button)} vs slot ${JSON.stringify(slot)}`,
+        );
+      }
+    }
   }
+}
+
+// Paginated leaderboard (contract change 2026-06-11): entries must render as
+// table rows; the pager appears only when the backend reports totalPages > 1,
+// and Next/Previous must actually change the page indicator.
+async function verifyLeaderboard(ws) {
+  await waitFor(
+    () =>
+      evaluate(
+        ws,
+        `(() => {
+          const panel = document.querySelector("#leaderboard-panel");
+          if (!panel) return false;
+          return panel.querySelectorAll("tbody tr").length > 0;
+        })()`,
+      ),
+    "leaderboard entries",
+  );
+
+  const readState = () =>
+    evaluate(
+      ws,
+      `(() => {
+        const panel = document.querySelector("#leaderboard-panel");
+        const pager = panel?.querySelector(".leaderboard-pager");
+        return {
+          rowCount: panel?.querySelectorAll("tbody tr").length ?? 0,
+          firstRow: panel?.querySelector("tbody tr")?.innerText.trim() ?? "",
+          pagerVisible: Boolean(pager),
+          pagerText: pager?.querySelector("span")?.innerText.trim() ?? "",
+          previousDisabled: pager
+            ? [...pager.querySelectorAll("button")].find((b) =>
+                b.textContent.includes("Previous"))?.disabled ?? null
+            : null,
+        };
+      })()`,
+    );
+
+  const initialState = await readState();
+  if (initialState.rowCount === 0) {
+    throw new Error("Leaderboard rendered no entries after completion");
+  }
+
+  // The leaderboard table (long usernames) must not widen the page; the
+  // end-of-run overflow check no longer sees this tab, so assert here too.
+  const leaderboardOverflow = await evaluate(
+    ws,
+    `(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      innerWidth: window.innerWidth,
+    }))()`,
+  );
+  if (leaderboardOverflow.scrollWidth > leaderboardOverflow.innerWidth) {
+    throw new Error(
+      `Horizontal overflow on the leaderboard view: scrollWidth ` +
+        `${leaderboardOverflow.scrollWidth} > innerWidth ${leaderboardOverflow.innerWidth}`,
+    );
+  }
+
+  await captureScreenshot(ws, "leaderboard");
+
+  let pagination = null;
+  if (initialState.pagerVisible) {
+    if (!initialState.pagerText.startsWith("page 1 of")) {
+      throw new Error(
+        `Leaderboard pager did not start on page 1: "${initialState.pagerText}"`,
+      );
+    }
+    if (initialState.previousDisabled !== true) {
+      throw new Error("Leaderboard Previous button should be disabled on page 1");
+    }
+    if (!(await clickText(ws, "Next"))) {
+      throw new Error("Leaderboard Next button not clickable");
+    }
+    const pageTwo = await waitFor(async () => {
+      const state = await readState();
+      return state.pagerText.startsWith("page 2 of") ? state : null;
+    }, "leaderboard page 2");
+    if (pageTwo.firstRow === initialState.firstRow) {
+      throw new Error("Leaderboard page 2 shows the same first entry as page 1");
+    }
+    await captureScreenshot(ws, "leaderboard-page-2");
+    if (!(await clickText(ws, "Previous"))) {
+      throw new Error("Leaderboard Previous button not clickable");
+    }
+    await waitFor(async () => {
+      const state = await readState();
+      return state.pagerText.startsWith("page 1 of") ? state : null;
+    }, "leaderboard back to page 1");
+    pagination = { pageOneFirstRow: initialState.firstRow, pageTwoFirstRow: pageTwo.firstRow };
+  }
+
+  return {
+    rowCount: initialState.rowCount,
+    pagerVisible: initialState.pagerVisible,
+    pagerText: initialState.pagerText,
+    pagination,
+  };
 }
 
 async function waitForSessionRequest() {
@@ -825,6 +989,38 @@ async function answerCurrentRound(ws, expectFixation) {
   }
   if (!feedbackText.includes("Meaning")) {
     throw new Error("Feedback did not include meanings");
+  }
+
+  // Outcome-height parity: both outcomes render two summary-card cells; the
+  // correct outcome hides the second card but keeps its reserved space.
+  const feedbackCards = await evaluate(
+    ws,
+    `(() => {
+      const cards = [...document.querySelectorAll(".feedback-choice-card")];
+      return {
+        total: cards.length,
+        hidden: cards.filter((card) =>
+          getComputedStyle(card).visibility === "hidden"
+        ).length,
+      };
+    })()`,
+  );
+  if (feedbackCards.total !== 2) {
+    throw new Error(
+      `Feedback should reserve 2 summary card slots, found ${feedbackCards.total}`,
+    );
+  }
+  if (feedbackCards.hidden !== (wasIncorrect ? 0 : 1)) {
+    throw new Error(
+      `Feedback hidden-card count is wrong for ${wasIncorrect ? "incorrect" : "correct"}: ` +
+        `${feedbackCards.hidden}`,
+    );
+  }
+
+  const outcomeName = wasIncorrect ? "incorrect" : "correct";
+  if (!feedbackShotsTaken.has(outcomeName)) {
+    feedbackShotsTaken.add(outcomeName);
+    await captureScreenshot(ws, `feedback-${outcomeName}`);
   }
 
   await sleep(1200);

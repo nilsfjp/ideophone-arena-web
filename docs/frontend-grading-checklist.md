@@ -36,7 +36,7 @@ POST /api/auth/login
 POST /api/game/sessions
 GET  /api/game/sessions/{sessionUuid}/rounds/next
 POST /api/game/sessions/{sessionUuid}/answers
-GET  /api/leaderboard
+GET  /api/leaderboard?page={page}&size={size}
 GET  /api/game/me/attempts
 GET  /stimuli/**
 ```
@@ -263,7 +263,10 @@ src/api/types.ts
 
 ## Leaderboard and recent attempts
 
-- [x] Leaderboard calls `GET /api/leaderboard`.
+- [x] Leaderboard calls `GET /api/leaderboard?page={page}&size={size}` and reads
+      the paginated wrapper's `entries` (contract change 2026-06-11). A
+      Previous/Next pager driven by the page metadata appears only when
+      `totalPages > 1`.
 - [x] Leaderboard is visible from completion.
 - [x] Leaderboard loading failure does not break the game.
 - [x] Recent attempts call `GET /api/game/me/attempts` with bearer token.
