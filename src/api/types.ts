@@ -101,6 +101,17 @@ export type LeaderboardEntry = {
   accuracy: number;
 };
 
+// Paginated wrapper introduced by the backend on 2026-06-11; `page` is
+// 0-indexed and out-of-range request params are clamped server-side, so the
+// metadata reports the effective values.
+export type LeaderboardPageResponse = {
+  entries: LeaderboardEntry[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};
+
 export type AttemptResponse = {
   answeredAt?: string;
   targetTranslation?: string;

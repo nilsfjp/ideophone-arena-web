@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ApiError, getLeaderboard, getMyAttempts } from "../api/client";
-import type { AttemptResponse, LeaderboardEntry } from "../api/types";
+import type { AttemptResponse, LeaderboardPageResponse } from "../api/types";
 
 type LeaderboardProps = {
   isAuthenticated: boolean;
@@ -15,7 +15,9 @@ export default function Leaderboard({
   view = "both",
   onAuthExpired,
 }: LeaderboardProps) {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardPage, setLeaderboardPage] =
+    useState<LeaderboardPageResponse | null>(null);
+  const [page, setPage] = useState(0);
   const [attempts, setAttempts] = useState<AttemptResponse[]>([]);
   const [leaderboardError, setLeaderboardError] = useState("");
   const [attemptsError, setAttemptsError] = useState("");
@@ -27,9 +29,9 @@ export default function Leaderboard({
       setLeaderboardError("");
 
       try {
-        const entries = await getLeaderboard();
+        const response = await getLeaderboard(page);
         if (isMounted) {
-          setLeaderboard(entries);
+          setLeaderboardPage(response);
         }
       } catch (caught) {
         if (caught instanceof ApiError && [401, 403].includes(caught.status)) {
@@ -81,7 +83,7 @@ export default function Leaderboard({
     return () => {
       isMounted = false;
     };
-  }, [isAuthenticated, onAuthExpired, refreshKey]);
+  }, [isAuthenticated, onAuthExpired, page, refreshKey]);
 
   const showLeaderboard = view === "leaderboard" || view === "both";
   const showAttempts = isAuthenticated && (view === "attempts" || view === "both");
@@ -95,31 +97,7 @@ export default function Leaderboard({
           role={view === "both" ? undefined : "tabpanel"}
           aria-labelledby="leaderboard-title"
         >
-          <h2 id="leaderboard-title">Leaderboard</h2>
-          {leaderboard.length > 0 ? (
-            <table>
-              <thead>
-                <tr>
-                  <th>Player</th>
-                  <th>Account total correct</th>
-                  <th>Accuracy</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.map((entry) => (
-                  <tr key={entry.username}>
-                    <td>{entry.username}</td>
-                    <td>
-                      {entry.totalCorrect} / {entry.totalAnswered}
-                    </td>
-                    <td>{Math.round(entry.accuracy * 100)}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="muted">No scores yet.</p>
-          )}
+          <LeaderboardPanel data={leaderboardPage} onPageChange={setPage} />
 
           {leaderboardError ? <p className="error-text">{leaderboardError}</p> : null}
         </div>
@@ -156,5 +134,72 @@ export default function Leaderboard({
         </div>
       ) : null}
     </section>
+  );
+}
+
+type LeaderboardPanelProps = {
+  data: LeaderboardPageResponse | null;
+  onPageChange: (page: number) => void;
+};
+
+// Pure render of one leaderboard page; the stateful wrapper above owns
+// fetching and the current page index.
+export function LeaderboardPanel({ data, onPageChange }: LeaderboardPanelProps) {
+  const entries = data?.entries ?? [];
+  const totalPages = data?.totalPages ?? 0;
+  const currentPage = data?.page ?? 0;
+
+  return (
+    <>
+      <h2 id="leaderboard-title">Leaderboard</h2>
+      {entries.length > 0 ? (
+        <table>
+          <thead>
+            <tr>
+              <th>Player</th>
+              <th>Account total correct</th>
+              <th>Accuracy</th>
+            </tr>
+          </thead>
+          <tbody>
+            {entries.map((entry) => (
+              <tr key={entry.username}>
+                <td>{entry.username}</td>
+                <td>
+                  {entry.totalCorrect} / {entry.totalAnswered}
+                </td>
+                <td>{Math.round(entry.accuracy * 100)}%</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <p className="muted">No scores yet.</p>
+      )}
+
+      {totalPages > 1 ? (
+        <nav className="leaderboard-pager" aria-label="Leaderboard pages">
+          <button
+            className="secondary-button"
+            type="button"
+            disabled={currentPage <= 0}
+            onClick={() => onPageChange(Math.max(currentPage - 1, 0))}
+          >
+            Previous
+          </button>
+          <span>
+            page {currentPage + 1} of {totalPages}
+          </span>
+          <button
+            className="secondary-button"
+            type="button"
+            disabled={currentPage >= totalPages - 1}
+            onClick={() => onPageChange(Math.min(currentPage + 1, totalPages - 1))}
+          >
+            Next
+          </button>
+        </nav>
+      ) : null}
+    </>
   );
 }

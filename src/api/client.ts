@@ -3,7 +3,7 @@ import type {
   AttemptResponse,
   AuthResponse,
   GameSessionResponse,
-  LeaderboardEntry,
+  LeaderboardPageResponse,
   LoginRequest,
   NextRoundResponse,
   RegisterRequest,
@@ -249,8 +249,10 @@ export function submitAnswer(
   );
 }
 
-export function getLeaderboard() {
-  return apiRequest<LeaderboardEntry[]>("/api/leaderboard");
+export function getLeaderboard(page = 0, size = 10) {
+  return apiRequest<LeaderboardPageResponse>(
+    `/api/leaderboard?page=${page}&size=${size}`,
+  );
 }
 
 export function getMyAttempts() {

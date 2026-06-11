@@ -122,11 +122,35 @@ Do not rely on cumulative user-wide totals for per-session remaining count. The 
 
 ## Leaderboard
 
-Public leaderboard:
+Public leaderboard, paginated (changed 2026-06-11; previously returned a bare array):
 
 ```text
-GET /api/leaderboard
+GET /api/leaderboard?page=0&size=10
 ```
+
+Query params: `page` (default `0`, clamped to `>= 0`) and `size` (default `10`, clamped to `1..50`). Out-of-range
+values are clamped, not rejected; the response metadata reports the effective values.
+
+Ordering is deterministic: `totalCorrect` desc, then `totalAnswered` desc, then average response time asc, then
+`username` asc as the final tiebreak.
+
+Response shape:
+
+```json
+{
+  "entries": [
+    { "username": "demo", "totalAnswered": 30, "totalCorrect": 21, "accuracy": 0.7 }
+  ],
+  "page": 0,
+  "size": 10,
+  "totalElements": 4,
+  "totalPages": 1
+}
+```
+
+**Breaking change for the frontend:** the previous shape was the bare `entries` array. The Vite app's
+`getLeaderboard()` (`src/api/client.ts`) and the `Leaderboard` component read `.entries` and drive a
+Previous/Next pager from the page metadata (hidden when `totalPages <= 1`).
 
 This should be visible in the final demo.
 
