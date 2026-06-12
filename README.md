@@ -63,16 +63,29 @@ Script mismatch (`CONDITION_3_SOKUON`). Audio only shows neutral A/B placeholder
 pre-answer; script conditions show the backend `displayForm`. Difficulty is fixed
 at `1`; the numeric condition enum and `TEXT_ONLY` are never exposed.
 
+**Practice rounds.** An "Include 2 practice rounds (not scored)" checkbox in
+the Script Lab section (default ON) sends `includePractice: true` with the
+session start. The backend then serves 2 practice rounds (`practice: true`,
+p-prefix stimuli) before scored round 1. Practice rounds show a "Practice
+round" header with a "Not scored" badge instead of the round counter and score
+readout; feedback works exactly as in scored rounds, but nothing is persisted
+and scored play still begins at "Round 1 / 30" with the score at 0.
+
 **Leaderboard.** `GET /api/leaderboard?page&size` returns a paginated wrapper
-(`entries`, `page`, `size`, `totalElements`, `totalPages`). The frontend reads
-`.entries` and shows a Previous/Next pager when `totalPages > 1`.
+(`entries`, `page`, `size`, `totalElements`, `totalPages`). Entries rank each
+user's best *completed* session (`bestSessionCorrect`, `bestSessionAnswered`,
+`bestSessionAccuracy` as a 0–1 fraction; contract change 2026-06-11). The
+frontend reads `.entries`, renders "Best session" and "Accuracy" columns, and
+shows a Previous/Next pager when `totalPages > 1`.
 
 ### Browser path
 
 1. Open `http://localhost:5174`.
 2. Register or log in.
 3. Run the sound check.
-4. Keep Audio only selected, or select Script match / Script mismatch.
+4. Keep Audio only selected, or select Script match / Script mismatch. Keep
+   the practice checkbox on for 2 unscored warm-up rounds, or untick it to
+   start at Round 1 immediately.
 5. Start Game.
 6. Watch the fixation, left word, right word, and choice phase.
 7. Choose one card.

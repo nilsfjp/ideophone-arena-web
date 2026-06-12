@@ -8,8 +8,18 @@ function makePage(
 ): LeaderboardPageResponse {
   return {
     entries: [
-      { username: "alpha", totalAnswered: 30, totalCorrect: 24, accuracy: 0.8 },
-      { username: "beta", totalAnswered: 30, totalCorrect: 18, accuracy: 0.6 },
+      {
+        username: "alpha",
+        bestSessionCorrect: 24,
+        bestSessionAnswered: 30,
+        bestSessionAccuracy: 0.8,
+      },
+      {
+        username: "beta",
+        bestSessionCorrect: 18,
+        bestSessionAnswered: 30,
+        bestSessionAccuracy: 0.6,
+      },
     ],
     page: 0,
     size: 10,
@@ -29,6 +39,7 @@ describe("LeaderboardPanel", () => {
   it("renders one table row per entry from the wrapper's entries field", () => {
     const markup = renderPanel(makePage());
 
+    expect(markup).toContain("Best session");
     expect(markup).toContain("alpha");
     expect(markup).toContain("24 / 30");
     expect(markup).toContain("80%");

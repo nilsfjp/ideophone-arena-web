@@ -18,6 +18,9 @@ export type AuthResponse = {
 export type StartSessionRequest = {
   difficultyLevel: number;
   conditionName: ConditionName;
+  // Optional, backend default false; when true the session serves 2 practice
+  // rounds (practice: true) before scored round 1 (contract 2026-06-11).
+  includePractice?: boolean;
 };
 
 export type ConditionName =
@@ -32,6 +35,7 @@ export type GameSessionResponse = {
   difficultyLevel: number;
   conditionName: ConditionName;
   startedAt: string;
+  includePractice?: boolean;
 };
 
 export type IdeophoneOption = {
@@ -57,6 +61,7 @@ export type RoundResponse = {
     target?: string;
     other?: string;
   };
+  practice?: boolean;
   left: IdeophoneOption;
   right: IdeophoneOption;
   timing?: {
@@ -92,13 +97,18 @@ export type AnswerResultResponse = {
   selectedKana?: string;
   totalAnswered: number;
   totalCorrect: number;
+  // Mirrors the round's flag; practice answers return feedback but never
+  // increment totals (always false/absent for scored rounds).
+  practice?: boolean;
 };
 
+// Best *completed* session per user (contract change 2026-06-11; replaced the
+// lifetime totalCorrect/totalAnswered/accuracy fields).
 export type LeaderboardEntry = {
   username: string;
-  totalAnswered: number;
-  totalCorrect: number;
-  accuracy: number;
+  bestSessionCorrect: number;
+  bestSessionAnswered: number;
+  bestSessionAccuracy: number;
 };
 
 // Paginated wrapper introduced by the backend on 2026-06-11; `page` is

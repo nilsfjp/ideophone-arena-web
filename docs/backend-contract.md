@@ -79,14 +79,18 @@ Start session:
 POST /api/game/sessions
 ```
 
-Request body:
+Request body (`includePractice` optional, backend default `false`; the
+frontend always sends it explicitly and defaults the toggle to `true`):
 
 ```json
 {
   "conditionName": "CONDITION_1_SOKUON",
-  "difficultyLevel": 1
+  "difficultyLevel": 1,
+  "includePractice": true
 }
 ```
+
+The session response echoes `includePractice`.
 
 Get next round:
 
@@ -110,6 +114,31 @@ Request body:
 }
 ```
 
+The answer response includes a `practice` boolean mirroring the round's flag
+(always `false` for scored rounds).
+
+## Practice rounds (2026-06-11)
+
+When a session is started with `"includePractice": true`, the next-round
+endpoint serves **2 practice rounds** (p-prefix stimuli, e.g.
+`/stimuli/audio/p0h-sotto.m4a`) before the first scored round. Practice rounds
+use the same round DTO with `practice: true`; scored rounds carry
+`practice: false`.
+
+Practice answers return normal correctness feedback (`practice: true` in the
+answer response) but are never persisted: `totalAnswered`/`totalCorrect` stay
+at the session's scored counts (0 during practice), and practice cannot affect
+completion or the leaderboard. Practice rounds do not consume round numbers:
+"Round 1 / 30" still means the first scored round.
+
+Frontend behavior: the instructions screen has an "Include 2 practice rounds
+(not scored)" checkbox in the Script Lab section, default ON; the flag is
+always sent explicitly. During a practice round the trial header shows
+"Practice round" with a "Not scored" badge instead of the round counter and
+score readout, the progress bar stays at its pre-game 0%, and feedback behaves
+exactly as in scored rounds. Practice answers never increment session-local
+stats.
+
 ## Completion behavior
 
 When there are no more unanswered rounds, the backend may return an explicit
@@ -131,15 +160,17 @@ GET /api/leaderboard?page=0&size=10
 Query params: `page` (default `0`, clamped to `>= 0`) and `size` (default `10`, clamped to `1..50`). Out-of-range
 values are clamped, not rejected; the response metadata reports the effective values.
 
-Ordering is deterministic: `totalCorrect` desc, then `totalAnswered` desc, then average response time asc, then
-`username` asc as the final tiebreak.
+The metric is **best completed session** (changed 2026-06-11; previously lifetime account totals): each user is
+ranked by the highest number of correct answers within a single *completed* session. Incomplete sessions never
+count. Ordering is deterministic: `bestSessionCorrect` desc, then best-session accuracy desc (equivalently
+`bestSessionAnswered` asc), then `username` asc.
 
-Response shape:
+Response shape (`bestSessionAccuracy` is a 0–1 fraction):
 
 ```json
 {
   "entries": [
-    { "username": "demo", "totalAnswered": 30, "totalCorrect": 21, "accuracy": 0.7 }
+    { "username": "demo", "bestSessionCorrect": 21, "bestSessionAnswered": 30, "bestSessionAccuracy": 0.7 }
   ],
   "page": 0,
   "size": 10,
@@ -148,8 +179,10 @@ Response shape:
 }
 ```
 
-**Breaking change for the frontend:** the previous shape was the bare `entries` array. The Vite app's
-`getLeaderboard()` (`src/api/client.ts`) and the `Leaderboard` component read `.entries` and drive a
+Entry fields were renamed/re-scoped on 2026-06-11 from the lifetime
+`totalAnswered`/`totalCorrect`/`accuracy`; the wrapper is unchanged. The Vite app's `getLeaderboard()`
+(`src/api/client.ts`) and the `Leaderboard` component read `.entries`, render "Best session"
+(`bestSessionCorrect / bestSessionAnswered`) and "Accuracy" (percentage) columns, and drive a
 Previous/Next pager from the page metadata (hidden when `totalPages <= 1`).
 
 This should be visible in the final demo.

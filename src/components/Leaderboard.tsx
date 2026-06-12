@@ -157,7 +157,7 @@ export function LeaderboardPanel({ data, onPageChange }: LeaderboardPanelProps) 
           <thead>
             <tr>
               <th>Player</th>
-              <th>Account total correct</th>
+              <th>Best session</th>
               <th>Accuracy</th>
             </tr>
           </thead>
@@ -166,9 +166,9 @@ export function LeaderboardPanel({ data, onPageChange }: LeaderboardPanelProps) 
               <tr key={entry.username}>
                 <td>{entry.username}</td>
                 <td>
-                  {entry.totalCorrect} / {entry.totalAnswered}
+                  {entry.bestSessionCorrect} / {entry.bestSessionAnswered}
                 </td>
-                <td>{Math.round(entry.accuracy * 100)}%</td>
+                <td>{Math.round(entry.bestSessionAccuracy * 100)}%</td>
               </tr>
             ))}
           </tbody>

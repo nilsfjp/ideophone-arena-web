@@ -4,7 +4,12 @@ import { getLeaderboard } from "./client";
 
 const wrapper: LeaderboardPageResponse = {
   entries: [
-    { username: "demo", totalAnswered: 30, totalCorrect: 21, accuracy: 0.7 },
+    {
+      username: "demo",
+      bestSessionCorrect: 21,
+      bestSessionAnswered: 30,
+      bestSessionAccuracy: 0.7,
+    },
   ],
   page: 0,
   size: 10,

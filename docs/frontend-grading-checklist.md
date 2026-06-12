@@ -116,6 +116,8 @@ Browser devtools Network tab shows POST /api/game/sessions with the selected Scr
 
 2026-06-07 source update: the start screen exposes a small Script Lab selector for Audio only, Script match, and Script mismatch. The selector uses user-facing labels, not backend enum names or numeric values, and session start still hardcodes difficulty level `1`.
 
+2026-06-12 source update: the Script Lab section gained an "Include 2 practice rounds (not scored)" checkbox, default ON. Session start always sends `includePractice` explicitly (the backend default is false). Browser proof recorded body `{"difficultyLevel":1,"conditionName":"CONDITION_1_SOKUON","includePractice":true}` with the toggle on and `"includePractice":false` after unticking it.
+
 ## Round/game loop
 
 - [x] Trial player requests the next round from the backend.
@@ -165,6 +167,8 @@ Browser proof:
 2026-06-07 source update: feedback now stays visible with the research note until a manual `Next round` click. The browser-loop helper was updated to assert that behavior before continuing.
 
 2026-06-07 Phase 2 source update: feedback cards now identify the selected and correct card side, canonical display form, romaji, and meaning when the round/result data provides enough information.
+
+2026-06-12 practice-rounds evidence: with the practice toggle on, `node scripts/verify-browser-loop.mjs` (desktop and 375px) answered 32 rounds — exactly the first 2 with header "Practice round" plus a "Not scored" badge, no round counter or score readout, progress bar held at 0%, and normal feedback. The first scored round showed `Round 1 / 30 | Session score: 0 / 0 | 0% answered`. Practice answers never increment session stats (`App.handleAnswered` returns early on `result.practice`). A separate CDP proof unticked the toggle and confirmed the first round is `Round 1 / 30` immediately. Practice stimuli were ordinary `/stimuli/audio/p*.m4a` files (e.g. `p0h-sotto.m4a`).
 
 ## Stimuli/media
 
@@ -267,6 +271,10 @@ src/api/types.ts
       the paginated wrapper's `entries` (contract change 2026-06-11). A
       Previous/Next pager driven by the page metadata appears only when
       `totalPages > 1`.
+- [x] Leaderboard entries use the best-completed-session fields
+      (`bestSessionCorrect`/`bestSessionAnswered`/`bestSessionAccuracy`,
+      contract change 2026-06-11) rendered as "Best session" and "Accuracy"
+      columns; no references to the old lifetime entry fields remain.
 - [x] Leaderboard is visible from completion.
 - [x] Leaderboard loading failure does not break the game.
 - [x] Recent attempts call `GET /api/game/me/attempts` with bearer token.
@@ -288,6 +296,8 @@ Browser proof:
 2026-06-05 evidence: browser proof confirmed `leaderboardVisible: true` and `recentAttemptsVisible: true` after completion. `src/components/Leaderboard.tsx` renders empty/error states without blocking the game surface.
 
 2026-06-07 source update: leaderboard/recent attempts are no longer mounted below the active trial. Completion owns those views through the leaderboard/recent-attempt tabs.
+
+2026-06-12 best-session evidence: `LeaderboardEntry` in `src/api/types.ts` and the `Leaderboard` table switched to `bestSessionCorrect`/`bestSessionAnswered`/`bestSessionAccuracy` ("Best session" rendered as `correct / answered`, "Accuracy" as a rounded percentage). Browser proof rendered 10 rows on page 1 of 2 and navigated Next/Previous (the best-session metric only counts completed sessions, so pager seeding now plays full 30-round sessions via the public API). Vitest fixtures in `Leaderboard.test.tsx` and `client.test.ts` use the new fields.
 
 ## Error handling and loading states
 
