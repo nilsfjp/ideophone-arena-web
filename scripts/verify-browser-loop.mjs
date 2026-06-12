@@ -21,6 +21,7 @@ const protectedRequests = [];
 const stimulusRequests = [];
 const screenshots = [];
 const feedbackShotsTaken = new Set();
+let practiceShotTaken = false;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -311,6 +312,7 @@ async function run() {
     "instructions after register",
   );
   await assertScriptLabSelector(ws);
+  await assertPracticeToggle(ws);
   if (!(await trustedClickText(ws, "Sound check"))) {
     throw new Error("Sound check button not found");
   }
@@ -337,6 +339,13 @@ async function run() {
   }
   if (!sessionBody.includes('"difficultyLevel":1')) {
     throw new Error(`Session request did not send difficultyLevel 1: ${sessionBody}`);
+  }
+  // The UI default is practice ON and the flag must be sent explicitly
+  // (the backend default is false).
+  if (!sessionBody.includes('"includePractice":true')) {
+    throw new Error(
+      `Session request did not send includePractice true: ${sessionBody}`,
+    );
   }
 
   const answeredRounds = [];
@@ -383,6 +392,33 @@ async function run() {
 
   if (!completed) {
     throw new Error("Session did not reach completion within 40 answered rounds");
+  }
+
+  // Practice sequencing: the toggle stayed ON, so exactly the first 2 rounds
+  // are practice and the first scored round starts at Round 1 / 30 with the
+  // score still at its pre-game 0 / 0.
+  const practiceRounds = answeredRounds.filter((round) => round.practice);
+  if (practiceRounds.length !== 2) {
+    throw new Error(
+      `Expected exactly 2 practice rounds, observed ${practiceRounds.length}`,
+    );
+  }
+  if (!answeredRounds[0]?.practice || !answeredRounds[1]?.practice) {
+    throw new Error("Practice rounds were not served first");
+  }
+  if (answeredRounds.slice(2).some((round) => round.practice)) {
+    throw new Error("A practice round appeared after the scored rounds began");
+  }
+  const firstScoredRound = answeredRounds[2];
+  if (
+    !firstScoredRound ||
+    !firstScoredRound.progressText.includes("Round 1 / 30") ||
+    !firstScoredRound.progressText.includes("Session score: 0 / 0")
+  ) {
+    throw new Error(
+      `First scored round did not start at Round 1 / 30 with score 0 / 0: ` +
+        `${firstScoredRound?.progressText ?? "missing"}`,
+    );
   }
 
   await waitFor(
@@ -492,7 +528,9 @@ async function run() {
         viewportWidth: viewportWidth ?? "desktop default",
         phaseGeometry,
         answeredRoundCount: answeredRounds.length,
-        firstRound: answeredRounds[0],
+        practiceRoundCount: practiceRounds.length,
+        firstPracticeRound: answeredRounds[0],
+        firstScoredRound,
         sessionRequest: sessionRequests[0],
         completionVisible: completed,
         leaderboardVisible: finalText.includes("Leaderboard"),
@@ -844,6 +882,39 @@ async function assertScriptLabSelector(ws) {
   }
 }
 
+// The practice toggle (2026-06-12) sits in the Script Lab section, defaults
+// to checked, and must use player-facing wording only.
+async function assertPracticeToggle(ws) {
+  const toggleProof = await evaluate(
+    ws,
+    `(() => {
+      const label = [...document.querySelectorAll("label")].find((candidate) =>
+        candidate.textContent.includes("practice")
+      );
+      const checkbox = label?.querySelector("input[type='checkbox']");
+      if (!checkbox) return null;
+      return {
+        labelText: label.textContent.trim(),
+        checked: checkbox.checked,
+        insideScriptLab: Boolean(label.closest(".script-lab-selector")),
+      };
+    })()`,
+  );
+
+  if (!toggleProof) {
+    throw new Error("Practice toggle checkbox not found on the instructions screen");
+  }
+  if (!toggleProof.labelText.includes("Include 2 practice rounds (not scored)")) {
+    throw new Error(`Practice toggle label is wrong: "${toggleProof.labelText}"`);
+  }
+  if (!toggleProof.checked) {
+    throw new Error("Practice toggle should default to checked");
+  }
+  if (!toggleProof.insideScriptLab) {
+    throw new Error("Practice toggle is not near the Script Lab selector");
+  }
+}
+
 async function answerCurrentRound(ws, expectFixation) {
   if (expectFixation) {
     await waitFor(
@@ -909,7 +980,29 @@ async function answerCurrentRound(ws, expectFixation) {
     ws,
     "document.querySelector('.trial-progress')?.innerText ?? ''",
   );
-  if (
+  // Practice rounds replace the round counter with "Practice round" plus a
+  // "Not scored" note (CSS uppercases the note, so match case-insensitively)
+  // and must not show the score readout.
+  const isPracticeRound = activeProgressText.includes("Practice round");
+  if (isPracticeRound) {
+    if (!/not scored/i.test(activeProgressText)) {
+      throw new Error(
+        `Practice header is missing the Not scored note: ${activeProgressText}`,
+      );
+    }
+    if (
+      activeProgressText.includes("Session score") ||
+      /Round \d+ \/ \d+/.test(activeProgressText)
+    ) {
+      throw new Error(
+        `Practice header leaked the scored-round readout: ${activeProgressText}`,
+      );
+    }
+    if (!practiceShotTaken) {
+      practiceShotTaken = true;
+      await captureScreenshot(ws, "practice-round");
+    }
+  } else if (
     !activeProgressText.includes("Round") ||
     !activeProgressText.includes("Session score")
   ) {
@@ -1038,6 +1131,8 @@ async function answerCurrentRound(ws, expectFixation) {
   return {
     choices,
     selectedLabel,
+    practice: isPracticeRound,
+    progressText: activeProgressText,
     feedback: wasIncorrect ? "Incorrect" : "Correct",
     presentation: presentationProof,
   };

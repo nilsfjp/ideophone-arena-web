@@ -5,10 +5,12 @@ type InstructionsProps = {
   difficultyLevel: 1;
   isStarting: boolean;
   error?: string;
+  includePractice: boolean;
   selectedCondition: ConditionName;
   soundCheckError?: string;
   soundCheckStatus: "idle" | "checking" | "ready" | "error";
   onConditionChange: (conditionName: ConditionName) => void;
+  onIncludePracticeChange: (includePractice: boolean) => void;
   onSoundCheck: () => void;
   onStart: () => void;
 };
@@ -17,10 +19,12 @@ export default function Instructions({
   difficultyLevel,
   isStarting,
   error,
+  includePractice,
   selectedCondition,
   soundCheckError,
   soundCheckStatus,
   onConditionChange,
+  onIncludePracticeChange,
   onSoundCheck,
   onStart,
 }: InstructionsProps) {
@@ -80,6 +84,15 @@ export default function Instructions({
             );
           })}
         </div>
+
+        <label className="practice-toggle">
+          <input
+            checked={includePractice}
+            type="checkbox"
+            onChange={(event) => onIncludePracticeChange(event.target.checked)}
+          />
+          <span>Include 2 practice rounds (not scored)</span>
+        </label>
       </section>
 
       <div className="sound-check" aria-live="polite">

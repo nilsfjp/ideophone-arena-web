@@ -163,6 +163,7 @@ export default function TrialPlayer({
   const isChoice = phase === "choice" || phase === "submitting";
   const hasFeedback = phase === "feedback" && answerResult !== null;
   const cardsAreChoices = isChoice;
+  const isPractice = round.practice === true;
   const currentRoundNumber = Math.min(
     totalRounds,
     sessionStats.answered + (hasFeedback ? 0 : 1),
@@ -192,14 +193,27 @@ export default function TrialPlayer({
   return (
     <section className="trial-stage" aria-live="polite">
       <div className="trial-progress" aria-label="Session progress">
+        {/* Practice rounds replace the round counter and score readout for the
+            whole round (header content is constant per round, so invariant 5
+            is untouched); the progress track below stays at its pre-game 0%
+            because practice answers never increment sessionStats. */}
         <div className="progress-summary">
-          <strong>
-            Round {currentRoundNumber} / {totalRounds}
-          </strong>
-          <span>
-            Session score: {sessionStats.correct} / {sessionStats.answered}
-          </span>
-          <span>{answeredPercent}% answered</span>
+          {isPractice ? (
+            <>
+              <strong>Practice round</strong>
+              <span className="practice-note">Not scored</span>
+            </>
+          ) : (
+            <>
+              <strong>
+                Round {currentRoundNumber} / {totalRounds}
+              </strong>
+              <span>
+                Session score: {sessionStats.correct} / {sessionStats.answered}
+              </span>
+              <span>{answeredPercent}% answered</span>
+            </>
+          )}
         </div>
         <div
           className="progress-track"

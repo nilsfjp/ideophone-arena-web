@@ -203,6 +203,24 @@ button {
   line-height: 1.3;
 }
 
+.practice-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: #202124;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  cursor: pointer;
+}
+
+.practice-toggle input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
+  accent-color: #e90b3f;
+  cursor: pointer;
+}
+
 .sound-check {
   display: grid;
   justify-items: center;
@@ -293,6 +311,16 @@ button {
 
 .progress-summary strong {
   color: #202124;
+}
+
+.practice-note {
+  padding: 0.1rem 0.5rem;
+  border: 1px solid #e90b3f;
+  border-radius: 4px;
+  color: #e90b3f;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .progress-track {

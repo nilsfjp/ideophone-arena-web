@@ -130,6 +130,37 @@ describe("TrialPlayer reserved question slot", () => {
   });
 });
 
+describe("TrialPlayer practice rounds", () => {
+  it("replaces the round counter and score readout with the practice header", () => {
+    const markup = renderTrialBoard({ ...validRound, practice: true });
+
+    expect(markup).toContain("Practice round");
+    expect(markup).toContain("Not scored");
+    expect(markup).not.toContain("Round 1 / 30");
+    expect(markup).not.toContain("Session score");
+  });
+
+  it("keeps the scored-round header when the practice flag is absent or false", () => {
+    for (const round of [validRound, { ...validRound, practice: false }]) {
+      const markup = renderTrialBoard(round);
+
+      expect(markup).toContain("Round 1 / 30");
+      expect(markup).toContain("Session score: 0 / 0");
+      expect(markup).not.toContain("Practice round");
+      expect(markup).not.toContain("Not scored");
+    }
+  });
+
+  it("renders the same trial board and feedback slots during practice", () => {
+    const markup = renderTrialBoard({ ...validRound, practice: true });
+
+    expect(markup).toContain(`<p>${LISTEN_INSTRUCTION}</p>`);
+    expect(countOccurrences(markup, CHOICE_QUESTION_PREFIX)).toBe(1);
+    expect(countOccurrences(markup, "Next round")).toBe(1);
+    expect(markup).toContain("progress-track");
+  });
+});
+
 describe("TrialPlayer round validation wiring", () => {
   it("shows the round-problem panel instead of guessing a display form", () => {
     const markup = renderToStaticMarkup(

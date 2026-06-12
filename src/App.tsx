@@ -81,6 +81,9 @@ export default function App() {
   const [selectedCondition, setSelectedCondition] = useState<ConditionName>(
     DEFAULT_SCRIPT_LAB_CONDITION,
   );
+  // UI default is ON; the backend default stays false, so the flag is always
+  // sent explicitly and only this opt-in produces practice rounds.
+  const [includePractice, setIncludePractice] = useState(true);
 
   function handleAuthenticated(response: AuthResponse) {
     setAuthToken(response.token);
@@ -110,6 +113,7 @@ export default function App() {
     setScoreRefreshKey(0);
     setCompletionScoreView("leaderboard");
     setSelectedCondition(DEFAULT_SCRIPT_LAB_CONDITION);
+    setIncludePractice(true);
   }, []);
 
   const handleBackToStart = useCallback(() => {
@@ -199,6 +203,7 @@ export default function App() {
       const sessionRequest: StartSessionRequest = {
         difficultyLevel: DEMO_DIFFICULTY_LEVEL,
         conditionName: selectedCondition,
+        includePractice,
       };
       const createdSession = await startSession(sessionRequest);
       setSession(createdSession);
@@ -217,6 +222,12 @@ export default function App() {
   }
 
   function handleAnswered(result: AnswerResultResponse) {
+    if (result.practice) {
+      // Practice feedback shows in-trial only; session stats and score views
+      // stay at their pre-game state until the first scored answer.
+      return;
+    }
+
     setLatestResult(result);
     setSessionStats((current) => ({
       answered: current.answered + 1,
@@ -255,11 +266,13 @@ export default function App() {
         <Instructions
           difficultyLevel={DEMO_DIFFICULTY_LEVEL}
           error={error}
+          includePractice={includePractice}
           isStarting={isStarting}
           selectedCondition={selectedCondition}
           soundCheckError={soundCheckError}
           soundCheckStatus={soundCheckStatus}
           onConditionChange={setSelectedCondition}
+          onIncludePracticeChange={setIncludePractice}
           onSoundCheck={() => void handleSoundCheck()}
           onStart={handleStart}
         />
