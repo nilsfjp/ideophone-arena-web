@@ -1,11 +1,13 @@
 # Frontend grading and integration checklist
 
-Date: 2026-06-05
+Date: 2026-06-05 (reconciled 2026-06-20 to shipped S1–S4 state)
 Repository: `/code/js/ideophone-arena-web`
 
 ## Purpose
 
 This checklist verifies that the frontend demonstrates the Spring Boot backend correctly. The backend is the main grading target, but the frontend must make the project demonstrable: authentication, game flow, feedback, completion, leaderboard, and recent attempts.
+
+It also tracks the items the frontend genuinely *owns* — the experiment invariants and the verify scripts that gate them (see the "Experiment invariants (frontend-owned)" section). This is the frontend's checklist, not the course's Spring grading doc; that lives in the backend repo as `docs/backend-grading-checklist.md`.
 
 Do not mark an item complete unless it has browser evidence, build evidence, or a clear file reference.
 
@@ -385,6 +387,78 @@ Result: PASS. Registered fresh user, passed the sound check, started CONDITION_1
 Blocker: none for the frontend browser demo while backend 8081 and frontend 5174 are running.
 Next task: verify backend round seed/pairing semantics against the experiment design so canonical/opposite modality pairings are not left to frontend display assumptions.
 ```
+
+## Experiment invariants (frontend-owned)
+
+These are the research-instrument guarantees the frontend owns directly, beyond
+demonstrating the backend. They map to the numbered invariants in
+`CLAUDE.md`/`AGENTS.md` and are gated by the verify scripts below. Do not mark an
+item complete without a verify-script pass or a clear file reference.
+
+- [x] Frozen participant-facing trial wording lives only in
+      `src/experimentText.ts`; strings are never rephrased, duplicated, or
+      relocated (invariant 1). Shipped S2 (2026-06-11).
+- [x] Trial phase order is fixed: fixation → left plays → right plays → choice →
+      feedback; timing comes from the backend (`timing.fixationMs`,
+      `timing.preChoiceDelayMs`) (invariant 2).
+- [x] Script display is received, never computed: the backend `displayForm`
+      (pre-flipped for mismatch) is rendered verbatim; no client-side kana
+      conversion/detection exists in `src/` (invariant 3). Shipped S1
+      (2026-06-10).
+- [x] Audio-only condition shows neutral A/B placeholders pre-answer; display
+      form, romaji, and meaning reveal only at feedback (invariant 4).
+- [x] No mid-trial layout shift: all phase elements occupy reserved space at
+      mount and toggle visibility, not document flow (invariant 5). Shipped S2.
+- [x] Response time is measured from choice-phase start to selection; integers
+      submitted; double submission prevented (invariant 6).
+- [x] Cards do not reveal identity beyond the intended channel; trial aria-labels
+      are position-only ("Choose card A") until feedback (invariants 7). Shipped
+      S2.
+- [x] Condition mapping is the only mapping (UI label → enum): Audio only →
+      `CONDITION_1_SOKUON`, Script match → `CONDITION_2_SOKUON`, Script mismatch
+      → `CONDITION_3_SOKUON`; `difficultyLevel` locked to 1; no numeric
+      conditions or `TEXT_ONLY` exposed (invariant 8).
+- [x] A round missing `displayForm`/`canonicalForm` surfaces the round-problem
+      error state instead of guessing (invariant 3 / `roundValidation.ts`).
+      Shipped S1.
+
+Files to inspect:
+
+```text
+src/experimentText.ts
+src/conditionPresentation.ts
+src/roundValidation.ts
+src/components/TrialPlayer.tsx
+src/components/StimulusDisplay.tsx
+```
+
+## Verify scripts (the gates)
+
+These scripts are the oracle for "no behavioral / invariant change" and must pass
+before any task is considered done.
+
+- [x] `node scripts/verify-presentation-logic.mjs` passes — verifies forbidden
+      kana identifiers absent from `src/`, condition mapping, verbatim
+      `displayForm` rendering, audio-only placeholder behavior, frozen
+      `experimentText.ts` strings, and reserved-layout slots.
+- [x] `node scripts/verify-browser-loop.mjs` passes for loop-affecting changes
+      (skip when a change does not affect the loop; say so).
+- [x] `npm run lint` passes.
+- [x] `npm run build` passes.
+- [x] `npm run test` (vitest) passes — condition mapping, verbatim rendering,
+      missing-field round-problem path, leaderboard best-session fixtures.
+
+2026-06-20 reconciliation evidence: this checklist was brought current with the
+shipped S1–S4 state (S1 verbatim `displayForm` render + per-word audio, 2026-06-10;
+S2 reserved-layout + frozen `experimentText.ts` + position-only aria-labels,
+2026-06-11; S3 best-session leaderboard + practice rounds, 2026-06-12; S4
+design-token / self-hosted-font pass with layout/DOM untouched, 2026-06-13). The
+S4 visual-identity pass changed only `src/styles/tokens.css` and token-consuming
+CSS, so the experiment invariants above are unaffected. Session history is now
+also logged in `docs/progress-log.md` in the backend's format. Verification for
+the 2026-06-20 docs-only pass: `npm run lint`, `npm run build`, and
+`node scripts/verify-presentation-logic.mjs` all green (no loop-affecting change,
+so no browser-loop run).
 
 ## Agent steering rules
 
