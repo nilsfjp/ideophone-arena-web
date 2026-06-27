@@ -152,7 +152,8 @@ backend (this session).
 Session goal:
 Docs/process only — bring the frontend repo's session-logging and checklist
 workflow to parity with the backend so autonomous and manual sessions log
-identically going forward, per `docs/SPEC-frontend-workflow-parity.md`. No source
+identically going forward, per the workflow-parity spec (since archived to
+`docs/instruction-archive/SPEC-frontend-workflow-parity.md`). No source
 or behavior change.
 
 Changed:
@@ -190,3 +191,42 @@ None.
 Next single task:
 Game-loop polish (transition timing, feedback readability, mobile tap targets) —
 a separate, human-in-the-loop session, out of scope for this docs-only run.
+
+## 2026-06-28 (spec archival)
+
+Session goal:
+Docs-only cleanup — archive the now-implemented workflow-parity spec into
+`docs/instruction-archive/`. No app, component, or style change.
+
+Changed:
+
+- `git mv docs/SPEC-frontend-workflow-parity.md
+  docs/instruction-archive/SPEC-frontend-workflow-parity.md` (preserved, not
+  deleted; rename keeps history).
+- Updated the one inbound reference in this log's 2026-06-20 entry to point at the
+  archived path.
+- Touched nothing outside `docs/`. Did not touch `experimentText.ts`, `app.css`,
+  `tokens.css`, `main.tsx`, or any component.
+
+Proof:
+`npm run build` green; `node scripts/verify-presentation-logic.mjs` green (oracle
+— frozen strings, verbatim render, and reserved-layout slots untouched). `npm run
+lint` reports 3 pre-existing errors, all in `ds-bundle/_ds_bundle.js` — a
+gitignored, untracked local artifact that inline-disables `jsx-a11y`/`react-hooks`
+rules this flat config doesn't register; unrelated to this docs change and not
+visible on a clean checkout. Not fixed here (would require editing
+`eslint.config.js`, out of scope for a docs-only session).
+
+Result:
+Complete. Implemented spec archived; no behavioral change.
+
+Commit:
+Not committed (proposed message in the handoff).
+
+Blocker:
+`npm run lint` is red due to the pre-existing `ds-bundle/_ds_bundle.js` artifact
+(see Proof). Out of scope for this session.
+
+Next single task:
+Game-loop polish (transition timing, feedback readability, mobile tap targets) —
+a separate, human-in-the-loop session.
