@@ -22,6 +22,16 @@ dist
 dist-ssr
 *.local
 
+# design-sync (staged scripts, build output, machine state — durable inputs under
+# .design-sync/ that AREN'T listed here stay committed: config.json, NOTES.md,
+# conventions.md, previews/, overrides/)
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+.design-sync/ds-bundle-styles.css
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

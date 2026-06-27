@@ -1,0 +1,51 @@
+{
+  "pkg": "ideophone-arena-web",
+  "globalName": "IdeophoneArena",
+  "shape": "package",
+  "projectId": "2a6c3e30-d2cc-46b8-b9b0-de64ecfe48c2",
+  "srcDir": "src",
+  "tsconfig": "tsconfig.app.json",
+  "buildCmd": "node .design-sync/build-css.mjs",
+  "cssEntry": ".design-sync/ds-bundle-styles.css",
+  "readmeHeader": ".design-sync/conventions.md",
+  "docsMap": {
+    "Instructions": null
+  },
+  "extraEntries": ["./.design-sync/router-reexport.mjs"],
+  "overrides": {
+    "TrialPlayer": { "cardMode": "column" }
+  },
+  "libOverrides": {
+    "source-kit.mjs": "synth entry honors componentSrcMap pins so app entry points (main.tsx importing @fontsource CSS) don't inline fonts into _ds_bundle.css"
+  },
+  "componentSrcMap": {
+    "TrialPlayer": "src/components/TrialPlayer.tsx",
+    "IdeophoneCard": "src/components/IdeophoneCard.tsx",
+    "FeedbackPanel": "src/components/FeedbackPanel.tsx",
+    "Leaderboard": "src/components/Leaderboard.tsx",
+    "LeaderboardPanel": "src/components/Leaderboard.tsx",
+    "Instructions": "src/components/Instructions.tsx",
+    "StimulusDisplay": "src/components/StimulusDisplay.tsx",
+    "StimulusPlayback": "src/components/StimulusPlayback.tsx",
+    "AuthForm": "src/components/AuthForm.tsx",
+    "HomePage": "src/pages/HomePage.tsx",
+    "ResultsPage": "src/pages/ResultsPage.tsx",
+    "NotFoundPage": "src/pages/NotFoundPage.tsx",
+    "App": null,
+    "StyleGuide": null
+  },
+  "extraFonts": [
+    "node_modules/@fontsource/line-seed-jp/latin-400.css",
+    "node_modules/@fontsource/line-seed-jp/latin-700.css",
+    "node_modules/@fontsource/line-seed-jp/japanese-400.css",
+    "node_modules/@fontsource/line-seed-jp/japanese-700.css",
+    "node_modules/@fontsource/zen-maru-gothic/latin-400.css",
+    "node_modules/@fontsource/zen-maru-gothic/latin-700.css",
+    "node_modules/@fontsource/zen-maru-gothic/japanese-400.css",
+    "node_modules/@fontsource/zen-maru-gothic/japanese-700.css",
+    "node_modules/@fontsource/zen-kaku-gothic-new/latin-400.css",
+    "node_modules/@fontsource/zen-kaku-gothic-new/latin-700.css",
+    "node_modules/@fontsource/zen-kaku-gothic-new/japanese-400.css",
+    "node_modules/@fontsource/zen-kaku-gothic-new/japanese-700.css"
+  ]
+}
