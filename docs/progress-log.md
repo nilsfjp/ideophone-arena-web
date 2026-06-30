@@ -196,7 +196,8 @@ a separate, human-in-the-loop session, out of scope for this docs-only run.
 
 Session goal:
 Docs-only cleanup — archive the now-implemented workflow-parity spec into
-`docs/instruction-archive/`. No app, component, or style change.
+`docs/instruction-archive/`. No app, component, or style change. (Plus a
+user-approved one-line eslint-ignore fix, below.)
 
 Changed:
 
@@ -205,27 +206,32 @@ Changed:
   deleted; rename keeps history).
 - Updated the one inbound reference in this log's 2026-06-20 entry to point at the
   archived path.
-- Touched nothing outside `docs/`. Did not touch `experimentText.ts`, `app.css`,
-  `tokens.css`, `main.tsx`, or any component.
+- `eslint.config.js`: added `ds-bundle` to `globalIgnores` (was only `dist`).
+  Lint was scanning `ds-bundle/_ds_bundle.js` — a gitignored, untracked local
+  design-system build artifact that inline-disables `jsx-a11y`/`react-hooks`
+  rules this flat config doesn't register, producing 3 "rule not found" errors
+  unrelated to any committed source. User approved this config-only fix.
+- Touched no participant-facing or behavioral code: `experimentText.ts`,
+  `app.css`, `tokens.css`, `main.tsx`, and all components are untouched.
 
 Proof:
-`npm run build` green; `node scripts/verify-presentation-logic.mjs` green (oracle
-— frozen strings, verbatim render, and reserved-layout slots untouched). `npm run
-lint` reports 3 pre-existing errors, all in `ds-bundle/_ds_bundle.js` — a
-gitignored, untracked local artifact that inline-disables `jsx-a11y`/`react-hooks`
-rules this flat config doesn't register; unrelated to this docs change and not
-visible on a clean checkout. Not fixed here (would require editing
-`eslint.config.js`, out of scope for a docs-only session).
+`npm run lint` green; `npm run build` green; `npx tsc --noEmit` green;
+`npm test` green (35/35); `node scripts/verify-presentation-logic.mjs` green
+(oracle — frozen strings, verbatim render, and reserved-layout slots untouched).
+Tripwire scan clean: no port `8080`, no `/api/rounds/next` (the live endpoint is
+`/api/game/sessions/{uuid}/rounds/next`, matching the contract), `TEXT_ONLY`
+present only in a test asserting it resolves to `unknown`.
 
 Result:
-Complete. Implemented spec archived; no behavioral change.
+Complete. Implemented spec archived; lint restored to green; no behavioral change.
 
 Commit:
 Not committed (proposed message in the handoff).
 
 Blocker:
-`npm run lint` is red due to the pre-existing `ds-bundle/_ds_bundle.js` artifact
-(see Proof). Out of scope for this session.
+None. (Noted for later, not addressed here: `npm audit` flags 2 vite advisories
+— 1 high/1 low, dev-server `server.fs.deny` bypass on Windows alt paths; and the
+untracked 21M `ds-bundle/` local artifact carries a `_ds_needs_recompile` flag.)
 
 Next single task:
 Game-loop polish (transition timing, feedback readability, mobile tap targets) —
