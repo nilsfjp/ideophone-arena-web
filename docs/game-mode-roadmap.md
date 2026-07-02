@@ -1,3 +1,35 @@
+# Game-mode roadmap
+
+## Status — 2026-07-02 (F2 / NIL-56): four greenfield spec sheets exist
+
+Engineering-grade specs for the four greenfield mode candidates live in the Cowork project folder, `docs/specs/` (Ideophone Arena project, outside this repo):
+
+- `SPEC-cross-linguistic.md` — `CROSS_LINGUISTIC`, 239 items / 5 languages from `triangulating_iconicity`, published-guessability anchors. Architecture driver for NIL-57; build after NIL-57 + licensing gate.
+- `SPEC-free-form-entry.md` — `PRODUCTION`, the third measure (production). Standalone `ratings`-pattern vertical; no NIL-57 dependency, no external gates. **← Build pick (F2, criteria: no new recordings · ≤1 backend + 1 frontend session · vision test). Build slot Jul 6–8 (F5).**
+- `SPEC-phoneme-shape.md` — `TEMPLATE_READING`, template-reading (redup / -Q / -ri; -N deferred; voicing excluded per the F1 null). Second in line, after NIL-57 D1 + pair sign-off round.
+- `SPEC-four-floor-ladder.md` — Touch floor for the Modality Ladder from the six approved haptic pairs. Gated on the audio-recording decision (10 new recordings) → fails build-pick criterion 1; W31+ contingent on the gate.
+
+Every spec carries a "Deferred to NIL-57" ledger; the shared decisions (mode dispatch D1, unified trials D2, lexeme identity D3, shared item-stats D4, seed-stream registry, `PhonologyService` as shared engine) resolve in the NIL-57 architecture session before any gated build.
+
+Still deferred as modes (unchanged): pseudo-word Foil Arena (gated on recorded audio; TTS ruled out 2026-07-02 — foil *method* lands invariant-safely as the NIL-58 difficulty engine instead), sentence-context mode, campaign / deck-builder / codex structures, Corpus Route.
+
+### Learnability / iconic-bootstrapping mode — designed, deferred (assessed 2026-07-02, OSF-mining session)
+
+Paradigm: Lockwood, Dingemanse & Hagoort 2016 (*Collabra*; data mined from the OSF archive, CC BY 4.0). Teach word–meaning pairs, test retention; iconicity's fingerprint is the real-vs-opposite gap — verified from raw data at **86.7% vs 71.3%, Cohen's dz = 1.07, n = 29** (large and real). A "Memory Lab" mode would be the fourth measure: recognition (Choosing) / reflection (Rating) / generation (Production) / **retention**.
+
+Why deferred, explicitly **not** a build-one candidate (the case is not overwhelming):
+
+1. The measure's power comes from the **opposite arm** — deliberately teaching players false meanings. That is a mode-killer for a research-honest public app (and un-teaching would need its own design).
+2. A real-only variant loses the contrast and hits ceiling (.867 mean) — low discriminative resolution, and it measures memory + iconicity confounded.
+3. Per-item learnability is empirically thin even in the source data (one condition arm per item, n = 19/arm; learn-acc ~ guessability rho = +.30/−.25, both n.s.) — no per-item difficulty scaffold to build on.
+4. Not salvageable as a free-form-entry mechanic: produce-then-recall measures the generation effect, not iconicity.
+
+Salvage that ships anyway: the clash-is-costly finding (with its P3/LPC ERP signature) is vetted research-flavor copy ("your brain fights a word whose sound points the wrong way" — F3 register, citation ready), and the 37-row opposite-gloss sheet (`osf-lockwoodstimuli/`) is a reference for antonymic contrast quality in pairing work. Revisit only if a delayed-retention hook ever matters (e.g. spaced-repetition retention curves as a long-horizon portfolio stat); it would still need an honest design that never teaches falsehoods.
+
+---
+
+## Historical design notes (pre-F2 chat digest, kept for provenance)
+
 Yes. The raw `.png`, `.mp3`, base64 strings, TTS workflow, and spreadsheets are valuable, but they should be treated as an **asset pipeline**, not as the game runtime model.
 
 The design mistake to avoid is letting generated `.mp4` files define the game logic. In the experiment, the videos were a practical Gorilla artifact: Google Cloud TTS audio was combined with images for katakana, hiragana, or triangle placeholders, then uploaded as `.mp4` stimuli. For the web app, the correct model is: audio is one asset, script display is React-rendered state, placeholder display is React-rendered state, and `.mp4` is only a legacy derived asset.
@@ -36,32 +68,4 @@ Fourth tier: more linguistically serious expansion.
 
 **Context Mode**. Present an ideophone embedded in a real or curated sentence and ask the player to infer its contribution. This is closer to real ideophone research, but harder because you need sentence sources, translations, licensing/citation decisions, and probably Japanese-reading support. It should come later.
 
-**Corpus Route**. Use the top-600 spreadsheet as a content expansion source. The player unlocks “common ideophones,” “katakana-dominant ideophones,” “hiragana-dominant ideophones,” “high perceptual strength,” and so on. Your spreadsheet already has frequency, script frequency, modality, and perceptual-strength columns, so it can become a mode-generation source rather than a manual content dump.
-
-The practical architecture I would aim for is:
-
-`Ideophone` remains the lexical item.
-`StimulusAsset` stores audio/image/video/source paths and whether an asset is canonical or generated.
-`RoundTemplate` stores pairings, correct answer, foil type, modality, route, difficulty, and source.
-`PresentationMode` controls audio-only, congruent script, incongruent script, context sentence, or rating view.
-`GameMode` controls the rules: choosing, rating, ladder, duel, campaign.
-`Attempt` records choices.
-`RatingAttempt` records Likert ratings separately.
-
-That separation keeps the project from becoming a pile of special cases.
-
-The most sensible roadmap is:
-
-Now: make the current game loop feel good. Feedback should be readable, progress should be visible, leaderboard/recent attempts should not pollute active play.
-
-Next: separate stimulus playback from stimulus display. Use `.mp3` or hidden media for sound, React for kana/placeholder/script presentation. Do not rely on video visuals.
-
-Then: add Script Lab. It is the smallest real research-mode expansion.
-
-Then: add Modality Ladder. It gives the game a thesis-shaped progression.
-
-Then: add Rating Lab. This creates the “two measures” design inside the app.
-
-Later: add generated assets, artificial foils, context sentences, campaign/deck mechanics.
-
-The one point I would push back on: do not jump straight to Slay-the-Spire/Pokemon mechanics. That can be the long-term skin, but first you need a clean research-game engine. Once `GameMode`, `PresentationMode`, `RoundTemplate`, and `StimulusAsset` are cleanly separated, the card/campaign ideas become mostly frontend design rather than backend chaos.
+**Corpus Route**. Use the top-600 spreadsheet as a content expansion source. The player unlocks “common ideophones,” “katakana-dominant ideophones,” “hiragana-dominant ideophones,” “high perceptual strength,” and so on. Your
