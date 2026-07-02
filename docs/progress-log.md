@@ -302,3 +302,85 @@ Next single task:
 27D — Rating Lab UI (NIL-39): flip `rating` in `src/modes.ts`, add the rating
 view branch; backend ready (`GET /api/game/me/ratings` paginated → `.entries`,
 public `GET /api/research/divergence`).
+
+## 2026-07-02 (27D — Rating Lab wired to the API, NIL-39)
+
+Session goal:
+Rating Lab playable end-to-end: 1–7 resemblance rating against POST
+/api/ratings + paginated GET /api/game/me/ratings, with the public
+GET /api/research/divergence read surfaced to the player.
+
+Changed:
+- `src/experimentText.ts` + test: frozen Rating Task block (adjudicated
+  2026-07-02, Gorilla/thesis verbatim from
+  `docs/research/design-archive/gorilla-rating-task-*.png`; instructions are
+  Gorilla-adapted with a dynamic word count, time estimate dropped; count
+  unbolded, 1/7/anchor phrases bolded).
+- `src/api/types.ts` / `src/api/client.ts` + test: `RatingRequest/Response`,
+  `RatingPageResponse`, `DivergenceEntry`; `submitRating`, `getMyRatings`,
+  `getAllMyRatings` (paged walk), `getDivergence`.
+- New `src/ratingPool.ts` + test: contamination-free word pool — words enter
+  only via answered non-practice rounds (mapping from
+  `AnswerResultResponse.correctIdeophoneId`; never guessed client-side),
+  deduped, persisted per user (`ideophone-arena-rating-pool`, versioned,
+  username-scoped so accounts never see each other's pools).
+- New `src/components/RatingLab.tsx` + test, new `src/labRecord.ts`: pure
+  panels (instructions with dynamic n, Gorilla-layout trial with audio-only
+  neutral card + replay, arena-record reveal, Lab record table, empty state)
+  under a stateful container (loading/instructions/rating/submitting/
+  revealed/done/empty/error). Queue = unrated pool words; 409 recovered as
+  read-only "already rated"; stale sessionUuid retried once without it;
+  unknown-ideophone 404 reveals-and-moves-on; divergence failure never blocks
+  rating. `aria-pressed` scale buttons ≥44px, reveal slot reserved from first
+  paint with `aria-live="polite"`; response time anchored at trial mount,
+  integer, clamped.
+- `src/modes.ts` flip + `src/App.tsx`: `rating` view, pool accumulation in
+  `handleAnswered` + persistence, completion-panel "Rate these words" CTA;
+  lockstep updates to `modes.test.ts` / `ModeSelect.test.tsx`.
+- `src/styles/app.css`: `.rating-*` block (tokens only; vermillion `.selected`
+  fill per the Gorilla reference, 640px stacked anchors, 400px tightened gap,
+  reduced-motion guard, record-table scroll wrapper).
+- `scripts/verify-presentation-logic.mjs`: compiles RatingLab, pins all rating
+  strings verbatim, asserts trial markup (strings once, 7 buttons, no
+  canonicalForm/romaji leak, reserved reveal slot).
+- `scripts/verify-browser-loop.mjs`: Rating Lab asserted enabled (disabled
+  list now just Modality Ladder) + new post-completion rating waypoint (CTA →
+  instructions → rate 4 → Next → arena-record reveal). Robustness fixes found
+  during proofing: sound-check activation now retries mouse/touch and leads
+  with a trusted focused-button Enter keypress (pointer coordinates
+  intermittently miss under 375px mobile emulation — page scroll/reflow
+  between measurement and dispatch); reveal matched case-insensitively
+  (CSS-uppercased label).
+- Docs: `docs/backend-contract.md` gained the previously-missing Ratings +
+  Research divergence sections (409-not-upsert, null zero-n semantics);
+  README mode-select/Rating Lab; grading checklist Rating Lab block.
+
+Proof:
+`npm run lint` / `npm run build` / `npm test` (85 tests, 14 files) green;
+`node scripts/verify-presentation-logic.mjs` green;
+`node scripts/verify-browser-loop.mjs` desktop AND 375px exit 0 — both runs
+answered 32 rounds to completion and passed the rating waypoint
+(7-button scale, reveal visible, rating confirmed; no horizontal overflow;
+0 console errors). CDP manual proof (desktop): pool = 60 words, 0 practice,
+username-scoped; instructions counted 57 unrated with the already-rated note;
+out-of-band conflict then UI submit → 409 recovery showing "rating stands at
+3"; clean UI submit → 201 with `{rating: 2, responseTimeMs: 1415 (integer),
+sessionUuid}` and reveal incl. mean-rating line; re-entry showed 55 remaining
+(rated words skipped); fresh user saw the empty state + Choosing CTA (pool
+isolation). Screenshots: trial + reveal match the Gorilla reference (selected
+number filled vermillion, reserved reveal slot).
+
+Result:
+Complete. Rating Lab playable end-to-end (NIL-39 exit criterion).
+
+Commit:
+Not committed (commits are the user's).
+
+Blocker:
+None. Notes: mid-trial rating escape is the site-title header (same as the
+Choosing trial); divergence is a full-table fetch per submit (fine at demo
+scale, noted in contract doc).
+
+Next single task:
+W29 landing / welcome page (divergence read is also available for it), or
+28B Modality Ladder per roadmap — user's pick.

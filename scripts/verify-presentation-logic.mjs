@@ -34,6 +34,7 @@ try {
       "src/conditionPresentation.ts",
       "src/components/StimulusDisplay.tsx",
       "src/components/TrialPlayer.tsx",
+      "src/components/RatingLab.tsx",
       "--ignoreConfig",
       "--jsx",
       "react-jsx",
@@ -74,6 +75,10 @@ try {
       "export const backendUrl = (path) => path;",
       "export const fetchBackendBlob = async () => new Blob();",
       "export const submitAnswer = async () => { throw new Error('stub'); };",
+      "export const submitRating = async () => { throw new Error('stub'); };",
+      "export const getMyRatings = async () => ({ entries: [], page: 0, size: 50, totalElements: 0, totalPages: 0 });",
+      "export const getAllMyRatings = async () => [];",
+      "export const getDivergence = async () => [];",
       "",
     ].join("\n"),
   );
@@ -304,6 +309,116 @@ try {
     2,
     "both card slots should be mounted from fixation onward",
   );
+
+  // Invariant 1 (Rating Task, 27D): the rating strings were adjudicated
+  // 2026-07-02 as Gorilla/thesis verbatim (dynamic count, time estimate
+  // dropped) and must not drift.
+  const ratingStrings = {
+    RATING_INTRO_PREFIX: "In this task, you will rate ",
+    RATING_INTRO_AFTER_COUNT:
+      " words from the previous task. In each trial, you will be shown a Japanese word together with its English meaning. Your task is to rate how much you think the word resembles its meaning on a scale from ",
+    RATING_INTRO_TO: " to ",
+    RATING_SENTENCE_END: ".",
+    RATING_SCALE_MIN: "1",
+    RATING_SCALE_MAX: "7",
+    RATING_INDICATES: " indicates ",
+    RATING_WHILE: " while ",
+    RATING_ANCHOR_LOW_INLINE: "no resemblance",
+    RATING_ANCHOR_HIGH_INLINE: "strong resemblance",
+    RATING_HOW_TO:
+      "Click on a number (1–7) to select your rating, then press 'Next' to submit your response.",
+    RATING_LISTEN_LINE_1: "Listen to the Japanese word below.",
+    RATING_LISTEN_LINE_2: "Click to replay.",
+    RATING_MEANING_PREFIX: "It means ",
+    RATING_QUESTION:
+      "Do you think there is a resemblance between the word and its meaning?",
+    RATING_SCALE_LOW_LABEL: "No resemblance",
+    RATING_SCALE_HIGH_LABEL: "Strong resemblance",
+    RATING_REPLAY_BUTTON: "Replay",
+    RATING_NEXT_BUTTON: "Next",
+  };
+  for (const [name, expected] of Object.entries(ratingStrings)) {
+    assertEqual(
+      text[name],
+      expected,
+      `${name} must keep the adjudicated rating-task wording`,
+    );
+  }
+
+  // The rating trial mirrors the Gorilla layout: audio-only stimulus card (no
+  // script, no romaji before the lab record), frozen strings each exactly
+  // once, seven scale buttons, and a reserved reveal slot from first paint.
+  const { RatingTrialPanel } = await import(
+    `file://${join(tempDir, "components/RatingLab.js")}`
+  );
+  const ratingWord = {
+    ideophoneId: 62,
+    canonicalForm: "カタカタ",
+    romaji: "katakata",
+    stimulusUrl: "/stimuli/audio/a0a-sample.m4a",
+    modality: "AUDITORY",
+    meaning: "clattering, rattling",
+    sessionUuid: "verify-session",
+    addedAt: "2026-07-02T00:00:00.000Z",
+  };
+  const ratingMarkup = renderToStaticMarkup(
+    jsx(RatingTrialPanel, {
+      index: 0,
+      phase: "rating",
+      replayToken: 1,
+      reveal: null,
+      selectedRating: null,
+      statusMessage: "",
+      total: 12,
+      word: ratingWord,
+      onNext: () => {},
+      onPlaybackError: () => {},
+      onReplay: () => {},
+      onSelectRating: () => {},
+      onSubmit: () => {},
+    }),
+  );
+
+  for (const [line, label] of [
+    [text.RATING_LISTEN_LINE_1, "first listen line"],
+    [text.RATING_LISTEN_LINE_2, "replay line"],
+    [text.RATING_QUESTION, "resemblance question"],
+    [text.RATING_SCALE_LOW_LABEL, "low anchor"],
+    [text.RATING_SCALE_HIGH_LABEL, "high anchor"],
+  ]) {
+    assertEqual(
+      countOccurrences(ratingMarkup, line),
+      1,
+      `the rating trial should render the ${label} exactly once`,
+    );
+  }
+  assertEqual(
+    countOccurrences(
+      ratingMarkup,
+      `${text.RATING_MEANING_PREFIX}<strong>${ratingWord.meaning}</strong>`,
+    ),
+    1,
+    "the meaning line should render exactly once with a bold meaning",
+  );
+  assertEqual(
+    countOccurrences(ratingMarkup, 'class="rating-scale-button"'),
+    7,
+    "the rating scale should render exactly seven buttons",
+  );
+  for (const leaked of [ratingWord.canonicalForm, ratingWord.romaji]) {
+    assertEqual(
+      ratingMarkup.includes(leaked),
+      false,
+      `the rating trial must not leak "${leaked}" — the stimulus stays audio-only`,
+    );
+  }
+  for (const slot of ["rating-reveal slot-hidden", "status-line"]) {
+    assertEqual(
+      ratingMarkup.includes(slot),
+      true,
+      `the initial rating render should mount the reserved "${slot}" slot`,
+    );
+  }
 
   console.log("Presentation logic verified.");
 } finally {

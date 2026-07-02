@@ -2,10 +2,14 @@ import type {
   AnswerResultResponse,
   AttemptResponse,
   AuthResponse,
+  DivergenceEntry,
   GameSessionResponse,
   LeaderboardPageResponse,
   LoginRequest,
   NextRoundResponse,
+  RatingPageResponse,
+  RatingRequest,
+  RatingResponse,
   RegisterRequest,
   StartSessionRequest,
   SubmitAnswerRequest,
@@ -257,4 +261,40 @@ export function getLeaderboard(page = 0, size = 10) {
 
 export function getMyAttempts() {
   return apiRequest<AttemptResponse[]>("/api/game/me/attempts");
+}
+
+export function submitRating(request: RatingRequest) {
+  return apiRequest<RatingResponse>("/api/ratings", {
+    method: "POST",
+    body: request,
+  });
+}
+
+export function getMyRatings(page = 0, size = 50) {
+  return apiRequest<RatingPageResponse>(
+    `/api/game/me/ratings?page=${page}&size=${size}`,
+  );
+}
+
+// The backend clamps size to 50, so 40 pages covers 2000 ratings — far past
+// the stimulus set. The cap only guards against a pathological totalPages.
+const MY_RATINGS_MAX_PAGES = 40;
+
+export async function getAllMyRatings(): Promise<RatingResponse[]> {
+  const entries: RatingResponse[] = [];
+  let page = 0;
+  let totalPages = 1;
+
+  while (page < totalPages && page < MY_RATINGS_MAX_PAGES) {
+    const response = await getMyRatings(page);
+    entries.push(...(response.entries ?? []));
+    totalPages = response.totalPages ?? 0;
+    page += 1;
+  }
+
+  return entries;
+}
+
+export function getDivergence() {
+  return apiRequest<DivergenceEntry[]>("/api/research/divergence");
 }

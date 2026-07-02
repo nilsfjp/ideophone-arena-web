@@ -22,9 +22,9 @@ export const MODES: ModeDefinition[] = [
   {
     id: "rating",
     title: "Rating Lab",
-    status: "coming-soon",
+    status: "available",
     description:
-      "Review your past rounds and explore how players' choices diverge.",
+      "Listen again to words you have met and rate how much each one resembles its meaning.",
   },
   {
     id: "ladder",

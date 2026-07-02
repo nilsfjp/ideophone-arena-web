@@ -47,10 +47,21 @@ proxy configuration. Leave `VITE_API_BASE_URL` empty to use the Vite proxy for
 directly.
 
 **Mode select.** After sign-in the app lands on a home screen listing game
-modes. The Choosing Task is the only playable mode today; Rating Lab and
-Modality Ladder appear as disabled "Coming soon" cards. Mode switching is
-plain view state in `src/App.tsx` (no router); the registry lives in
-`src/modes.ts`.
+modes. The Choosing Task and the Rating Lab are playable; Modality Ladder
+appears as a disabled "Coming soon" card. Mode switching is plain view state
+in `src/App.tsx` (no router); the registry lives in `src/modes.ts`.
+
+**Rating Lab.** The thesis Rating Task as a mode: listen to a word you have
+met, read its meaning, and rate the resemblance on a 1–7 scale (frozen
+Gorilla-verbatim copy in `src/experimentText.ts`). The word pool comes from
+answered Choosing rounds — feedback is the only place the word→meaning mapping
+is revealed, so unplayed words can never leak meanings into naive guessing.
+The pool persists per user in localStorage (`src/ratingPool.ts`). Ratings POST
+to `/api/ratings` (one per word — re-rating returns 409 and is shown
+read-only); after each submit the mode reveals the word's public "Arena
+record" from `GET /api/research/divergence`, and a Lab record table joins
+your ratings with those aggregates. A "Rate these words" call-to-action also
+appears on the Choosing completion panel.
 
 **Verbatim rendering.** Each round option carries `displayForm` (the visible
 pre-answer script, already flipped by the backend for mismatch rounds) and

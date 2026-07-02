@@ -132,6 +132,47 @@ export type AttemptResponse = {
   responseTimeMs?: number;
 };
 
+// Ratings surface (backend NIL-32/33/34, 2026-06-29). One rating per
+// (user, ideophone): re-rating returns 409, NOT an upsert.
+export type RatingRequest = {
+  ideophoneId: number;
+  rating: number; // 1..7
+  responseTimeMs?: number; // 0..600000
+  sessionUuid?: string; // provenance only; 404 unknown / 403 foreign
+};
+
+export type RatingResponse = {
+  id: number;
+  ideophoneId: number;
+  rating: number;
+  responseTimeMs?: number | null;
+  ratedAt: string; // ISO instant
+};
+
+// Paginated wrapper mirroring LeaderboardPageResponse; size clamped 1..50
+// server-side, entries ordered ratedAt desc.
+export type RatingPageResponse = {
+  entries: RatingResponse[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+// GET /api/research/divergence — PUBLIC, bare array (no wrapper). One row per
+// ideophone with >=1 guess OR >=1 rating; aggregates are null (not 0) when
+// that side has zero observations.
+export type DivergenceEntry = {
+  ideophoneId: number;
+  romaji?: string;
+  gloss?: string;
+  modality?: Modality;
+  guessAccuracy: number | null;
+  guessCount: number;
+  meanRating: number | null;
+  ratingCount: number;
+};
+
 export type TrialPhase =
   | "idle"
   | "loading"

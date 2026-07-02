@@ -216,3 +216,88 @@ round sequence. Media must not be force-muted by the frontend. If
 unmuted autoplay is blocked by the browser, the frontend should show a manual
 play control instead of silently advancing as if the participant heard the
 sound.
+
+## Ratings (2026-07-02, backend NIL-32/33/34)
+
+The Rating Lab (27D) submits one 1–7 iconicity rating per (user, ideophone).
+
+```text
+POST /api/ratings            (authenticated)
+```
+
+Request body:
+
+```json
+{
+  "ideophoneId": 1,
+  "rating": 6,
+  "responseTimeMs": 1500,
+  "sessionUuid": "..."
+}
+```
+
+`ideophoneId` (required, positive) and `rating` (required, 1..7) are validated
+server-side; `responseTimeMs` (optional) must be 0..600000; `sessionUuid`
+(optional) is provenance only. Success returns **201**:
+
+```json
+{
+  "id": 42,
+  "ideophoneId": 1,
+  "rating": 6,
+  "responseTimeMs": 1500,
+  "ratedAt": "2026-07-02T12:34:56Z"
+}
+```
+
+Errors: **409** when the user has already rated the ideophone (ratings are
+NOT upserts — `(user_id, ideophone_id)` is unique and a rating can never be
+changed through this API), 400 on validation failures, 404 for an unknown
+ideophone or sessionUuid, 403 when the sessionUuid belongs to another user,
+401 unauthenticated. The frontend pre-loads existing ratings, shows them
+read-only, and treats a mid-run 409 as "already rated". A stale sessionUuid
+(dev database reset) is retried once without the session reference.
+
+```text
+GET /api/game/me/ratings?page=0&size=50    (authenticated)
+```
+
+Returns the caller's ratings newest-first in the same paginated wrapper as the
+leaderboard (`entries` / `page` / `size` / `totalElements` / `totalPages`);
+`size` is clamped to 1..50 and out-of-range params are clamped, not rejected.
+`getAllMyRatings()` in `src/api/client.ts` walks all pages.
+
+There is **no ratable-words endpoint**. The Rating Lab's word pool is built
+client-side from answered Choosing rounds (the word→meaning mapping is only
+knowable from answer feedback — see `src/ratingPool.ts`), persisted per user
+under the `ideophone-arena-rating-pool` localStorage key.
+
+## Research divergence (public)
+
+```text
+GET /api/research/divergence               (no auth)
+```
+
+Returns a **bare JSON array** (no pagination wrapper), one row per ideophone
+with at least one guess or rating:
+
+```json
+[
+  {
+    "ideophoneId": 1,
+    "romaji": "gosogoso",
+    "gloss": "rustling",
+    "modality": "SOUND",
+    "guessAccuracy": 0.72,
+    "guessCount": 25,
+    "meanRating": 6.0,
+    "ratingCount": 4
+  }
+]
+```
+
+`guessAccuracy` and `meanRating` are `null` (not 0) when that side has zero
+observations — the client must distinguish "no data" from "always wrong" /
+"lowest rating". The Rating Lab shows these as a per-word "Arena record"
+reveal after each rating and joins them into the Lab record table. Framing
+stays descriptive (counts and averages), per the flavor-text rule.

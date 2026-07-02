@@ -19,16 +19,19 @@ describe("ModeSelect", () => {
     expect(markup).toContain("Modality Ladder");
   });
 
-  it("keeps the Choosing Task card enabled", () => {
-    const choosingCard = markup
-      .split("<button")
-      .find((chunk) => chunk.includes("Choosing Task"));
-    expect(choosingCard).toBeDefined();
-    expect(choosingCard).not.toContain("disabled");
+  it("keeps the playable mode cards enabled", () => {
+    for (const title of ["Choosing Task", "Rating Lab"]) {
+      const card = markup
+        .split("<button")
+        .find((chunk) => chunk.includes(title));
+      expect(card).toBeDefined();
+      expect(card).not.toContain("disabled");
+      expect(card).not.toContain("Coming soon");
+    }
   });
 
   it("marks coming-soon modes as disabled with an honest badge", () => {
-    for (const title of ["Rating Lab", "Modality Ladder"]) {
+    for (const title of ["Modality Ladder"]) {
       const card = markup
         .split("<button")
         .find((chunk) => chunk.includes(title));

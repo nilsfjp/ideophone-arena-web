@@ -301,6 +301,33 @@ Browser proof:
 
 2026-06-12 best-session evidence: `LeaderboardEntry` in `src/api/types.ts` and the `Leaderboard` table switched to `bestSessionCorrect`/`bestSessionAnswered`/`bestSessionAccuracy` ("Best session" rendered as `correct / answered`, "Accuracy" as a rounded percentage). Browser proof rendered 10 rows on page 1 of 2 and navigated Next/Previous (the best-session metric only counts completed sessions, so pager seeding now plays full 30-round sessions via the public API). Vitest fixtures in `Leaderboard.test.tsx` and `client.test.ts` use the new fields.
 
+## Rating Lab (27D)
+
+- [ ] Mode card enabled on home; Modality Ladder stays "Coming soon".
+- [ ] All participant-facing rating copy imported from `src/experimentText.ts`
+      (Gorilla-verbatim, adjudicated 2026-07-02); no inline trial strings.
+- [ ] Word pool built only from answered, non-practice rounds
+      (`src/ratingPool.ts`), deduped by `ideophoneId`, persisted per user
+      under `ideophone-arena-rating-pool`; another user's pool never loads.
+- [ ] Empty pool shows the Choosing Task pointer, never a broken trial.
+- [ ] Trial screen is audio-only (no script/romaji leak before the lab
+      record); replay allowed; manual play fallback when autoplay is blocked.
+- [ ] Scale offers exactly 7 buttons ≥44px, `aria-pressed` selection,
+      select-then-Next submission, double-submit blocked while submitting.
+- [ ] `POST /api/ratings` sends integer `responseTimeMs` (anchor at rating
+      screen mount) and the source `sessionUuid`; 201 handled; 409 recovered
+      as read-only "already rated"; stale session retried once without
+      `sessionUuid`; 401/403 route to auth-expired.
+- [ ] Existing ratings pre-loaded via paged `GET /api/game/me/ratings`
+      (`.entries` wrapper); rated words never re-enter the trial queue
+      (revisit shows the stored rating).
+- [ ] Divergence (`GET /api/research/divergence`) failure never blocks
+      rating; zero-n `null` aggregates render as "no data", not 0.
+- [ ] Reveal slot reserved from first paint (no layout shift), announced via
+      `aria-live="polite"`; framing stays descriptive (invariant 9).
+- [ ] Lab record table scrolls inside its own wrapper at 360–390px; the page
+      never scrolls horizontally.
+
 ## Error handling and loading states
 
 - [x] Every async API request has loading, success, and error behavior.

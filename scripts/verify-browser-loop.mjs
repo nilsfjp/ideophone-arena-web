@@ -99,22 +99,46 @@ async function clickText(ws, text) {
   );
 }
 
+// Scrolls the button into view and re-measures until its viewport position
+// stops moving. On the mobile-emulated viewport a scroll/reflow (font swap,
+// smooth-scroll settling) can shift the page between measurement and the
+// Input dispatch, landing the click on a neighboring element.
+async function stableButtonRect(ws, text) {
+  let previous = null;
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    const rect = await evaluate(
+      ws,
+      `(() => {
+        const el = [...document.querySelectorAll("button")].find((button) =>
+          button.textContent.trim().includes(${JSON.stringify(text)})
+        );
+        if (!el) return null;
+        el.scrollIntoView({ block: "center", behavior: "instant" });
+        const rect = el.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2,
+        };
+      })()`,
+    );
+    if (!rect) {
+      return null;
+    }
+    if (
+      previous &&
+      Math.abs(previous.x - rect.x) < 1 &&
+      Math.abs(previous.y - rect.y) < 1
+    ) {
+      return rect;
+    }
+    previous = rect;
+    await sleep(150);
+  }
+  return previous;
+}
+
 async function trustedClickText(ws, text) {
-  const rect = await evaluate(
-    ws,
-    `(() => {
-      const el = [...document.querySelectorAll("button")].find((button) =>
-        button.textContent.trim().includes(${JSON.stringify(text)})
-      );
-      if (!el) return null;
-      el.scrollIntoView({ block: "center", behavior: "instant" });
-      const rect = el.getBoundingClientRect();
-      return {
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2,
-      };
-    })()`,
-  );
+  const rect = await stableButtonRect(ws, text);
   if (!rect) {
     return false;
   }
@@ -132,6 +156,65 @@ async function trustedClickText(ws, text) {
     y: rect.y,
     button: "left",
     clickCount: 1,
+  });
+  return true;
+}
+
+// Trusted touch tap — like trustedClickText, but via touch events. Under
+// mobile device emulation (viewportWidth < 600) Edge sometimes drops
+// synthetic mouse input while touch input lands; both carry the user
+// activation the Web Audio sound check needs.
+async function trustedTapText(ws, text) {
+  const rect = await stableButtonRect(ws, text);
+  if (!rect) {
+    return false;
+  }
+
+  await send(ws, "Input.dispatchTouchEvent", {
+    type: "touchStart",
+    touchPoints: [{ x: rect.x, y: rect.y }],
+  });
+  await send(ws, "Input.dispatchTouchEvent", {
+    type: "touchEnd",
+    touchPoints: [],
+  });
+  return true;
+}
+
+// Coordinate-free trusted activation: focus the button via JS, then send a
+// trusted Enter keypress. A focused <button> activates natively on Enter, and
+// the key event carries the user activation Web Audio needs — immune to the
+// mobile-emulation coordinate/scroll drift that makes pointer input miss.
+async function trustedPressEnterOnText(ws, text) {
+  const focused = await evaluate(
+    ws,
+    `(() => {
+      const el = [...document.querySelectorAll("button")].find((button) =>
+        button.textContent.trim().includes(${JSON.stringify(text)})
+      );
+      if (!el) return false;
+      el.focus();
+      return document.activeElement === el;
+    })()`,
+  );
+  if (!focused) {
+    return false;
+  }
+
+  await send(ws, "Input.dispatchKeyEvent", {
+    type: "keyDown",
+    key: "Enter",
+    code: "Enter",
+    windowsVirtualKeyCode: 13,
+    nativeVirtualKeyCode: 13,
+    text: "\r",
+  });
+  await send(ws, "Input.dispatchKeyEvent", {
+    type: "keyUp",
+    key: "Enter",
+    code: "Enter",
+    windowsVirtualKeyCode: 13,
+    nativeVirtualKeyCode: 13,
   });
   return true;
 }
@@ -316,9 +399,19 @@ async function run() {
     `(() => [...document.querySelectorAll("button.mode-card:disabled")]
       .map((button) => button.textContent))()`,
   );
-  for (const mode of ["Rating Lab", "Modality Ladder"]) {
+  for (const mode of ["Modality Ladder"]) {
     if (!comingSoonModes.some((text) => text.includes(mode))) {
       throw new Error(`${mode} is not shown as a disabled coming-soon mode`);
+    }
+  }
+  const enabledModes = await evaluate(
+    ws,
+    `(() => [...document.querySelectorAll("button.mode-card:not(:disabled)")]
+      .map((button) => button.textContent))()`,
+  );
+  for (const mode of ["Choosing Task", "Rating Lab"]) {
+    if (!enabledModes.some((text) => text.includes(mode))) {
+      throw new Error(`${mode} is not shown as an enabled mode card`);
     }
   }
   if (!(await clickText(ws, "Choosing Task"))) {
@@ -330,14 +423,43 @@ async function run() {
   );
   await assertScriptLabSelector(ws);
   await assertPracticeToggle(ws);
-  if (!(await trustedClickText(ws, "Sound check"))) {
-    throw new Error("Sound check button not found");
+  // The sound check needs trusted input for Web Audio user activation. Under
+  // mobile emulation synthetic mouse clicks sometimes never land (known
+  // environment flake), so retry, alternating mouse and touch input.
+  let soundCheckPassed = false;
+  const soundCheckMethods = [
+    trustedPressEnterOnText,
+    trustedClickText,
+    trustedTapText,
+    trustedPressEnterOnText,
+  ];
+  for (
+    let attempt = 0;
+    attempt < soundCheckMethods.length && !soundCheckPassed;
+    attempt += 1
+  ) {
+    const clicked = await soundCheckMethods[attempt](ws, "Sound check");
+    if (!clicked) {
+      throw new Error("Sound check button not found");
+    }
+    soundCheckPassed = await waitFor(
+      async () => (await bodyText(ws)).includes("Sound check passed."),
+      "sound check to pass",
+      8000,
+    ).then(
+      () => true,
+      () => false,
+    );
   }
-  await waitFor(
-    async () => (await bodyText(ws)).includes("Sound check passed."),
-    "sound check to pass",
-    10000,
-  );
+  if (!soundCheckPassed) {
+    const soundCheckState = await evaluate(
+      ws,
+      `document.querySelector(".sound-check")?.innerText ?? "(sound-check panel missing)"`,
+    );
+    throw new Error(
+      `Sound check did not pass after mouse and touch retries. Panel: ${soundCheckState}`,
+    );
+  }
   if (!(await clickText(ws, "Start Game"))) {
     throw new Error("Start Game button not found");
   }
@@ -458,6 +580,92 @@ async function run() {
     "recent attempts panel",
   );
   const attemptsText = await bodyText(ws);
+
+  // 27D Rating Lab waypoint: completion CTA → frozen instructions → rate one
+  // word on the 1-7 scale → arena-record reveal. The run registers a fresh
+  // user, so every pool word is unrated and the first submit must succeed.
+  if (!(await clickText(ws, "Rate these words"))) {
+    throw new Error("'Rate these words' CTA not found on the completion panel");
+  }
+  await waitFor(
+    async () => (await bodyText(ws)).includes("In this task, you will rate"),
+    "rating lab instructions",
+  );
+  if (!(await clickText(ws, "Start rating"))) {
+    throw new Error("Start rating button not found");
+  }
+  await waitFor(
+    async () =>
+      (await bodyText(ws)).includes(
+        "Do you think there is a resemblance between the word and its meaning?",
+      ),
+    "rating trial question",
+  );
+  const ratingScaleShape = await evaluate(
+    ws,
+    `(() => {
+      const buttons = [...document.querySelectorAll(".rating-scale-button")];
+      return {
+        count: buttons.length,
+        enabled: buttons.filter((button) => !button.disabled).length,
+      };
+    })()`,
+  );
+  if (ratingScaleShape.count !== 7 || ratingScaleShape.enabled !== 7) {
+    throw new Error(
+      `Rating scale should offer 7 enabled buttons, saw ${JSON.stringify(ratingScaleShape)}`,
+    );
+  }
+  const ratingSelected = await evaluate(
+    ws,
+    `(() => {
+      const button = [...document.querySelectorAll(".rating-scale-button")]
+        .find((candidate) => candidate.textContent.trim() === "4");
+      if (!button) return false;
+      button.click();
+      return true;
+    })()`,
+  );
+  if (!ratingSelected) {
+    throw new Error("Rating scale button 4 not found");
+  }
+  await waitFor(
+    async () =>
+      await evaluate(
+        ws,
+        `document.querySelectorAll(".rating-scale-button.selected").length === 1`,
+      ),
+    "scale selection to register",
+  );
+  const nextClicked = await evaluate(
+    ws,
+    `(() => {
+      const button = document.querySelector(".rating-next-button");
+      if (!button || button.disabled) return false;
+      button.click();
+      return true;
+    })()`,
+  );
+  if (!nextClicked) {
+    throw new Error("Rating Next button not clickable after selection");
+  }
+  // The reveal label is CSS-uppercased, so innerText reads "ARENA RECORD" —
+  // match case-insensitively.
+  await waitFor(
+    async () => /arena record/i.test(await bodyText(ws)),
+    "arena record reveal after rating submit",
+    15000,
+  );
+  const ratingRevealText = await bodyText(ws);
+  if (!ratingRevealText.includes("Your rating:")) {
+    throw new Error("Reveal did not confirm the submitted rating");
+  }
+  const ratingProof = {
+    scale: ratingScaleShape,
+    revealVisible: /arena record/i.test(ratingRevealText),
+    ratingConfirmed: ratingRevealText.includes("Your rating:"),
+  };
+
   if (stimulusRequests.length === 0) {
     throw new Error("No /stimuli/ media requests were observed");
   }
@@ -555,6 +763,7 @@ async function run() {
         overflowProof,
         screenshots,
         recentAttemptsVisible: attemptsText.includes("Recent Attempts"),
+        ratingProof,
         staleControlCount: Array.isArray(staleControls)
           ? staleControls.length
           : 0,
