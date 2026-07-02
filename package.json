@@ -18,8 +18,7 @@
     "@fontsource/zen-kaku-gothic-new": "^5.2.7",
     "@fontsource/zen-maru-gothic": "^5.2.8",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6",
-    "react-router-dom": "^7.15.1"
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

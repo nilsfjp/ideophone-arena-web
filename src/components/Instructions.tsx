@@ -9,6 +9,7 @@ type InstructionsProps = {
   selectedCondition: ConditionName;
   soundCheckError?: string;
   soundCheckStatus: "idle" | "checking" | "ready" | "error";
+  onBackToHome?: () => void;
   onConditionChange: (conditionName: ConditionName) => void;
   onIncludePracticeChange: (includePractice: boolean) => void;
   onSoundCheck: () => void;
@@ -23,6 +24,7 @@ export default function Instructions({
   selectedCondition,
   soundCheckError,
   soundCheckStatus,
+  onBackToHome,
   onConditionChange,
   onIncludePracticeChange,
   onSoundCheck,
@@ -33,6 +35,16 @@ export default function Instructions({
   return (
     <section className="instructions" aria-labelledby="instructions-title">
       <h1 id="instructions-title">Choosing Task Instructions</h1>
+
+      {onBackToHome ? (
+        <button
+          className="secondary-button instructions-back"
+          type="button"
+          onClick={onBackToHome}
+        >
+          Back to modes
+        </button>
+      ) : null}
 
       <p>
         In this task, you will see two Japanese ideophones and their English

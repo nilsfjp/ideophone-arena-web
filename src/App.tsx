@@ -17,7 +17,9 @@ import type {
 import AuthForm from "./components/AuthForm";
 import Instructions from "./components/Instructions";
 import Leaderboard from "./components/Leaderboard";
+import ModeSelect from "./components/ModeSelect";
 import TrialPlayer from "./components/TrialPlayer";
+import { MODES, type ModeId } from "./modes";
 
 const USERNAME_STORAGE_KEY = "ideophone-arena-username";
 const ROLE_STORAGE_KEY = "ideophone-arena-role";
@@ -30,7 +32,7 @@ type AuthState = {
   role?: string;
 };
 
-type AppView = "auth" | "instructions" | "game";
+type AppView = "auth" | "home" | "instructions" | "game";
 type SoundCheckStatus = "idle" | "checking" | "ready" | "error";
 type CompletionScoreView = "leaderboard" | "attempts";
 
@@ -59,7 +61,7 @@ function readStoredAuth(): AuthState | null {
 export default function App() {
   const [auth, setAuth] = useState<AuthState | null>(() => readStoredAuth());
   const [view, setView] = useState<AppView>(() =>
-    readStoredAuth() ? "instructions" : "auth",
+    readStoredAuth() ? "home" : "auth",
   );
   const [session, setSession] = useState<GameSessionResponse | null>(null);
   const [round, setRound] = useState<RoundResponse | null>(null);
@@ -94,7 +96,7 @@ export default function App() {
       localStorage.removeItem(ROLE_STORAGE_KEY);
     }
     setAuth({ username: response.username ?? "player", role: response.role });
-    setView("instructions");
+    setView("home");
     setError("");
   }
 
@@ -116,15 +118,30 @@ export default function App() {
     setIncludePractice(true);
   }, []);
 
-  const handleBackToStart = useCallback(() => {
+  const resetSessionState = useCallback(() => {
     setSession(null);
     setRound(null);
     setSessionComplete(false);
     setLatestResult(null);
     setSessionStats(EMPTY_SESSION_STATS);
     setError("");
-    setView("instructions");
     setCompletionScoreView("leaderboard");
+  }, []);
+
+  const handleBackToStart = useCallback(() => {
+    resetSessionState();
+    setView("instructions");
+  }, [resetSessionState]);
+
+  const handleBackToHome = useCallback(() => {
+    resetSessionState();
+    setView("home");
+  }, [resetSessionState]);
+
+  const handleModeSelect = useCallback((modeId: ModeId) => {
+    if (modeId === "choosing") {
+      setView("instructions");
+    }
   }, []);
 
   const handleAuthExpired = useCallback(
@@ -261,6 +278,10 @@ export default function App() {
       return <p className="status-text">Starting new game...</p>;
     }
 
+    if (view === "home") {
+      return <ModeSelect modes={MODES} onSelect={handleModeSelect} />;
+    }
+
     if (view === "instructions") {
       return (
         <Instructions
@@ -271,6 +292,7 @@ export default function App() {
           selectedCondition={selectedCondition}
           soundCheckError={soundCheckError}
           soundCheckStatus={soundCheckStatus}
+          onBackToHome={handleBackToHome}
           onConditionChange={setSelectedCondition}
           onIncludePracticeChange={setIncludePractice}
           onSoundCheck={() => void handleSoundCheck()}
@@ -307,6 +329,13 @@ export default function App() {
             <div className="completion-actions">
               <button className="primary-button" type="button" onClick={handleStart}>
                 Play again
+              </button>
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={handleBackToHome}
+              >
+                Back to modes
               </button>
               <button
                 className="secondary-button"
@@ -419,7 +448,7 @@ export default function App() {
         <button
           className="site-title"
           type="button"
-          onClick={() => setView(auth ? "instructions" : "auth")}
+          onClick={() => setView(auth ? "home" : "auth")}
         >
           Ideophone Arena
         </button>

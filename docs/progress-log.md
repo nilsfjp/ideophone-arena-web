@@ -236,3 +236,69 @@ untracked 21M `ds-bundle/` local artifact carries a `_ds_needs_recompile` flag.)
 Next single task:
 Game-loop polish (transition timing, feedback readability, mobile tap targets) —
 a separate, human-in-the-loop session.
+
+## 2026-07-02 (27C — mode shell + game-loop polish, NIL-38)
+
+Session goal:
+Multi-mode shell (home/mode-select surface, view-state only, no router) so 27D
+(Rating Lab) and 28B (Modality Ladder) can slot in, plus feedback-card and
+instructions polish — tokens only, all participant-facing wording unchanged.
+
+Changed:
+- `src/modes.ts` (new): data-only mode registry (`choosing` available;
+  `rating`/`ladder` coming-soon). Future modes flip `status` here and add a
+  view branch in App — ModeSelect never changes.
+- `src/components/ModeSelect.tsx` (new): "Choose a mode" home screen; three
+  mode cards; coming-soon entries native-`disabled` + `aria-disabled` with a
+  visible "Coming soon" pill (honest placeholders, full-opacity muted ink).
+- `src/App.tsx`: `AppView` gains `"home"`; auth lands on home; new
+  `handleModeSelect`/`handleBackToHome` (shared `resetSessionState()` factored
+  from `handleBackToStart`, which still targets instructions); logo click →
+  home; completion panel gains a secondary "Back to modes" button.
+- `src/components/Instructions.tsx`: optional `onBackToHome` prop renders a
+  "Back to modes" secondary button under the h1. No wording changes.
+- `src/styles/app.css`: new `.mode-*` block (tokens only; 1-col ≤860px);
+  feedback block tokenized (grid/card gaps, paddings, h2 `--text-xl`→`--text-lg`
+  so the kana anchors the panel) + correct-card emphasis via
+  `.feedback.incorrect .feedback-choice-card:last-child` (green border/title,
+  raised surface — CSS only, JSX untouched); instructions density pass
+  (`1.35rem`→`--text-md`, paragraph rhythm `2rem`→`--space-4`, selector/toggle/
+  sound-check spacing tokenized, `.practice-toggle` min-height 44px); @640px
+  feedback literals snapped to the token scale.
+- Deleted dead `src/pages/` (HomePage/NotFoundPage/ResultsPage stubs) and
+  uninstalled `react-router-dom` (was never wired; user approved).
+- `scripts/verify-browser-loop.mjs`: register → wait "Choose a mode" → assert
+  Rating Lab + Modality Ladder are disabled mode cards → click "Choosing Task"
+  → existing instructions waypoint.
+- New tests: `src/modes.test.ts` (registry shape + wording guard),
+  `src/components/ModeSelect.test.tsx` (3 cards, disabled semantics + badge),
+  `src/components/Instructions.test.tsx` (condition options, practice label,
+  sound-check gating, conditional Back to modes).
+- Docs: README gains a "Mode select" paragraph in Trial flow.
+
+Proof:
+`npm run lint` green; `npm run build` green; `npm test` green (45/45, 12 files);
+`node scripts/verify-presentation-logic.mjs` green (TrialPlayer/StimulusDisplay/
+conditionPresentation untouched); `node scripts/verify-browser-loop.mjs` green
+desktop AND 375px (exit 0 both; stale backend jar rebuilt first — it predated
+the Jun-12 practice/shuffle commits). CDP screenshots: home 3-column at 1280px /
+stacked at 375px, condensed instructions with Back to modes, feedback correct/
+incorrect with green correct-card emphasis, completion with Play again +
+Back to modes. Tap-target audit via CDP: no interactive element under 44px at
+375px. Tokens grep on the diff: only additions without `var(--…)` are
+`min-height: 44px` (existing button idiom) and `width: min(100%, 760px)`
+(matches the shared panel-width rule).
+
+Result:
+Complete. Choosing Task flow unchanged end-to-end; shell ready for 27D/28B.
+
+Commit:
+Not committed (commits are the user's).
+
+Blocker:
+None. (Pre-existing, untouched: `npm audit` 2 vite advisories.)
+
+Next single task:
+27D — Rating Lab UI (NIL-39): flip `rating` in `src/modes.ts`, add the rating
+view branch; backend ready (`GET /api/game/me/ratings` paginated → `.entries`,
+public `GET /api/research/divergence`).

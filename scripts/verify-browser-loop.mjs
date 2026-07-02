@@ -308,8 +308,25 @@ async function run() {
   }
 
   await waitFor(
+    async () => (await bodyText(ws)).includes("Choose a mode"),
+    "mode select after register",
+  );
+  const comingSoonModes = await evaluate(
+    ws,
+    `(() => [...document.querySelectorAll("button.mode-card:disabled")]
+      .map((button) => button.textContent))()`,
+  );
+  for (const mode of ["Rating Lab", "Modality Ladder"]) {
+    if (!comingSoonModes.some((text) => text.includes(mode))) {
+      throw new Error(`${mode} is not shown as a disabled coming-soon mode`);
+    }
+  }
+  if (!(await clickText(ws, "Choosing Task"))) {
+    throw new Error("Choosing Task mode card not found");
+  }
+  await waitFor(
     async () => (await bodyText(ws)).includes("Choosing Task Instructions"),
-    "instructions after register",
+    "instructions after mode select",
   );
   await assertScriptLabSelector(ws);
   await assertPracticeToggle(ws);
