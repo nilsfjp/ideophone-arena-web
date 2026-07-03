@@ -21,13 +21,6 @@ import ModeSelect from "./components/ModeSelect";
 import RatingLab from "./components/RatingLab";
 import TrialPlayer from "./components/TrialPlayer";
 import { MODES, type ModeId } from "./modes";
-import {
-  addWordsToPool,
-  extractRoundWords,
-  readRatingPool,
-  writeRatingPool,
-  type RatingPoolWord,
-} from "./ratingPool";
 
 const USERNAME_STORAGE_KEY = "ideophone-arena-username";
 const ROLE_STORAGE_KEY = "ideophone-arena-role";
@@ -94,12 +87,6 @@ export default function App() {
   // UI default is ON; the backend default stays false, so the flag is always
   // sent explicitly and only this opt-in produces practice rounds.
   const [includePractice, setIncludePractice] = useState(true);
-  // Words the player has met through answered rounds, available to the
-  // Rating Lab. Persisted per user; practice words never enter it.
-  const [ratingPool, setRatingPool] = useState<RatingPoolWord[]>(() => {
-    const stored = readStoredAuth();
-    return stored ? readRatingPool(stored.username) : [];
-  });
 
   function handleAuthenticated(response: AuthResponse) {
     setAuthToken(response.token);
@@ -110,7 +97,6 @@ export default function App() {
       localStorage.removeItem(ROLE_STORAGE_KEY);
     }
     setAuth({ username: response.username ?? "player", role: response.role });
-    setRatingPool(readRatingPool(response.username ?? "player"));
     setView("home");
     setError("");
   }
@@ -131,7 +117,6 @@ export default function App() {
     setCompletionScoreView("leaderboard");
     setSelectedCondition(DEFAULT_SCRIPT_LAB_CONDITION);
     setIncludePractice(true);
-    setRatingPool([]);
   }, []);
 
   const resetSessionState = useCallback(() => {
@@ -264,21 +249,9 @@ export default function App() {
       return;
     }
 
-    // Feedback reveals the word-to-meaning mapping, so both of this round's
-    // words become rateable in the Rating Lab.
-    if (auth && round) {
-      const revealedWords = extractRoundWords(round, result);
-      if (revealedWords.length > 0) {
-        setRatingPool((current) => {
-          const next = addWordsToPool(current, revealedWords);
-          if (next !== current) {
-            writeRatingPool(auth.username, next);
-          }
-          return next;
-        });
-      }
-    }
-
+    // Feedback reveals the word-to-meaning mapping, which makes both of this
+    // round's words rateable — the backend derives that from player_answers,
+    // so the Rating Lab pool needs no client-side bookkeeping here.
     setLatestResult(result);
     setSessionStats((current) => ({
       answered: current.answered + 1,
@@ -338,7 +311,6 @@ export default function App() {
     if (view === "rating") {
       return (
         <RatingLab
-          pool={ratingPool}
           onAuthExpired={handleAuthExpired}
           onBackToHome={handleBackToHome}
           onGoToChoosing={() => setView("instructions")}
@@ -375,15 +347,15 @@ export default function App() {
               <button className="primary-button" type="button" onClick={handleStart}>
                 Play again
               </button>
-              {ratingPool.length > 0 ? (
-                <button
-                  className="secondary-button"
-                  type="button"
-                  onClick={() => setView("rating")}
-                >
-                  Rate these words
-                </button>
-              ) : null}
+              {/* A completed session always leaves encountered words, so the
+                  Rating Lab entry no longer needs a local pool check. */}
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={() => setView("rating")}
+              >
+                Rate these words
+              </button>
               <button
                 className="secondary-button"
                 type="button"

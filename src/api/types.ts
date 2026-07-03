@@ -62,6 +62,10 @@ export type RoundResponse = {
     other?: string;
   };
   practice?: boolean;
+  // Seed-drawn presentation flag (27E): true when the target meaning fills
+  // the first of the two meaning lines. The renderer treats a missing value
+  // (older backend payload) as true, the historical order.
+  targetMeaningListedFirst: boolean;
   left: IdeophoneOption;
   right: IdeophoneOption;
   timing?: {
@@ -153,6 +157,29 @@ export type RatingResponse = {
 // server-side, entries ordered ratedAt desc.
 export type RatingPageResponse = {
   entries: RatingResponse[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+// GET /api/game/me/ratable-words (27E) — the server-side Rating Lab pool:
+// words encountered through answered scored rounds, minus already-rated. The
+// thesis contamination rule is enforced by the backend; `meaning` is the
+// word's own gloss, exactly as the round feedback revealed it. Entries come
+// encounter-ordered and deduplicated.
+export type RatableWordResponse = {
+  ideophoneId: number;
+  canonicalForm?: string;
+  romaji?: string;
+  stimulusFile?: string;
+  modality?: Modality;
+  meaning: string;
+};
+
+// Paginated wrapper mirroring RatingPageResponse (size clamped 1..50).
+export type RatableWordPageResponse = {
+  entries: RatableWordResponse[];
   page: number;
   size: number;
   totalElements: number;

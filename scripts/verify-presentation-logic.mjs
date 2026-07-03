@@ -78,6 +78,8 @@ try {
       "export const submitRating = async () => { throw new Error('stub'); };",
       "export const getMyRatings = async () => ({ entries: [], page: 0, size: 50, totalElements: 0, totalPages: 0 });",
       "export const getAllMyRatings = async () => [];",
+      "export const getRatableWords = async () => ({ entries: [], page: 0, size: 50, totalElements: 0, totalPages: 0 });",
+      "export const getAllRatableWords = async () => [];",
       "export const getDivergence = async () => [];",
       "",
     ].join("\n"),

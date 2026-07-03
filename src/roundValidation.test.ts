@@ -9,6 +9,7 @@ function makeRound(overrides: Partial<RoundResponse> = {}): RoundResponse {
     targetTranslation: "clattering, rattling",
     conditionName: "CONDITION_2_SOKUON",
     difficultyLevel: 1,
+    targetMeaningListedFirst: true,
     left: {
       ideophoneId: 61,
       kana: "ごそごそ",

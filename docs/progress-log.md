@@ -384,3 +384,76 @@ scale, noted in contract doc).
 Next single task:
 W29 landing / welcome page (divergence read is also available for it), or
 28B Modality Ladder per roadmap — user's pick.
+
+## 2026-07-03 ("27E: meaning lines follow the seed draw + API-sourced rating pool (NIL-40)")
+
+Session goal:
+Consume server truth instead of client-side derivation, closing W27: (a) order the trial's two meaning lines by the
+round's seed-drawn `targetMeaningListedFirst` (new on the round DTO); (b) retire the username-scoped localStorage
+rating pool and source the Rating Lab pool from the new `GET /api/game/me/ratable-words` — the localStorage pool
+broke for any multi-device hosted user (W30 blocker).
+
+Changed:
+
+- `src/api/types.ts`: `RoundResponse.targetMeaningListedFirst: boolean` (+ comment); new `RatableWordResponse` /
+  `RatableWordPageResponse`. `src/api/client.ts`: `getRatableWords` + `getAllRatableWords` (page walker mirroring
+  `getAllMyRatings`; shared cap renamed to `PAGE_WALK_MAX_PAGES`).
+- `TrialPlayer.tsx`: the frozen line prefixes stay in place ("One of them means …" always first); the flag decides
+  which gloss fills which line; a missing flag (older backend) keeps the historical target-first order. Question
+  wording, left/right word placement, and kana rendering untouched; `experimentText.ts` untouched.
+- `src/ratingPool.ts` is now a thin client: `RatingPoolWord` = the endpoint entry type, `fetchRatingPool()` walks
+  the pages. localStorage read/write path and the `ideophone-arena-rating-pool` key deleted — discarded without
+  migration (only pre-deploy test data existed).
+- `RatingLab.tsx` fetches the pool itself (parallel with `getAllMyRatings`; same error/auth handling and retry);
+  the `pool` prop is gone; instructions' already-rated count now comes from the ratings map; ratings POST without
+  `sessionUuid` (server-pool words carry no provenance — the dead stale-session fallback helper was removed).
+  Empty state and 409 recovery unchanged. `App.tsx` dropped the whole pool pipeline (state, seeding, extract/write
+  on answer); the completion "Rate these words" CTA is now unconditional (a completed session always leaves
+  encountered words).
+- Tests: fixtures gained the required flag (`TrialPlayer`, `FeedbackPanel`, `roundValidation`, `RatingLab` pool
+  word); new `TrialPlayer` meaning-line order block (flag true / flag false swaps glosses but never prefixes /
+  absent flag defaults target-first); `ratingPool.test.ts` rewritten for the thin client (page walk, order,
+  empty); `client.test.ts` covers `getRatableWords` + `getAllRatableWords`. Suite: 80 tests (was 85: the 15
+  localStorage-pool tests died with the module; 10 new added; all 70 surviving tests untouched and green).
+- `scripts/verify-presentation-logic.mjs`: client stub gained the two new exports.
+- `scripts/verify-browser-loop.mjs` extended: per-round meaning-line assertion against the round's own captured
+  `rounds/next` payload (bound to the on-screen round via the question gloss; never a two-session diff), both
+  orders required across the session, a refetch-determinism probe (same round fetched twice -> same draw), a
+  ratable-words waypoint (network call observed + legacy localStorage key never written + instructions word count
+  equals the served pool), and a fresh-client pool-parity check (Node logs into the same account and must see the
+  browser's pool minus the just-rated word, order-stable across two fetches). Also made the post-reload "Register"
+  click retry (pre-existing cold-start race).
+- Docs: `docs/backend-contract.md` (round DTO flag paragraph; ratable-words section replaces the "no endpoint"
+  claim; no more `sessionUuid` on ratings), `docs/frontend-grading-checklist.md` (pool + ratings-POST items
+  rewritten for 27E), `README.md` (pool line).
+
+Proof:
+
+- `npm run lint` clean; `npm run build` (tsc -b + vite) clean; `npm test` -> 80 passed (14 files);
+  `node scripts/verify-presentation-logic.mjs` -> "Presentation logic verified."
+- `node scripts/verify-browser-loop.mjs` desktop AND 375px, both green end-to-end against the rebuilt backend.
+  Desktop 27E numbers: 32 rounds asserted, meaning-line order matched each round's flag every time
+  (targetFirst 15 / otherFirst 17 — both orders exercised), refetch probe stable
+  (`roundId` 91, flag `false`, twice identical); ratable-words requests observed (4, all 200),
+  `ideophone-arena-rating-pool` key absent, instructions said 60 words = served pool 60; fresh-client parity:
+  59 ids = browser pool minus the rated word, order stable across two fetches. 375px numbers: 32 rounds,
+  targetFirst 20 / otherFirst 12, refetch stable, pool 60, legacy key absent, parity 59 ids exact.
+
+Result:
+Complete. Meaning-line order is now server truth end-to-end, and the Rating Lab pool follows the account instead of
+the browser — the W30 multi-device blocker is cleared. NIL-40 exit criteria all met.
+
+Commit:
+Not committed (commits are the user's). Proposed message:
+"order meaning lines by the round flag and source the rating pool from the API (NIL-40)" — body: TrialPlayer fills
+the frozen meaning-line prefixes by targetMeaningListedFirst (target-first fallback for older payloads);
+ratingPool.ts becomes a thin client of GET /api/game/me/ratable-words (localStorage pool retired, no migration);
+RatingLab fetches its own pool and rates without sessionUuid; browser loop asserts flag-vs-DOM per round, refetch
+determinism, API-sourced pool, and fresh-client parity.
+
+Blocker:
+None.
+
+Next single task:
+NIL-62 free-form-entry build, from the kickoff prompt the NIL-57 architecture session emits (NIL-57 itself is a
+chat session, not Claude Code).

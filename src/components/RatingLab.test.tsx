@@ -24,15 +24,15 @@ import {
   type RatingTrialPanelProps,
 } from "./RatingLab";
 
+// Shaped like the ratable-words endpoint entries: no session provenance, no
+// timestamps — the backend owns encounter order now.
 const word: RatingPoolWord = {
   ideophoneId: 7,
   canonicalForm: "カンカン",
   romaji: "kankan",
-  stimulusUrl: "/stimuli/audio/a0a-kankan.m4a",
+  stimulusFile: "audio/a0a-kankan.m4a",
   modality: "AUDITORY",
   meaning: "clanging, banging",
-  sessionUuid: "session-1",
-  addedAt: "2026-07-02T12:00:00.000Z",
 };
 
 const divergenceEntry: DivergenceEntry = {

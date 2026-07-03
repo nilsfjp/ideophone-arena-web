@@ -32,7 +32,7 @@ import {
   RATING_WHILE,
 } from "../experimentText";
 import { buildLabRecordRows, type LabRecordRow } from "../labRecord";
-import type { RatingPoolWord } from "../ratingPool";
+import { fetchRatingPool, type RatingPoolWord } from "../ratingPool";
 import { resolveStimulusSource } from "../stimulusMedia";
 import StimulusPlayback from "./StimulusPlayback";
 
@@ -42,7 +42,6 @@ const SCALE_VALUES = [1, 2, 3, 4, 5, 6, 7];
 const MAX_RESPONSE_TIME_MS = 600000;
 
 type RatingLabProps = {
-  pool: RatingPoolWord[];
   onAuthExpired: (message: string) => void;
   onBackToHome: () => void;
   onGoToChoosing: () => void;
@@ -66,12 +65,15 @@ export type RatingRevealData = {
 };
 
 export default function RatingLab({
-  pool,
   onAuthExpired,
   onBackToHome,
   onGoToChoosing,
 }: RatingLabProps) {
   const [phase, setPhase] = useState<RatingLabPhase>("loading");
+  // The pool comes from the backend (GET /api/game/me/ratable-words): the
+  // caller's encountered-but-unrated words, so it follows the account across
+  // devices instead of living in this browser's localStorage.
+  const [pool, setPool] = useState<RatingPoolWord[]>([]);
   const [queue, setQueue] = useState<RatingPoolWord[]>([]);
   const [index, setIndex] = useState(0);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
@@ -101,9 +103,13 @@ export default function RatingLab({
         .then((rows) => toDivergenceMap(rows))
         .catch(() => null);
 
+      let poolWords: RatingPoolWord[];
       let ratings: RatingResponse[];
       try {
-        ratings = await getAllMyRatings();
+        [poolWords, ratings] = await Promise.all([
+          fetchRatingPool(),
+          getAllMyRatings(),
+        ]);
       } catch (caught) {
         if (caught instanceof ApiError && [401, 403].includes(caught.status)) {
           onAuthExpired(caught.message);
@@ -113,7 +119,7 @@ export default function RatingLab({
           setLoadError(
             caught instanceof Error
               ? caught.message
-              : "Your ratings failed to load",
+              : "Your rating pool failed to load",
           );
           setPhase("error");
         }
@@ -128,8 +134,13 @@ export default function RatingLab({
       const ratingsMap = new Map(
         ratings.map((entry) => [entry.ideophoneId, entry]),
       );
-      const unrated = pool.filter((word) => !ratingsMap.has(word.ideophoneId));
+      // The backend already excludes rated words; this filter only covers a
+      // rating submitted from another tab between the two fetches.
+      const unrated = poolWords.filter(
+        (word) => !ratingsMap.has(word.ideophoneId),
+      );
 
+      setPool(poolWords);
       setExistingRatings(ratingsMap);
       setDivergenceMap(divergence);
       setQueue(unrated);
@@ -138,7 +149,7 @@ export default function RatingLab({
       setReveal(null);
       setStatusMessage("");
 
-      if (pool.length === 0 && ratingsMap.size === 0) {
+      if (poolWords.length === 0 && ratingsMap.size === 0) {
         setPhase("empty");
       } else if (unrated.length === 0) {
         setPhase("done");
@@ -152,7 +163,7 @@ export default function RatingLab({
     return () => {
       isMounted = false;
     };
-  }, [pool, onAuthExpired, loadToken]);
+  }, [onAuthExpired, loadToken]);
 
   function startWord(nextIndex: number) {
     setIndex(nextIndex);
@@ -219,15 +230,16 @@ export default function RatingLab({
     setPhase("submitting");
     setStatusMessage("");
 
+    // Server-pool words carry no session provenance; ratings are keyed by
+    // (user, ideophone) alone, so none is needed.
     const request: RatingRequest = {
       ideophoneId: word.ideophoneId,
       rating: selectedRating,
       responseTimeMs,
-      sessionUuid: word.sessionUuid,
     };
 
     try {
-      const response = await submitRatingWithSessionFallback(request);
+      const response = await submitRating(request);
       setExistingRatings((current) =>
         new Map(current).set(word.ideophoneId, response),
       );
@@ -350,7 +362,7 @@ export default function RatingLab({
   if (phase === "instructions") {
     return (
       <RatingInstructionsPanel
-        alreadyRatedCount={countRatedPoolWords(pool, existingRatings)}
+        alreadyRatedCount={existingRatings.size}
         wordCount={queue.length}
         onBack={onBackToHome}
         onBegin={handleBegin}
@@ -751,36 +763,6 @@ export function RatingEmptyState({
       </div>
     </section>
   );
-}
-
-// Session linkage is provenance only; a stale sessionUuid (e.g. after a
-// backend database reset) should not block the rating itself, so retry once
-// without it when the backend rejects the session reference.
-async function submitRatingWithSessionFallback(request: RatingRequest) {
-  try {
-    return await submitRating(request);
-  } catch (caught) {
-    if (
-      request.sessionUuid &&
-      caught instanceof ApiError &&
-      [403, 404].includes(caught.status) &&
-      /session/i.test(caught.message)
-    ) {
-      return submitRating({
-        ideophoneId: request.ideophoneId,
-        rating: request.rating,
-        responseTimeMs: request.responseTimeMs,
-      });
-    }
-    throw caught;
-  }
-}
-
-function countRatedPoolWords(
-  pool: RatingPoolWord[],
-  ratings: Map<number, RatingResponse>,
-) {
-  return pool.filter((word) => ratings.has(word.ideophoneId)).length;
 }
 
 function toDivergenceMap(rows: DivergenceEntry[]) {

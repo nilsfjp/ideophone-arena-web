@@ -16,6 +16,7 @@ const roundMissingDisplayForm: RoundResponse = {
   targetTranslation: "clattering, rattling",
   conditionName: "CONDITION_3_SOKUON",
   difficultyLevel: 1,
+  targetMeaningListedFirst: true,
   left: {
     ideophoneId: 121,
     kana: "ごそごそ",
@@ -37,6 +38,7 @@ const validRound: RoundResponse = {
   targetTranslation: "clattering, rattling",
   conditionName: "CONDITION_1_SOKUON",
   difficultyLevel: 1,
+  targetMeaningListedFirst: true,
   translations: {
     target: "clattering, rattling",
     other: "noisily gushing",
@@ -103,6 +105,60 @@ describe("TrialPlayer frozen experiment text", () => {
       `${CHOICE_QUESTION_PREFIX}<strong>clattering, rattling</strong>${CHOICE_QUESTION_SUFFIX}`,
     );
     expect(markup).not.toContain(`"clattering, rattling"`);
+  });
+});
+
+describe("TrialPlayer meaning-line order", () => {
+  // The frozen prefixes never move ("One of them means" is always the first
+  // line); the seed-drawn flag only decides which gloss fills which line.
+  it("lists the target meaning first when the flag is true", () => {
+    const markup = renderTrialBoard({
+      ...validRound,
+      targetMeaningListedFirst: true,
+    });
+
+    expect(markup).toContain(
+      `${MEANING_TARGET_PREFIX}<strong>clattering, rattling</strong>`,
+    );
+    expect(markup).toContain(
+      `${MEANING_OTHER_PREFIX}<strong>noisily gushing</strong>`,
+    );
+  });
+
+  it("swaps the glosses but not the prefixes when the flag is false", () => {
+    const markup = renderTrialBoard({
+      ...validRound,
+      targetMeaningListedFirst: false,
+    });
+
+    expect(markup).toContain(
+      `${MEANING_TARGET_PREFIX}<strong>noisily gushing</strong>`,
+    );
+    expect(markup).toContain(
+      `${MEANING_OTHER_PREFIX}<strong>clattering, rattling</strong>`,
+    );
+    expect(countOccurrences(markup, MEANING_TARGET_PREFIX)).toBe(1);
+    expect(countOccurrences(markup, MEANING_OTHER_PREFIX)).toBe(1);
+    expect(markup.indexOf(MEANING_TARGET_PREFIX)).toBeLessThan(
+      markup.indexOf(MEANING_OTHER_PREFIX),
+    );
+    // The canonical question is untouched by the meaning-line order.
+    expect(markup).toContain(
+      `${CHOICE_QUESTION_PREFIX}<strong>clattering, rattling</strong>${CHOICE_QUESTION_SUFFIX}`,
+    );
+  });
+
+  it("defaults to target-first when the flag is absent (older backend payload)", () => {
+    const legacyRound: RoundResponse = { ...validRound };
+    delete (legacyRound as Partial<RoundResponse>).targetMeaningListedFirst;
+    const markup = renderTrialBoard(legacyRound);
+
+    expect(markup).toContain(
+      `${MEANING_TARGET_PREFIX}<strong>clattering, rattling</strong>`,
+    );
+    expect(markup).toContain(
+      `${MEANING_OTHER_PREFIX}<strong>noisily gushing</strong>`,
+    );
   });
 });
 

@@ -56,7 +56,9 @@ met, read its meaning, and rate the resemblance on a 1–7 scale (frozen
 Gorilla-verbatim copy in `src/experimentText.ts`). The word pool comes from
 answered Choosing rounds — feedback is the only place the word→meaning mapping
 is revealed, so unplayed words can never leak meanings into naive guessing.
-The pool persists per user in localStorage (`src/ratingPool.ts`). Ratings POST
+The pool is served per account by `GET /api/game/me/ratable-words`
+(`src/ratingPool.ts` is a thin client of it), so it follows the login across
+browsers and devices. Ratings POST
 to `/api/ratings` (one per word — re-rating returns 409 and is shown
 read-only); after each submit the mode reveals the word's public "Arena
 record" from `GET /api/research/divergence`, and a Lab record table joins

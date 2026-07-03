@@ -7,6 +7,8 @@ import type {
   LeaderboardPageResponse,
   LoginRequest,
   NextRoundResponse,
+  RatableWordPageResponse,
+  RatableWordResponse,
   RatingPageResponse,
   RatingRequest,
   RatingResponse,
@@ -276,17 +278,39 @@ export function getMyRatings(page = 0, size = 50) {
   );
 }
 
-// The backend clamps size to 50, so 40 pages covers 2000 ratings — far past
-// the stimulus set. The cap only guards against a pathological totalPages.
-const MY_RATINGS_MAX_PAGES = 40;
+// The backend clamps size to 50, so 40 pages covers 2000 entries — far past
+// the stimulus set for both walkers below. The cap only guards against a
+// pathological totalPages.
+const PAGE_WALK_MAX_PAGES = 40;
 
 export async function getAllMyRatings(): Promise<RatingResponse[]> {
   const entries: RatingResponse[] = [];
   let page = 0;
   let totalPages = 1;
 
-  while (page < totalPages && page < MY_RATINGS_MAX_PAGES) {
+  while (page < totalPages && page < PAGE_WALK_MAX_PAGES) {
     const response = await getMyRatings(page);
+    entries.push(...(response.entries ?? []));
+    totalPages = response.totalPages ?? 0;
+    page += 1;
+  }
+
+  return entries;
+}
+
+export function getRatableWords(page = 0, size = 50) {
+  return apiRequest<RatableWordPageResponse>(
+    `/api/game/me/ratable-words?page=${page}&size=${size}`,
+  );
+}
+
+export async function getAllRatableWords(): Promise<RatableWordResponse[]> {
+  const entries: RatableWordResponse[] = [];
+  let page = 0;
+  let totalPages = 1;
+
+  while (page < totalPages && page < PAGE_WALK_MAX_PAGES) {
+    const response = await getRatableWords(page);
     entries.push(...(response.entries ?? []));
     totalPages = response.totalPages ?? 0;
     page += 1;

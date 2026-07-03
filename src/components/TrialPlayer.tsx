@@ -52,6 +52,17 @@ export default function TrialPlayer({
   const otherTranslation = round.translations?.other?.trim();
   const roundProblem = getRoundProblem(round, targetTranslation);
   const presentation = getConditionPresentation(round.conditionName);
+  // The frozen line prefixes stay in place; the round's seed-drawn flag only
+  // decides which gloss fills which line. A missing flag (older backend
+  // payload) keeps the historical target-first order.
+  const targetMeaningListedFirst = round.targetMeaningListedFirst !== false;
+  const otherMeaningText = otherTranslation || "an unavailable translation";
+  const firstMeaningText = targetMeaningListedFirst
+    ? targetTranslation
+    : otherMeaningText;
+  const secondMeaningText = targetMeaningListedFirst
+    ? otherMeaningText
+    : targetTranslation;
 
   useEffect(() => {
     if (roundProblem) {
@@ -281,11 +292,11 @@ export default function TrialPlayer({
         <div className="translation-lines" aria-label="Translations">
           <p className="translation-option">
             {MEANING_TARGET_PREFIX}
-            <strong>{targetTranslation}</strong>
+            <strong>{firstMeaningText}</strong>
           </p>
           <p className="translation-option">
             {MEANING_OTHER_PREFIX}
-            <strong>{otherTranslation || "an unavailable translation"}</strong>
+            <strong>{secondMeaningText}</strong>
           </p>
         </div>
 

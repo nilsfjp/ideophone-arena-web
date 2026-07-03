@@ -5,6 +5,8 @@ const cdpVersionUrl = process.argv[3] ?? "http://127.0.0.1:9224/json/version";
 // Optional viewport width (e.g. 375 for the mobile run); omit for desktop.
 const viewportWidth = process.argv[4] ? Number(process.argv[4]) : null;
 const viewportLabel = viewportWidth ? `${viewportWidth}px` : "desktop";
+// Backend base URL for the fresh-client pool-parity probe (27E).
+const apiBaseUrl = process.env.ARENA_API_URL ?? "http://127.0.0.1:8081";
 
 const username = `browser_loop_${Date.now()}`;
 const email = `${username}@example.test`;
@@ -19,6 +21,13 @@ const requestMeta = new Map();
 const sessionRequests = [];
 const protectedRequests = [];
 const stimulusRequests = [];
+const ratableWordsRequests = [];
+// Successful GET .../rounds/next responses, in arrival order; the last entry
+// is always the round currently on screen (the app fetches exactly once per
+// round), so its body is the ground truth for the meaning-order assertion.
+const roundFetches = [];
+const meaningOrderRounds = [];
+let roundRefetchProof = null;
 const screenshots = [];
 const feedbackShotsTaken = new Set();
 let practiceShotTaken = false;
@@ -322,6 +331,10 @@ async function run() {
       if (request.url.includes("/stimuli/")) {
         stimulusRequests.push(meta);
       }
+
+      if (request.url.includes("/api/game/me/ratable-words")) {
+        ratableWordsRequests.push(meta);
+      }
     }
 
     if (message.method === "Network.requestWillBeSentExtraInfo") {
@@ -335,6 +348,12 @@ async function run() {
       const meta = requestMeta.get(message.params.requestId);
       if (meta) {
         meta.status = message.params.response.status;
+        if (
+          meta.url.includes("/rounds/next") &&
+          message.params.response.status === 200
+        ) {
+          roundFetches.push(meta);
+        }
       }
     }
 
@@ -376,9 +395,10 @@ async function run() {
     "auth screen",
   );
 
-  if (!(await clickText(ws, "Register"))) {
-    throw new Error("Register tab not found");
-  }
+  // Retry the click: right after Page.reload the auth-screen text can match
+  // the pre-reload DOM while the new document is still mounting (seen on a
+  // cold Vite + fresh browser profile).
+  await waitFor(() => clickText(ws, "Register"), "Register tab");
   await waitFor(
     async () => (await bodyText(ws)).includes("Email"),
     "register form",
@@ -560,6 +580,23 @@ async function run() {
     );
   }
 
+  // Every answered round passed the per-round flag assertion above; across
+  // ~32 seed draws both orders must also appear (a one-sided run has chance
+  // ~2^-31, so a miss means the flag is ignored or constant).
+  const targetFirstCount = meaningOrderRounds.filter(
+    (round) => round.targetMeaningListedFirst,
+  ).length;
+  const otherFirstCount = meaningOrderRounds.length - targetFirstCount;
+  if (targetFirstCount === 0 || otherFirstCount === 0) {
+    throw new Error(
+      `Both meaning-line orders should appear across ${meaningOrderRounds.length} ` +
+        `seed draws; saw targetFirst=${targetFirstCount}, otherFirst=${otherFirstCount}`,
+    );
+  }
+  if (!roundRefetchProof?.stable) {
+    throw new Error("The round-refetch determinism probe never ran");
+  }
+
   await waitFor(
     async () => (await bodyText(ws)).includes("Session complete"),
     "completion screen remains visible",
@@ -591,6 +628,67 @@ async function run() {
     async () => (await bodyText(ws)).includes("In this task, you will rate"),
     "rating lab instructions",
   );
+
+  // 27E: the pool must be sourced from the backend, never from the retired
+  // localStorage pool — assert the network call happened and the legacy key
+  // was never written.
+  if (ratableWordsRequests.length === 0) {
+    throw new Error(
+      "Rating Lab opened without requesting GET /api/game/me/ratable-words",
+    );
+  }
+  const ratableWordsFailures = ratableWordsRequests.filter(
+    (request) => !request.status || request.status >= 400,
+  );
+  if (ratableWordsFailures.length > 0) {
+    throw new Error(
+      `ratable-words requests failed: ${JSON.stringify(ratableWordsFailures)}`,
+    );
+  }
+  const legacyPoolValue = await evaluate(
+    ws,
+    `localStorage.getItem("ideophone-arena-rating-pool")`,
+  );
+  if (legacyPoolValue !== null) {
+    throw new Error(
+      "The retired ideophone-arena-rating-pool localStorage key was written",
+    );
+  }
+  const instructionsText = await bodyText(ws);
+  const wordCountMatch = instructionsText.match(/you will rate (\d+) words/);
+  if (!wordCountMatch) {
+    throw new Error(
+      `Rating instructions did not state a word count: ${instructionsText.slice(0, 200)}`,
+    );
+  }
+  const instructionsWordCount = Number(wordCountMatch[1]);
+  // Rebuild the pool the browser received from the captured response bodies,
+  // deduplicating by page number (a dev-mode double effect refetches the
+  // same pages with identical bodies).
+  const poolPageBodies = new Map();
+  for (const request of ratableWordsRequests) {
+    const pageMatch = request.url.match(/[?&]page=(\d+)/);
+    const pageNumber = pageMatch ? Number(pageMatch[1]) : 0;
+    if (!poolPageBodies.has(pageNumber)) {
+      poolPageBodies.set(
+        pageNumber,
+        await getJsonResponseBody(ws, request.requestId, "ratable-words"),
+      );
+    }
+  }
+  const browserPoolIds = [...poolPageBodies.keys()]
+    .sort((a, b) => a - b)
+    .flatMap((page) =>
+      (poolPageBodies.get(page).entries ?? []).map((entry) => entry.ideophoneId),
+    );
+  // A fresh user has rated nothing, so the queue equals the served pool.
+  if (browserPoolIds.length !== instructionsWordCount) {
+    throw new Error(
+      `Instructions count ${instructionsWordCount} does not match the served ` +
+        `pool size ${browserPoolIds.length}`,
+    );
+  }
+
   if (!(await clickText(ws, "Start rating"))) {
     throw new Error("Start rating button not found");
   }
@@ -665,6 +763,11 @@ async function run() {
     revealVisible: /arena record/i.test(ratingRevealText),
     ratingConfirmed: ratingRevealText.includes("Your rating:"),
   };
+
+  // 27E pool parity: a completely fresh client (this Node process — no
+  // browser state, no localStorage) logs into the same account and must see
+  // the identical pool, minus the first pool word the waypoint just rated.
+  const poolParityProof = await verifyPoolParity(browserPoolIds);
 
   if (stimulusRequests.length === 0) {
     throw new Error("No /stimuli/ media requests were observed");
@@ -764,6 +867,18 @@ async function run() {
         screenshots,
         recentAttemptsVisible: attemptsText.includes("Recent Attempts"),
         ratingProof,
+        meaningOrderProof: {
+          assertedRoundCount: meaningOrderRounds.length,
+          targetFirstCount,
+          otherFirstCount,
+          refetch: roundRefetchProof,
+        },
+        ratablePoolProof: {
+          requestCount: ratableWordsRequests.length,
+          legacyPoolKeyAbsent: legacyPoolValue === null,
+          instructionsWordCount,
+          parity: poolParityProof,
+        },
         staleControlCount: Array.isArray(staleControls)
           ? staleControls.length
           : 0,
@@ -1141,6 +1256,185 @@ async function assertPracticeToggle(ws) {
   }
 }
 
+// Reads a captured response body via CDP; JSON bodies are only evictable, not
+// streamed, so a short retry covers the responseReceived -> body-ready gap.
+async function getJsonResponseBody(ws, requestId, label) {
+  for (let attempt = 0; attempt < 10; attempt += 1) {
+    try {
+      const { body, base64Encoded } = await send(ws, "Network.getResponseBody", {
+        requestId,
+      });
+      const text = base64Encoded
+        ? Buffer.from(body, "base64").toString("utf8")
+        : body;
+      return JSON.parse(text);
+    } catch {
+      await sleep(200);
+    }
+  }
+  throw new Error(`Could not read the ${label} response body`);
+}
+
+// 27E meaning-order assertion: the round payload the app just fetched is the
+// ground truth; the payload is bound to the on-screen round via the question
+// gloss, then the two meaning lines must place the glosses per the flag. The
+// frozen prefixes never move — only the glosses swap.
+async function assertMeaningLineOrder(ws, questionText) {
+  const lastFetch = roundFetches[roundFetches.length - 1];
+  if (!lastFetch) {
+    throw new Error("No rounds/next response was captured for the current round");
+  }
+  const payload = await getJsonResponseBody(ws, lastFetch.requestId, "rounds/next");
+  if (payload.completed === true) {
+    throw new Error("Latest rounds/next payload is a completion sentinel mid-round");
+  }
+  if (typeof payload.targetMeaningListedFirst !== "boolean") {
+    throw new Error(
+      "Round payload is missing the targetMeaningListedFirst boolean (stale backend?)",
+    );
+  }
+  const targetGloss = payload.translations?.target ?? "";
+  const otherGloss = payload.translations?.other ?? "";
+  if (!targetGloss || !otherGloss) {
+    throw new Error(
+      `Round payload is missing translations: ${JSON.stringify(payload.translations)}`,
+    );
+  }
+  if (!questionText.includes(targetGloss)) {
+    throw new Error(
+      `Captured payload (target "${targetGloss}") does not match the displayed ` +
+        `question: "${questionText}"`,
+    );
+  }
+
+  const lines = await evaluate(
+    ws,
+    `(() => [...document.querySelectorAll(".translation-lines .translation-option")]
+      .map((line) => line.innerText.trim()))()`,
+  );
+  if (!Array.isArray(lines) || lines.length !== 2) {
+    throw new Error(
+      `Expected 2 meaning lines, found ${Array.isArray(lines) ? lines.length : "none"}`,
+    );
+  }
+  const firstGloss = payload.targetMeaningListedFirst ? targetGloss : otherGloss;
+  const secondGloss = payload.targetMeaningListedFirst ? otherGloss : targetGloss;
+  const expected = [
+    `One of them means ${firstGloss}`,
+    `The other means ${secondGloss}`,
+  ];
+  if (lines[0] !== expected[0] || lines[1] !== expected[1]) {
+    throw new Error(
+      `Meaning lines do not follow targetMeaningListedFirst=` +
+        `${payload.targetMeaningListedFirst}: saw ${JSON.stringify(lines)}, ` +
+        `expected ${JSON.stringify(expected)}`,
+    );
+  }
+
+  const proof = {
+    roundId: payload.roundId,
+    targetMeaningListedFirst: payload.targetMeaningListedFirst,
+    firstLine: lines[0],
+  };
+  meaningOrderRounds.push(proof);
+
+  // Once per run: refetching the same unanswered round must reproduce the
+  // draw (the derivation is recomputed from the seed per request), which is
+  // what makes the order stable across a reload.
+  if (!roundRefetchProof) {
+    roundRefetchProof = await probeRoundRefetch(ws, lastFetch.url, payload);
+  }
+  return proof;
+}
+
+async function probeRoundRefetch(ws, url, payload) {
+  const probes = await evaluate(
+    ws,
+    `(async () => {
+      const token = localStorage.getItem("ideophone-arena-token");
+      const results = [];
+      for (let i = 0; i < 2; i += 1) {
+        const response = await fetch(${JSON.stringify(url)}, {
+          headers: { Authorization: "Bearer " + token },
+        });
+        const body = await response.json();
+        results.push({
+          roundId: body.roundId,
+          targetMeaningListedFirst: body.targetMeaningListedFirst,
+        });
+      }
+      return results;
+    })()`,
+  );
+  for (const probe of probes) {
+    if (
+      probe.roundId !== payload.roundId ||
+      probe.targetMeaningListedFirst !== payload.targetMeaningListedFirst
+    ) {
+      throw new Error(
+        `Refetching the current round changed the meaning-order draw: ` +
+          `${JSON.stringify(probes)} vs roundId ${payload.roundId} ` +
+          `flag ${payload.targetMeaningListedFirst}`,
+      );
+    }
+  }
+  return { url, probes, stable: true };
+}
+
+async function verifyPoolParity(browserPoolIds) {
+  const loginResponse = await fetch(`${apiBaseUrl}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+  if (!loginResponse.ok) {
+    throw new Error(`Pool-parity login failed: ${loginResponse.status}`);
+  }
+  const { token } = await loginResponse.json();
+
+  const fetchPoolIds = async () => {
+    const ids = [];
+    let page = 0;
+    let totalPages = 1;
+    while (page < totalPages && page < 40) {
+      const response = await fetch(
+        `${apiBaseUrl}/api/game/me/ratable-words?page=${page}&size=50`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (!response.ok) {
+        throw new Error(`Pool-parity fetch failed: ${response.status}`);
+      }
+      const body = await response.json();
+      ids.push(...(body.entries ?? []).map((entry) => entry.ideophoneId));
+      totalPages = body.totalPages ?? 0;
+      page += 1;
+    }
+    return ids;
+  };
+
+  const firstFetch = await fetchPoolIds();
+  const secondFetch = await fetchPoolIds();
+  if (JSON.stringify(firstFetch) !== JSON.stringify(secondFetch)) {
+    throw new Error("Ratable pool order changed between two fresh-client fetches");
+  }
+  // The waypoint rated the first pool word (queue[0] of a fresh user), so the
+  // fresh client must see exactly the rest, in the same order.
+  const expected = browserPoolIds.slice(1);
+  if (JSON.stringify(firstFetch) !== JSON.stringify(expected)) {
+    throw new Error(
+      `Fresh-client pool does not equal the browser pool minus the rated word: ` +
+        `fresh has ${firstFetch.length} ids, expected ${expected.length}; ` +
+        `first mismatch at index ${firstFetch.findIndex((id, i) => id !== expected[i])}`,
+    );
+  }
+  return {
+    browserPoolSize: browserPoolIds.length,
+    freshClientPoolSize: firstFetch.length,
+    orderStableAcrossFetches: true,
+    matchesBrowserMinusRated: true,
+  };
+}
+
 async function answerCurrentRound(ws, expectFixation) {
   if (expectFixation) {
     await waitFor(
@@ -1201,6 +1495,11 @@ async function answerCurrentRound(ws, expectFixation) {
   ) {
     throw new Error(`Choice question is not canonical: "${questionProof.text}"`);
   }
+
+  // 27E: the two meaning lines must follow the round's seed-drawn
+  // targetMeaningListedFirst flag, asserted against this round's actual
+  // payload (never a cross-session diff — a coin flip can coincide).
+  const meaningOrder = await assertMeaningLineOrder(ws, questionProof.text);
 
   const activeProgressText = await evaluate(
     ws,
@@ -1361,5 +1660,6 @@ async function answerCurrentRound(ws, expectFixation) {
     progressText: activeProgressText,
     feedback: wasIncorrect ? "Incorrect" : "Correct",
     presentation: presentationProof,
+    meaningOrder,
   };
 }

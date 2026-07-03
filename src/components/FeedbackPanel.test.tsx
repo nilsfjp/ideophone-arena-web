@@ -9,6 +9,7 @@ const round: RoundResponse = {
   targetTranslation: "clattering, rattling",
   conditionName: "CONDITION_1_SOKUON",
   difficultyLevel: 1,
+  targetMeaningListedFirst: true,
   translations: {
     target: "clattering, rattling",
     other: "noisily gushing",

@@ -2,15 +2,19 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type {
   DivergenceEntry,
   LeaderboardPageResponse,
+  RatableWordPageResponse,
+  RatableWordResponse,
   RatingPageResponse,
   RatingResponse,
 } from "./types";
 import {
   ApiError,
   getAllMyRatings,
+  getAllRatableWords,
   getDivergence,
   getLeaderboard,
   getMyRatings,
+  getRatableWords,
   submitRating,
 } from "./client";
 
@@ -190,6 +194,112 @@ describe("getAllMyRatings", () => {
     );
 
     expect(await getAllMyRatings()).toEqual([]);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+const ratableWord: RatableWordResponse = {
+  ideophoneId: 7,
+  canonicalForm: "カンカン",
+  romaji: "kankan",
+  stimulusFile: "audio/a0a-kankan.m4a",
+  modality: "AUDITORY",
+  meaning: "clanging, banging",
+};
+
+function ratablePage(
+  overrides: Partial<RatableWordPageResponse>,
+): RatableWordPageResponse {
+  return {
+    entries: [ratableWord],
+    page: 0,
+    size: 50,
+    totalElements: 1,
+    totalPages: 1,
+    ...overrides,
+  };
+}
+
+describe("getRatableWords", () => {
+  it("requests page 0 with size 50 by default and returns the paginated wrapper", async () => {
+    const wrapperResponse = ratablePage({});
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify(wrapperResponse), { status: 200 }),
+    );
+
+    const result = await getRatableWords();
+
+    const requestedUrl = String(fetchMock.mock.calls[0][0]);
+    expect(
+      requestedUrl.endsWith("/api/game/me/ratable-words?page=0&size=50"),
+    ).toBe(true);
+    expect(result).toEqual(wrapperResponse);
+  });
+
+  it("passes explicit page and size params through to the backend", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify(ratablePage({ page: 1, size: 10 })), {
+        status: 200,
+      }),
+    );
+
+    await getRatableWords(1, 10);
+
+    const requestedUrl = String(fetchMock.mock.calls[0][0]);
+    expect(
+      requestedUrl.endsWith("/api/game/me/ratable-words?page=1&size=10"),
+    ).toBe(true);
+  });
+});
+
+describe("getAllRatableWords", () => {
+  it("walks every page and concatenates the entries", async () => {
+    const second: RatableWordResponse = {
+      ...ratableWord,
+      ideophoneId: 9,
+      romaji: "gosogoso",
+      meaning: "rustling",
+    };
+    fetchMock
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify(ratablePage({ totalPages: 2, totalElements: 2 })),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify(
+            ratablePage({
+              entries: [second],
+              page: 1,
+              totalPages: 2,
+              totalElements: 2,
+            }),
+          ),
+          { status: 200 },
+        ),
+      );
+
+    const result = await getAllRatableWords();
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(String(fetchMock.mock.calls[0][0]).includes("page=0")).toBe(true);
+    expect(String(fetchMock.mock.calls[1][0]).includes("page=1")).toBe(true);
+    expect(result.map((entry) => entry.ideophoneId)).toEqual([7, 9]);
+  });
+
+  it("returns an empty list when the caller has nothing to rate", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify(
+          ratablePage({ entries: [], totalElements: 0, totalPages: 0 }),
+        ),
+        { status: 200 },
+      ),
+    );
+
+    expect(await getAllRatableWords()).toEqual([]);
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

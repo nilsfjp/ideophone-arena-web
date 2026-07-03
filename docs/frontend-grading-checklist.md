@@ -306,18 +306,20 @@ Browser proof:
 - [ ] Mode card enabled on home; Modality Ladder stays "Coming soon".
 - [ ] All participant-facing rating copy imported from `src/experimentText.ts`
       (Gorilla-verbatim, adjudicated 2026-07-02); no inline trial strings.
-- [ ] Word pool built only from answered, non-practice rounds
-      (`src/ratingPool.ts`), deduped by `ideophoneId`, persisted per user
-      under `ideophone-arena-rating-pool`; another user's pool never loads.
+- [ ] Word pool fetched from `GET /api/game/me/ratable-words` (27E): the
+      backend serves answered-round words minus rated ones, deduped and
+      encounter-ordered, so the pool follows the account across devices; the
+      `ideophone-arena-rating-pool` localStorage key is retired and never
+      written.
 - [ ] Empty pool shows the Choosing Task pointer, never a broken trial.
 - [ ] Trial screen is audio-only (no script/romaji leak before the lab
       record); replay allowed; manual play fallback when autoplay is blocked.
 - [ ] Scale offers exactly 7 buttons ≥44px, `aria-pressed` selection,
       select-then-Next submission, double-submit blocked while submitting.
 - [ ] `POST /api/ratings` sends integer `responseTimeMs` (anchor at rating
-      screen mount) and the source `sessionUuid`; 201 handled; 409 recovered
-      as read-only "already rated"; stale session retried once without
-      `sessionUuid`; 401/403 route to auth-expired.
+      screen mount) and no `sessionUuid` (27E: server-pool words carry no
+      session provenance); 201 handled; 409 recovered as read-only "already
+      rated"; 401/403 route to auth-expired.
 - [ ] Existing ratings pre-loaded via paged `GET /api/game/me/ratings`
       (`.entries` wrapper); rated words never re-enter the trial queue
       (revisit shows the stored rating).

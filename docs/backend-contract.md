@@ -98,6 +98,14 @@ Get next round:
 GET /api/game/sessions/{sessionUuid}/rounds/next
 ```
 
+The round payload carries `targetMeaningListedFirst` (2026-07-03, additive):
+the seed-drawn boolean deciding which gloss fills which of the two meaning
+lines. `TrialPlayer` renders the frozen line prefixes in place ("One of them
+means …" always first) and swaps only the glosses; a missing flag (older
+backend) falls back to the historical target-first order. The draw is part of
+the session's deterministic derivation, so refetching the same round returns
+the same order.
+
 Submit answer:
 
 ```text
@@ -255,8 +263,9 @@ NOT upserts — `(user_id, ideophone_id)` is unique and a rating can never be
 changed through this API), 400 on validation failures, 404 for an unknown
 ideophone or sessionUuid, 403 when the sessionUuid belongs to another user,
 401 unauthenticated. The frontend pre-loads existing ratings, shows them
-read-only, and treats a mid-run 409 as "already rated". A stale sessionUuid
-(dev database reset) is retried once without the session reference.
+read-only, and treats a mid-run 409 as "already rated". Since 27E the
+frontend sends no `sessionUuid` at all: server-pool words carry no session
+provenance, and ratings are keyed by `(user, ideophone)` alone.
 
 ```text
 GET /api/game/me/ratings?page=0&size=50    (authenticated)
@@ -267,10 +276,21 @@ leaderboard (`entries` / `page` / `size` / `totalElements` / `totalPages`);
 `size` is clamped to 1..50 and out-of-range params are clamped, not rejected.
 `getAllMyRatings()` in `src/api/client.ts` walks all pages.
 
-There is **no ratable-words endpoint**. The Rating Lab's word pool is built
-client-side from answered Choosing rounds (the word→meaning mapping is only
-knowable from answer feedback — see `src/ratingPool.ts`), persisted per user
-under the `ideophone-arena-rating-pool` localStorage key.
+```text
+GET /api/game/me/ratable-words?page=0&size=50  (authenticated)
+```
+
+The Rating Lab's word pool, served by the backend since 27E (2026-07-03). The
+contamination rule is enforced server-side: entries are the caller's words
+encountered through answered (scored) Choosing rounds — feedback is the only
+place the word→meaning mapping is revealed — minus words already rated. Same
+paginated wrapper as `/me/ratings`; entries are
+`{ ideophoneId, canonicalForm, romaji, stimulusFile, modality, meaning }`
+(`meaning` is the word's own gloss, exactly as feedback showed it), in stable
+first-encounter order, deduplicated. `src/ratingPool.ts` is now a thin client
+(`fetchRatingPool()` walks the pages); the former `ideophone-arena-rating-pool`
+localStorage pool is retired without migration — it broke for any multi-device
+user, which the server pool fixes by construction.
 
 ## Research divergence (public)
 
