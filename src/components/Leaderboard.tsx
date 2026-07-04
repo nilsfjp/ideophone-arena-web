@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { ApiError, getLeaderboard, getMyAttempts } from "../api/client";
 import type { AttemptResponse, LeaderboardPageResponse } from "../api/types";
+import { Button } from "./ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./ui/table";
 
 type LeaderboardProps = {
   isAuthenticated: boolean;
@@ -153,51 +162,53 @@ export function LeaderboardPanel({ data, onPageChange }: LeaderboardPanelProps) 
     <>
       <h2 id="leaderboard-title">Leaderboard</h2>
       {entries.length > 0 ? (
-        <table>
-          <thead>
-            <tr>
-              <th>Player</th>
-              <th>Best session</th>
-              <th>Accuracy</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Player</TableHead>
+              <TableHead>Best session</TableHead>
+              <TableHead>Accuracy</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {entries.map((entry) => (
-              <tr key={entry.username}>
-                <td>{entry.username}</td>
-                <td>
+              <TableRow key={entry.username}>
+                <TableCell>{entry.username}</TableCell>
+                <TableCell>
                   {entry.bestSessionCorrect} / {entry.bestSessionAnswered}
-                </td>
-                <td>{Math.round(entry.bestSessionAccuracy * 100)}%</td>
-              </tr>
+                </TableCell>
+                <TableCell>{Math.round(entry.bestSessionAccuracy * 100)}%</TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       ) : (
         <p className="muted">No scores yet.</p>
       )}
 
       {totalPages > 1 ? (
         <nav className="leaderboard-pager" aria-label="Leaderboard pages">
-          <button
-            className="secondary-button"
+          <Button
+            variant="secondary"
+            size="sm"
             type="button"
             disabled={currentPage <= 0}
             onClick={() => onPageChange(Math.max(currentPage - 1, 0))}
           >
             Previous
-          </button>
+          </Button>
           <span>
             page {currentPage + 1} of {totalPages}
           </span>
-          <button
-            className="secondary-button"
+          <Button
+            variant="secondary"
+            size="sm"
             type="button"
             disabled={currentPage >= totalPages - 1}
             onClick={() => onPageChange(Math.min(currentPage + 1, totalPages - 1))}
           >
             Next
-          </button>
+          </Button>
         </nav>
       ) : null}
     </>

@@ -14,13 +14,13 @@ describe("ModeSelect", () => {
 
   it("renders one card per registered mode", () => {
     expect(countOccurrences(markup, "<button")).toBe(3);
-    expect(markup).toContain("Choosing Task");
+    expect(markup).toContain("Meaning Match");
     expect(markup).toContain("Rating Lab");
-    expect(markup).toContain("Modality Ladder");
+    expect(markup).toContain("Perception Ladder");
   });
 
   it("keeps the playable mode cards enabled", () => {
-    for (const title of ["Choosing Task", "Rating Lab"]) {
+    for (const title of ["Meaning Match", "Rating Lab"]) {
       const card = markup
         .split("<button")
         .find((chunk) => chunk.includes(title));
@@ -31,7 +31,7 @@ describe("ModeSelect", () => {
   });
 
   it("marks coming-soon modes as disabled with an honest badge", () => {
-    for (const title of ["Modality Ladder"]) {
+    for (const title of ["Perception Ladder"]) {
       const card = markup
         .split("<button")
         .find((chunk) => chunk.includes(title));

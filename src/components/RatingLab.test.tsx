@@ -317,6 +317,21 @@ describe("buildLabRecordRows", () => {
     expect(rows[0].romaji).toBe("word #9");
     expect(rows[0].gloss).toBe("");
   });
+
+  // NIL-65 rider: a word rated in an earlier visit has left the pool, so when
+  // divergence is unavailable the remembered word-meta cache is the only source
+  // of its romaji/gloss — the fallback must fire instead of "word #id".
+  it("falls back to remembered word metadata when pool and divergence are absent", () => {
+    const rows = buildLabRecordRows(
+      new Map([[9, { ...rating, ideophoneId: 9 }]]),
+      null,
+      [],
+      new Map([[9, { romaji: "pikapika", gloss: "sparkling" }]]),
+    );
+
+    expect(rows[0].romaji).toBe("pikapika");
+    expect(rows[0].gloss).toBe("sparkling");
+  });
 });
 
 describe("LabRecordPanel and RatingEmptyState", () => {
@@ -339,12 +354,12 @@ describe("LabRecordPanel and RatingEmptyState", () => {
     expect(markup).toContain("No rated words yet.");
   });
 
-  it("points an empty lab at the Choosing Task", () => {
+  it("points an empty lab at Meaning Match", () => {
     const markup = renderToStaticMarkup(
       <RatingEmptyState onBackToHome={() => {}} onGoToChoosing={() => {}} />,
     );
 
     expect(markup).toContain("words you have already met");
-    expect(markup).toContain("Go to the Choosing Task");
+    expect(markup).toContain("Go to Meaning Match");
   });
 });

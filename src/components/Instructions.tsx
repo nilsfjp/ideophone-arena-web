@@ -1,5 +1,6 @@
 import type { ConditionName } from "../api/types";
 import { SCRIPT_LAB_CONDITION_OPTIONS } from "../conditionPresentation";
+import { Button } from "./ui/button";
 
 type InstructionsProps = {
   difficultyLevel: 1;
@@ -34,16 +35,17 @@ export default function Instructions({
 
   return (
     <section className="instructions" aria-labelledby="instructions-title">
-      <h1 id="instructions-title">Choosing Task Instructions</h1>
+      <h1 id="instructions-title">Meaning Match Instructions</h1>
 
       {onBackToHome ? (
-        <button
-          className="secondary-button instructions-back"
+        <Button
+          className="instructions-back"
+          variant="secondary"
           type="button"
           onClick={onBackToHome}
         >
           Back to modes
-        </button>
+        </Button>
       ) : null}
 
       <p>
@@ -78,6 +80,8 @@ export default function Instructions({
           </p>
         </div>
 
+        {/* Condition options stay bespoke (§5): rich multi-line pressed-state
+            cards that select the experimental condition. */}
         <div className="condition-option-list" role="group" aria-labelledby="script-lab-title">
           {SCRIPT_LAB_CONDITION_OPTIONS.map((option) => {
             const isSelected = option.conditionName === selectedCondition;
@@ -97,6 +101,10 @@ export default function Instructions({
           })}
         </div>
 
+        {/* Native checkbox retained: the browser loop associates the practice
+            toggle via input[type=checkbox] + .checked, and the wrapping label
+            drives the click. A Radix checkbox (role="checkbox" button) would
+            break both. */}
         <label className="practice-toggle">
           <input
             checked={includePractice}
@@ -108,14 +116,14 @@ export default function Instructions({
       </section>
 
       <div className="sound-check" aria-live="polite">
-        <button
-          className="secondary-button"
+        <Button
+          variant="secondary"
           disabled={soundCheckStatus === "checking"}
           type="button"
           onClick={onSoundCheck}
         >
           {soundCheckStatus === "checking" ? "Checking..." : "Sound check"}
-        </button>
+        </Button>
         {soundCheckReady ? (
           <p className="notice-text">Sound check passed.</p>
         ) : (
@@ -130,14 +138,15 @@ export default function Instructions({
 
       {error ? <p className="error-text centered">{error}</p> : null}
 
-      <button
-        className="primary-button"
-        disabled={isStarting || !soundCheckReady}
-        type="button"
-        onClick={onStart}
-      >
-        {isStarting ? "Starting..." : "Start Game"}
-      </button>
+      <div className="flex justify-center">
+        <Button
+          disabled={isStarting || !soundCheckReady}
+          type="button"
+          onClick={onStart}
+        >
+          {isStarting ? "Starting..." : "Start Game"}
+        </Button>
+      </div>
     </section>
   );
 }

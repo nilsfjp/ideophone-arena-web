@@ -1,0 +1,124 @@
+/* ============================================================================
+   Tailwind theme bridge (spec §4.6) — maps the tokens.css semantic properties
+   into Tailwind's utility namespaces BY var() REFERENCE. Zero value
+   duplication: tokens.css stays the single source of truth; utilities like
+   `bg-accent`, `text-ink-muted`, `text-auditory`, `font-stimuli`,
+   `text-kana-card`, `rounded-md`, `shadow-card` all resolve to the same
+   custom properties bespoke CSS uses.
+
+   `@theme inline` is what makes the self-named references (e.g.
+   `--font-display: var(--font-display)`) legal: with `inline` Tailwind does
+   NOT emit its own copy of the property — it inlines the RHS into the
+   generated utility, so `.font-display { font-family: var(--font-display) }`
+   resolves against tokens.css. (This is the exact pattern the spec §4.6
+   example uses.)
+
+   NOTE: Tailwind's numeric spacing scale is deliberately NOT remapped. Our
+   --space-5..8 (1.5/2/3/4rem) diverge from Tailwind's defaults
+   (1.25/1.5/1.75/2rem); remapping would corrupt every shadcn component's
+   padding, which assumes the default scale. Bespoke rhythm (§2.2) stays
+   enforced in app.css via var(--space-*).
+   ========================================================================== */
+
+@theme inline {
+  /* Surfaces */
+  --color-surface-page: var(--surface-page);
+  --color-surface-card: var(--surface-card);
+  --color-surface-raised: var(--surface-raised);
+
+  /* Ink */
+  --color-ink: var(--ink-primary);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-inverse: var(--ink-inverse);
+
+  /* Primary accent (vermillion) + ramp */
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-active: var(--accent-active);
+
+  /* Modality trio + haptic (each base + soft; haptic also hover/active) */
+  --color-auditory: var(--accent-auditory);
+  --color-auditory-soft: var(--accent-auditory-soft);
+  --color-visual: var(--accent-visual);
+  --color-visual-soft: var(--accent-visual-soft);
+  --color-interoceptive: var(--accent-interoceptive);
+  --color-interoceptive-soft: var(--accent-interoceptive-soft);
+  --color-haptic: var(--accent-haptic);
+  --color-haptic-soft: var(--accent-haptic-soft);
+  --color-haptic-hover: var(--accent-haptic-hover);
+  --color-haptic-active: var(--accent-haptic-active);
+
+  /* Feedback */
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-negative: var(--negative);
+  --color-negative-soft: var(--negative-soft);
+
+  /* Borders */
+  --color-border-soft: var(--border-soft);
+  --color-border-mid: var(--border-mid);
+  --color-border-strong: var(--border-strong);
+
+  /* Fonts */
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-stimuli: var(--font-stimuli);
+  --font-stimuli-latin: var(--font-stimuli-latin);
+
+  /* Type ladder (§3) — Latin UI roles, trial-board prompt roles, kana display
+     roles. Line-height companions make each `text-<role>` utility
+     self-contained (bespoke surfaces still set their own leading in app.css). */
+  --text-xs: var(--text-xs);
+  --text-xs--line-height: 1.4;
+  --text-sm: var(--text-sm);
+  --text-sm--line-height: 1.4;
+  --text-base: var(--text-base);
+  --text-base--line-height: 1.5;
+  --text-ui: var(--text-ui);
+  --text-ui--line-height: 1.2;
+  --text-md: var(--text-md);
+  --text-md--line-height: 1.3;
+  --text-lg: var(--text-lg);
+  --text-lg--line-height: 1.2;
+  --text-xl: var(--text-xl);
+  --text-xl--line-height: 1.2;
+  --text-2xl: var(--text-2xl);
+  --text-2xl--line-height: 1.15;
+  --text-prompt: var(--text-prompt);
+  --text-prompt--line-height: 1.3;
+  --text-question: var(--text-question);
+  --text-question--line-height: 1.35;
+  --text-kana-card: var(--text-kana-card);
+  --text-kana-card--line-height: var(--leading-kana);
+  --text-kana-feedback: var(--text-kana-feedback);
+  --text-kana-feedback--line-height: var(--leading-kana);
+  --text-kana-hero: var(--text-kana-hero);
+  --text-kana-hero--line-height: var(--leading-kana);
+  --text-hero: var(--text-hero);
+  --text-hero--line-height: 1.1;
+  --text-xl-form: var(--text-xl-form);
+  --text-xl-form--line-height: 1.15;
+
+  /* Tracking + leading */
+  --tracking-wide: var(--tracking-wide);
+  --leading-kana: var(--leading-kana);
+  --leading-tight: var(--leading-tight);
+  --leading-body: var(--leading-body);
+
+  /* Radii (sm = chips/inline, md = controls + cards, lg = panels, xl mirrors
+     panels for shadcn Card/Dialog defaults, pill = status chips) */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+
+  /* Elevation — instrument voice (card) + overlay only (raised) */
+  --shadow-card: var(--shadow-card);
+  --shadow-raised: var(--shadow-raised);
+
+  /* Container measures (§2.1) — max-w-app / max-w-read / max-w-form */
+  --container-app: var(--container-app);
+  --container-read: var(--container-read);
+  --container-form: var(--container-form);
+}

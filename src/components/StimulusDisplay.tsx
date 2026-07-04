@@ -55,7 +55,12 @@ export default function StimulusDisplay({
         aria-hidden={!showText}
       >
         <span className="card-side-label">{positionLabel}</span>
-        <span className="script-display-text">{scriptText}</span>
+        {/* lang="ja" (§9.2): a rendering attribute so screen readers pick a
+            Japanese voice for the kana. Zero string manipulation — the display
+            form still arrives from the backend verbatim (invariant 3). */}
+        <span className="script-display-text" lang="ja">
+          {scriptText}
+        </span>
         <span className="romaji-display-text">
           {revealDetails ? option.romaji : null}
         </span>

@@ -72,7 +72,11 @@ function ChoiceSummaryCard({
     >
       {title ? <h3>{title}</h3> : null}
       <p className="feedback-side">Card {summary.side}</p>
-      <p className="feedback-display-form">{summary.displayForm}</p>
+      {/* lang="ja" (§9.2): rendering attribute only; the reveal form is the
+          backend value, never derived. */}
+      <p className="feedback-display-form" lang="ja">
+        {summary.displayForm}
+      </p>
       <dl>
         <dt>Romaji</dt>
         <dd>{summary.romaji}</dd>

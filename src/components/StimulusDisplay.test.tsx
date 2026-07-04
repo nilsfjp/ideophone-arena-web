@@ -42,15 +42,28 @@ function render(
   );
 }
 
+// Reads an element's text by its semantic hook (§5 stable-hook contract keeps
+// the hook first in class), tolerant of appended utilities and extra
+// attributes (e.g. lang="ja"). Replaces exact-markup matching per §11.2 while
+// keeping the verbatim-kana assertion (the backend displayForm is rendered,
+// never a client conversion).
+function textOfHook(markup: string, hook: string): string {
+  const at = markup.indexOf(`class="${hook}`);
+  if (at === -1) return "";
+  const open = markup.indexOf(">", at);
+  const close = markup.indexOf("<", open + 1);
+  return markup.slice(open + 1, close).trim();
+}
+
 describe("StimulusDisplay pre-answer rendering", () => {
   it("script-match renders the backend displayForm verbatim", () => {
     const markup = render(matchOption, "CONDITION_2_SOKUON");
-    expect(markup).toContain('<span class="script-display-text">カタカタ</span>');
+    expect(textOfHook(markup, "script-display-text")).toBe("カタカタ");
   });
 
   it("script-mismatch renders the backend displayForm verbatim, not a kana conversion", () => {
     const markup = render(mismatchOption, "CONDITION_3_SOKUON");
-    expect(markup).toContain('<span class="script-display-text">ジャージャー</span>');
+    expect(textOfHook(markup, "script-display-text")).toBe("ジャージャー");
     expect(markup).not.toContain("ジャアジャア");
     expect(markup).not.toContain("じゃあじゃあ");
   });
@@ -68,14 +81,14 @@ describe("StimulusDisplay pre-answer rendering", () => {
 describe("StimulusDisplay feedback reveal", () => {
   it("renders canonicalForm, romaji, and meaning", () => {
     const markup = render(mismatchOption, "CONDITION_3_SOKUON", true, "noisily gushing");
-    expect(markup).toContain('<span class="script-display-text">じゃーじゃー</span>');
-    expect(markup).toContain('<span class="romaji-display-text">zyaazyaa</span>');
-    expect(markup).toContain('<span class="meaning-display-text">noisily gushing</span>');
+    expect(textOfHook(markup, "script-display-text")).toBe("じゃーじゃー");
+    expect(textOfHook(markup, "romaji-display-text")).toBe("zyaazyaa");
+    expect(textOfHook(markup, "meaning-display-text")).toBe("noisily gushing");
   });
 
   it("reveals canonicalForm in the audio-only condition too", () => {
     const markup = render(matchOption, "CONDITION_1_SOKUON", true, "clattering, rattling");
-    expect(markup).toContain('<span class="script-display-text">カタカタ</span>');
-    expect(markup).toContain('<span class="romaji-display-text">katakata</span>');
+    expect(textOfHook(markup, "script-display-text")).toBe("カタカタ");
+    expect(textOfHook(markup, "romaji-display-text")).toBe("katakata");
   });
 });

@@ -169,7 +169,9 @@ describe("TrialPlayer reserved question slot", () => {
     const markup = renderTrialBoard(validRound);
 
     expect(countOccurrences(markup, "Next round")).toBe(1);
-    const slotStart = markup.indexOf('class="question-slot"');
+    // §11.2: locate by class prefix so appended utilities never break the
+    // ordering probe (the hook stays first per §5).
+    const slotStart = markup.indexOf('class="question-slot');
     expect(slotStart).toBeGreaterThan(-1);
     const slotMarkup = markup.slice(slotStart, markup.indexOf("status-line"));
     expect(slotMarkup).toContain(CHOICE_QUESTION_PREFIX);

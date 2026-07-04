@@ -62,8 +62,10 @@ describe("LeaderboardPanel", () => {
     );
 
     expect(markup).toContain("page 1 of 3");
-    expect(markup).toMatch(/<button[^>]*disabled[^>]*>Previous<\/button>/);
-    expect(markup).not.toMatch(/<button[^>]*disabled[^>]*>Next<\/button>/);
+    // Assert the disabled ATTRIBUTE (disabled=""), not the shadcn Button's
+    // `disabled:` utility classes which are always present.
+    expect(markup).toMatch(/<button[^>]*disabled=""[^>]*>Previous<\/button>/);
+    expect(markup).not.toMatch(/<button[^>]*disabled=""[^>]*>Next<\/button>/);
   });
 
   it("disables Next on the last page and enables Previous", () => {
@@ -72,8 +74,8 @@ describe("LeaderboardPanel", () => {
     );
 
     expect(markup).toContain("page 3 of 3");
-    expect(markup).toMatch(/<button[^>]*disabled[^>]*>Next<\/button>/);
-    expect(markup).not.toMatch(/<button[^>]*disabled[^>]*>Previous<\/button>/);
+    expect(markup).toMatch(/<button[^>]*disabled=""[^>]*>Next<\/button>/);
+    expect(markup).not.toMatch(/<button[^>]*disabled=""[^>]*>Previous<\/button>/);
   });
 
   it("shows the empty state before data arrives", () => {

@@ -66,8 +66,10 @@ describe("FeedbackPanel outcome-height parity", () => {
     );
 
     expect(countOccurrences(markup, "feedback-choice-card")).toBe(2);
+    // §11.2: assert the hidden card via its semantic classes + aria-hidden,
+    // tolerant of appended utilities (hook stays first per §5).
     expect(markup).toMatch(
-      /<article class="feedback-choice-card slot-hidden" aria-hidden="true">/,
+      /<article class="feedback-choice-card[^"]*\bslot-hidden\b[^"]*"[^>]*aria-hidden="true"/,
     );
     expect(markup).toContain("You chose");
   });

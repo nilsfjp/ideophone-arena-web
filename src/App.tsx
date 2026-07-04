@@ -20,6 +20,9 @@ import Leaderboard from "./components/Leaderboard";
 import ModeSelect from "./components/ModeSelect";
 import RatingLab from "./components/RatingLab";
 import TrialPlayer from "./components/TrialPlayer";
+import { Button } from "./components/ui/button";
+import { Tabs, TabsList, TabsTrigger } from "./components/ui/tabs";
+import { Toaster } from "./components/ui/sonner";
 import { MODES, type ModeId } from "./modes";
 
 const USERNAME_STORAGE_KEY = "ideophone-arena-username";
@@ -344,80 +347,63 @@ export default function App() {
             </dl>
 
             <div className="completion-actions">
-              <button className="primary-button" type="button" onClick={handleStart}>
+              <Button type="button" onClick={handleStart}>
                 Play again
-              </button>
+              </Button>
               {/* A completed session always leaves encountered words, so the
                   Rating Lab entry no longer needs a local pool check. */}
-              <button
-                className="secondary-button"
+              <Button
+                variant="secondary"
                 type="button"
                 onClick={() => setView("rating")}
               >
                 Rate these words
-              </button>
-              <button
-                className="secondary-button"
-                type="button"
-                onClick={handleBackToHome}
-              >
+              </Button>
+              <Button variant="secondary" type="button" onClick={handleBackToHome}>
                 Back to modes
-              </button>
-              <button
-                className="secondary-button"
+              </Button>
+              <Button
+                variant="secondary"
                 type="button"
                 onClick={() => setCompletionScoreView("leaderboard")}
               >
                 View leaderboard
-              </button>
+              </Button>
               {auth ? (
-                <button
-                  className="secondary-button"
+                <Button
+                  variant="secondary"
                   type="button"
                   onClick={() => setCompletionScoreView("attempts")}
                 >
                   View my attempts
-                </button>
+                </Button>
               ) : null}
             </div>
           </section>
 
-          <div
-            className="completion-tabs"
-            role="tablist"
+          {/* Completion score-view switcher as shadcn Tabs (chrome, §5),
+              controlled by completionScoreView. The Leaderboard renders below
+              (not in a TabsContent) so the existing fetch/render flow and the
+              browser-loop's text-based tab click both keep working. */}
+          <Tabs
+            value={completionScoreView}
+            onValueChange={(value) =>
+              setCompletionScoreView(value as CompletionScoreView)
+            }
+            className="items-center mt-5"
             aria-label="Completion score views"
           >
-            <button
-              aria-controls="leaderboard-panel"
-              aria-selected={completionScoreView === "leaderboard"}
-              className={
-                completionScoreView === "leaderboard"
-                  ? "tab-button active"
-                  : "tab-button"
-              }
-              role="tab"
-              type="button"
-              onClick={() => setCompletionScoreView("leaderboard")}
-            >
-              Leaderboard
-            </button>
-            {auth ? (
-              <button
-                aria-controls="attempts-panel"
-                aria-selected={completionScoreView === "attempts"}
-                className={
-                  completionScoreView === "attempts"
-                    ? "tab-button active"
-                    : "tab-button"
-                }
-                role="tab"
-                type="button"
-                onClick={() => setCompletionScoreView("attempts")}
-              >
-                Recent attempts
-              </button>
-            ) : null}
-          </div>
+            <TabsList className="completion-tabs">
+              <TabsTrigger value="leaderboard" aria-controls="leaderboard-panel">
+                Leaderboard
+              </TabsTrigger>
+              {auth ? (
+                <TabsTrigger value="attempts" aria-controls="attempts-panel">
+                  Recent attempts
+                </TabsTrigger>
+              ) : null}
+            </TabsList>
+          </Tabs>
 
           <Leaderboard
             isAuthenticated={Boolean(auth)}
@@ -455,13 +441,13 @@ export default function App() {
         <p>Start a session to fetch the first round.</p>
         {error ? <p className="error-text centered">{error}</p> : null}
         <div className="completion-actions">
-          <button className="primary-button" type="button" onClick={handleStart}>
+          <Button type="button" onClick={handleStart}>
             Start New Game
-          </button>
+          </Button>
           {error ? (
-            <button className="secondary-button" type="button" onClick={handleBackToStart}>
+            <Button variant="secondary" type="button" onClick={handleBackToStart}>
               Back to start
-            </button>
+            </Button>
           ) : null}
         </div>
       </section>
@@ -482,9 +468,9 @@ export default function App() {
         {auth ? (
           <div className="user-controls">
             <span>{auth.username}</span>
-            <button className="secondary-button" type="button" onClick={handleLogout}>
+            <Button variant="ghost" size="sm" type="button" onClick={handleLogout}>
               Logout
-            </button>
+            </Button>
           </div>
         ) : null}
       </header>
@@ -495,6 +481,11 @@ export default function App() {
         ) : null}
         {renderMain()}
       </main>
+
+      {/* Chrome-level toast layer (§5): themed and mounted, staged like the
+          Dialog primitive. In-trial status lines stay reserved slots — no toast
+          triggers are wired this session (zero behavior change). */}
+      <Toaster />
     </div>
   );
 }

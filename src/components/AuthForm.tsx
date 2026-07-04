@@ -2,6 +2,9 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { login, register } from "../api/client";
 import type { AuthResponse } from "../api/types";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 
 type AuthMode = "login" | "register";
 
@@ -38,32 +41,32 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
 
   return (
     <section className="auth-panel" aria-labelledby="auth-title">
-      <div className="auth-tabs" role="tablist" aria-label="Authentication mode">
-        <button
-          type="button"
-          className={mode === "login" ? "tab-button active" : "tab-button"}
-          onClick={() => setMode("login")}
-        >
-          Login
-        </button>
-        <button
-          type="button"
-          className={mode === "register" ? "tab-button active" : "tab-button"}
-          onClick={() => setMode("register")}
-        >
-          Register
-        </button>
-      </div>
+      {/* shadcn Tabs as the login/register switcher (chrome, §5). The triggers
+          stay <button>s carrying "Login"/"Register" so the browser loop's
+          text-based tab click keeps resolving. */}
+      <Tabs
+        value={mode}
+        onValueChange={(value) => setMode(value as AuthMode)}
+        className="items-center mb-6"
+        aria-label="Authentication mode"
+      >
+        <TabsList className="auth-tabs">
+          <TabsTrigger value="login">Login</TabsTrigger>
+          <TabsTrigger value="register">Register</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       <h1 id="auth-title">Ideophone Arena</h1>
       <p className="muted">
         Choose the Japanese ideophone that best matches the target meaning.
       </p>
 
+      {/* Native wrapping labels keep the input a descendant of its label — the
+          browser loop associates fields by label text, not htmlFor. */}
       <form className="auth-form" onSubmit={handleSubmit}>
         <label>
           Username
-          <input
+          <Input
             autoComplete="username"
             minLength={3}
             required
@@ -75,7 +78,7 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
         {mode === "register" ? (
           <label>
             Email
-            <input
+            <Input
               autoComplete="email"
               required
               type="email"
@@ -87,10 +90,8 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
 
         <label>
           Password
-          <input
-            autoComplete={
-              mode === "login" ? "current-password" : "new-password"
-            }
+          <Input
+            autoComplete={mode === "login" ? "current-password" : "new-password"}
             minLength={8}
             required
             type="password"
@@ -101,9 +102,9 @@ export default function AuthForm({ onAuthenticated }: AuthFormProps) {
 
         {error ? <p className="error-text">{error}</p> : null}
 
-        <button className="primary-button" disabled={isSubmitting} type="submit">
+        <Button disabled={isSubmitting} type="submit">
           {isSubmitting ? "Working..." : mode === "login" ? "Login" : "Register"}
-        </button>
+        </Button>
       </form>
     </section>
   );

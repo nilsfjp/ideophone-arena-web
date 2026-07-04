@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup — Landing hero + numbers strip · NIL-64 / NIL-43</title>
+<!-- MOCKUP ONLY. Narrative per UI-SYSTEM.md §10.5; every stat traces to
+     thesis-facts.md (§3, §4, §9). Wave-rule motif = ledger L5; the hero kana
+     specimen (きらきら, practice-set adjacent authored literal) previews ledger L4 —
+     delete the .kana-specimen block to see the L4="ban" variant. Font substitution
+     as in the other mockups. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --surface-page:#e8e3d9; --surface-card:#fbf8f2; --surface-raised:#ffffff;
+  --ink-primary:#211e19; --ink-muted:#5e5749; --ink-inverse:#fbf8f2;
+  --accent:#c8401f; --accent-hover:#b23618;
+  --accent-auditory:#8a5512; --accent-visual:#99454f; --accent-interoceptive:#386376;
+  --border-mid:#867f70; --border-soft:#c9c2b4;
+  --font-display:"Zen Maru Gothic",sans-serif; --font-body:"Zen Kaku Gothic New",sans-serif;
+  --text-xs:.8rem; --text-sm:.92rem; --text-base:1rem; --text-ui:1.1rem; --text-md:1.2rem;
+  --text-lg:1.45rem; --text-xl:1.75rem; --text-2xl:2.55rem;
+  --text-hero:clamp(2.2rem,5vw,3.4rem);
+  --text-kana-hero:clamp(3.2rem,9vw,5.4rem);
+  --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.5rem; --space-6:2rem; --space-7:3rem; --space-8:4rem;
+  --radius-md:7px; --radius-pill:999px; --tracking-wide:.04em;
+  --shadow-card:0 1px 2px rgba(33,30,25,.08),0 2px 8px rgba(33,30,25,.06);
+  --container-read:760px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface-page);color:var(--ink-primary);font-family:var(--font-body);line-height:1.45}
+.site-header{display:flex;align-items:center;justify-content:space-between;min-height:62px;
+  padding:.75rem 2rem;background:var(--surface-card);border-bottom:1px solid var(--border-soft)}
+.site-title{font-family:var(--font-display);font-weight:700;font-size:var(--text-lg)}
+.header-cta{min-height:44px;padding:.55rem 1rem;border:1px solid var(--border-mid);border-radius:var(--radius-md);
+  background:var(--surface-raised);font-size:var(--text-ui);font-weight:700;cursor:pointer;font-family:inherit;color:inherit}
+/* Hero */
+.hero{padding:var(--space-8) var(--space-4)}
+.hero-inner{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:var(--space-6);
+  align-items:center;width:min(100%,1120px);margin:0 auto}
+.hero h1{margin:0 0 var(--space-3);font-family:var(--font-display);font-size:var(--text-hero);line-height:1.12}
+.wave-rule{display:block;margin:0 0 var(--space-4)}
+.hero-sub{margin:0 0 var(--space-5);max-width:52ch;color:var(--ink-muted);font-size:var(--text-md)}
+.cta-row{display:flex;flex-wrap:wrap;gap:var(--space-3)}
+.primary-button{min-height:44px;padding:.7rem 1.4rem;border:1px solid transparent;border-radius:var(--radius-md);
+  background:var(--accent);color:var(--ink-inverse);font-size:var(--text-ui);font-weight:700;cursor:pointer;font-family:inherit}
+.primary-button:hover{background:var(--accent-hover)}
+.ghost-button{min-height:44px;padding:.7rem 1.2rem;border:1px solid var(--border-mid);border-radius:var(--radius-md);
+  background:transparent;color:var(--ink-primary);font-size:var(--text-ui);font-weight:700;cursor:pointer;font-family:inherit}
+.primary-button:focus-visible,.ghost-button:focus-visible,.header-cta:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.hero-motif{position:relative;display:grid;place-items:center;min-height:240px}
+.kana-specimen{position:relative;font-family:var(--font-display);font-weight:700;
+  font-size:var(--text-kana-hero);line-height:1.05;text-align:center}
+.kana-specimen small{display:block;margin-top:var(--space-2);color:var(--ink-muted);
+  font-family:var(--font-body);font-size:var(--text-xs);font-weight:700;letter-spacing:var(--tracking-wide);text-transform:uppercase}
+/* Numbers strip */
+.numbers{padding:var(--space-7) var(--space-4);background:var(--surface-card);
+  border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft)}
+.numbers-inner{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--space-4);
+  width:min(100%,1120px);margin:0 auto}
+/* raised FILL for contrast on the washi strip, but no shadow — §1: shadow is the
+   instrument's voice, and the landing is chrome */
+.stat-card{padding:var(--space-4);background:var(--surface-raised);border:1px solid var(--border-soft);
+  border-radius:var(--radius-md)}
+.stat-card .specimen{color:var(--ink-muted);font-size:var(--text-xs);font-weight:700;
+  letter-spacing:var(--tracking-wide);text-transform:uppercase}
+.stat-figure{margin:var(--space-2) 0 var(--space-1);font-family:var(--font-display);
+  font-size:var(--text-2xl);font-weight:700;line-height:1}
+.stat-card p{margin:0;color:var(--ink-muted);font-size:var(--text-sm)}
+.stat-figure .mod-a{color:var(--accent-auditory)}
+.stat-figure .mod-v{color:var(--accent-visual)}
+.stat-figure .mod-i{color:var(--accent-interoceptive)}
+.stat-figure .arrow{color:var(--border-mid);font-size:.6em;vertical-align:.25em}
+/* Dissociation strip */
+.dissoc{padding:var(--space-7) var(--space-4)}
+.dissoc-inner{width:min(100%,var(--container-read));margin:0 auto;text-align:left}
+.dissoc h2{margin:0 0 var(--space-2);font-family:var(--font-display);font-size:var(--text-xl)}
+.dissoc p{margin:0 0 var(--space-3);max-width:60ch}
+.dissoc .kicker{color:var(--ink-muted)}
+.dissoc strong.claim{white-space:nowrap}
+.footnote{color:var(--ink-muted);font-size:var(--text-sm)}
+.provenance{padding:var(--space-5) var(--space-4);border-top:1px solid var(--border-soft);
+  color:var(--ink-muted);font-size:var(--text-sm);text-align:center}
+@media (max-width:860px){
+  .hero{padding:var(--space-6) var(--space-4)}
+  .hero-inner{grid-template-columns:1fr}
+  .hero-motif{order:-1;min-height:150px}
+}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <span class="site-title">Ideophone Arena</span>
+  <button class="header-cta" type="button">Log in</button>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <h1>You've never studied Japanese. You'll still get most of these right.</h1>
+      <svg class="wave-rule" width="180" height="14" viewBox="0 0 180 14" aria-hidden="true">
+        <path d="M2 7 L14 7 L20 2 L30 12 L40 3 L50 11 L58 7 L94 7 L100 4 L108 10 L114 7 L178 7"
+              fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <p class="hero-sub">Ideophone Arena is a live replication of a real experiment on sound symbolism —
+        Japanese words whose shape carries their meaning. Guess, rate, and see how far your ear takes you
+        before convention takes over.</p>
+      <div class="cta-row">
+        <button class="primary-button" type="button">Prove it — play a round</button>
+        <button class="ghost-button" type="button">Read the research</button>
+      </div>
+    </div>
+    <div class="hero-motif">
+      <div class="kana-specimen" lang="ja">
+        ガタン
+        <small>gatan · with a bang — hear it?</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="numbers">
+  <div class="numbers-inner">
+    <div class="stat-card">
+      <span class="specimen">Choosing task · N = 36</span>
+      <p class="stat-figure">64%</p>
+      <p>mean guessing accuracy for people with zero Japanese. Pure chance would be 50%. Can you beat the cohort?</p>
+    </div>
+    <div class="stat-card">
+      <span class="specimen">Accuracy by sense</span>
+      <p class="stat-figure"><span class="mod-a">Sound</span> <span class="arrow">▶</span> <span class="mod-v">Sight</span> <span class="arrow">▶</span> <span class="mod-i">Inner&nbsp;states</span></p>
+      <p>accuracy slides from 6.86 to 6.42 to 5.97 out of 10 as meanings turn inward.</p>
+    </div>
+    <div class="stat-card">
+      <span class="specimen">The hardest word</span>
+      <p class="stat-figure">36%</p>
+      <p><em>shobon</em> (downhearted) — the one word the cohort guessed worse than a coin flip.</p>
+    </div>
+  </div>
+</section>
+
+<section class="dissoc">
+  <div class="dissoc-inner">
+    <h2>Your gut and your reflection disagree.</h2>
+    <svg class="wave-rule" width="120" height="14" viewBox="0 0 120 14" aria-hidden="true">
+      <path d="M2 7 L10 7 L16 3 L26 11 L34 4 L42 10 L48 7 L118 7"
+            fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <p><em>dokidoki</em> — a racing heartbeat — was rated the most word-like word in the whole study.
+      People still couldn't reliably guess it. <strong class="claim">Ratings detect ideophone-ness; guessing doesn't.</strong></p>
+    <p class="footnote">Across scales the two measures correlate at ρ ≈ +.44 / +.65 — related, far from interchangeable.
+      That gap is what the Rating Lab measures.</p>
+  </div>
+</section>
+
+<footer class="provenance">
+  Built on the author's MA thesis data — every number on this page is from the study.
+  Dingemanse (2012) · McLean (2021) · McLean, Dunn &amp; Dingemanse (2023)
+</footer>
+</body>
+</html>

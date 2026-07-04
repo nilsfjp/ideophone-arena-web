@@ -457,3 +457,96 @@ None.
 Next single task:
 NIL-62 free-form-entry build, from the kickoff prompt the NIL-57 architecture session emits (NIL-57 itself is a
 chat session, not Claude Code).
+
+## 2026-07-04 (NIL-65)
+
+Session goal:
+Land the adopted `docs/specs/UI-SYSTEM.md` (NIL-64): migrate to Tailwind v4 + selective shadcn/ui chrome, restyle
+the bespoke experiment surfaces on the same tokens, add the §11.3 guards, and carry the two named riders — all
+presentation-layer, zero behavior change otherwise.
+
+Changed:
+- Wiring: `vite.config.ts` (@tailwindcss/vite plugin). `tokens.css` rewritten hex→`oklch()` with hex provenance
+  comments (all round-trip byte-identical; verified), plus the new token groups — §3.2 `--text-prompt/-question`,
+  §3.3 kana-hero/hero/xl-form + `--font-stimuli-latin`, §4.4 KOKE `--accent-haptic{,-soft,-hover,-active}`
+  (ledger L1), §7 `--motion-micro/reveal/spin`, §2.1 `--container-app/read/form`. New `src/styles/theme.css`
+  (`@theme inline` mapping tokens→Tailwind namespaces by `var()` reference, zero value duplication) and
+  `src/styles/shadcn-bridge.css` (shadcn var→token bridge; deliberately omits shadcn's `--accent` to avoid the
+  documented collision with our vermillion `--accent`). `src/lib/utils.ts` (`cn` via `extendTailwindMerge`).
+- Tailwind imported WITHOUT preflight and legacy `app.css` wrapped in `@layer app` (deviation from §4.6's
+  illustrative `@import "tailwindcss"`): preserves the reserved-slot geometry (invariant 5) that preflight would
+  reset, while utilities still win where shadcn chrome appends them. The button chrome preflight would have reset
+  is neutralized by one global `button { appearance:none; background:transparent; border:0 solid }` rule.
+- shadcn component set (`src/components/ui/*`): Button, Card, Input, Label, Tabs, Table, Dialog, Checkbox, sonner
+  — hand-authored Tailwind-v4 style, themed via the bridge, motion `motion-safe:`-gated, vermillion outline focus
+  (§6), inline Lucide SVG paths (no icon dep), no tw-animate-css.
+- Chrome → shadcn: AuthForm (Tabs/Input/Button), Leaderboard (Table + Button pager), completion actions/score-view
+  switcher (Button + Tabs), logout (ghost Button), Instructions Start/Sound-check/Back (Button); `<Toaster/>`
+  mounted (themed, staged — no triggers wired). Dialog staged (unused this session).
+- Bespoke deltas in `app.css`: §1 surface grammar (complete/error panels → washi+border, no shadow;
+  rating-reveal gains `--shadow-card`; condition options rest→washi + hover-lift); §3.2 prompt/question tokens
+  (media-query font literals removed, clamps subsume them); §7 motion gated (progress-track transition +
+  interactive-surface transitions all `prefers-reduced-motion: no-preference`); §2.1 container tokens; §2.3
+  six-mode shell (auto-fill grid, measure chip, reserved status slot). Reserved-slot constants (§2.4) byte-unchanged.
+- Rename sweep (§10.2, chrome literals only): `modes.ts` (Meaning Match / Rating Lab / Perception Ladder + measure
+  chips), `Instructions` h1, `RatingLab` "Choosing Task"→"Meaning Match" (4 player-facing spots). Internal ids /
+  API values / frozen `experimentText.ts` untouched. `verify-browser-loop.mjs` mode-name assertions updated to
+  the adopted slate (required — the loop asserts those literals).
+- Riders: (a) `labRecord.ts` word-meta cache (`rememberWordMeta`/`readWordMeta` + 4th `fallbackMeta` param on
+  `buildLabRecordRows`) so a word rated in an earlier visit still shows romaji/gloss when divergence fails and it
+  has left the pool; wired in `RatingLab`. (b) `lang="ja"` on the kana display elements (StimulusDisplay
+  `.script-display-text`, FeedbackPanel `.feedback-display-form`) — attribute only.
+- Test repairs (§11.2): FeedbackPanel/StimulusDisplay/TrialPlayer/Leaderboard/Instructions component tests +
+  `verify-presentation-logic.mjs` moved from exact-markup to hook/prefix/attribute idioms; the shadcn Button's
+  `disabled:` utility classes forced the disabled checks to assert the `disabled=""` attribute. New guards:
+  `src/semanticHooks.test.tsx` (stable-hook contract) and `scripts/verify-token-purity.mjs` (hex + motion-gate).
+- Deviations (browser-loop compatibility, consistent with each other): Instructions practice toggle stays a native
+  `input[type=checkbox]` (Radix Checkbox has no `input`, which the loop queries); AuthForm inputs stay descendants
+  of native `<label>` (loop associates by wrapping); mode cards stay `<button class="mode-card">`. The auth/
+  completion Tabs ARE shadcn Radix — the loop's two tab activations were switched from `element.click()` to
+  focus+Enter (`trustedPressEnterOnText`), which Radix activates on `onFocus` and which is immune to the mobile
+  coordinate drift; `element.click()` fires no mousedown so Radix ignored it.
+
+Proof:
+- `npm run lint` clean; `npm run build` (tsc -b + vite) clean; `npx vitest run` → 83 passed (15 files, +2:
+  semantic-hook contract, lab-record fallback); `node scripts/verify-presentation-logic.mjs` → "Presentation logic
+  verified."; `node scripts/verify-token-purity.mjs` → "Token purity and motion gating verified."
+- `node scripts/verify-browser-loop.mjs` full green at desktop (explicit 1280px) AND 375px against the live
+  backend + fresh Vite dev server, headless Edge CDP:
+  - 1280px: 32 rounds, 2 practice served first, first scored round Round 1/30 score 0/0, all 5 phase geometries
+    stable (invariant 5), meaning-order both directions (16/16), refetch stable, audio-only 2 placeholders /
+    0 visible media, pool parity 60→59, leaderboard 10 rows + pager page 1/8, recent-attempts tab OK, no
+    horizontal overflow (1265≤1280), 0 relevant console errors.
+  - 375px: 32 rounds, 5 phase geometries stable, both meaning orders (15/17), rating 7/7 + reveal, pool parity
+    60→59, recent-attempts tab OK, no overflow (388≤388), 0 console errors, 0 muted media, 0 stale controls.
+- Screenshots captured both viewports (`/tmp/{practice-round,feedback-correct,feedback-incorrect,leaderboard,
+  leaderboard-page-2}-{1280px,375px}.png`); trial-board geometry sampler passed (reserved slots identical across
+  phases at both viewports). §4.5 contrast spot-check: default Button text computes to `--ink-inverse` (light) on
+  `--accent` (verified via CDP getComputedStyle) after the merge fix below.
+- Adversarial multi-lens review workflow (12 agents) over the diff surfaced 2 confirmed defects, both fixed and
+  re-verified: (1) omitted preflight left shadcn fill/ghost/link + TabsTrigger with native UA button chrome →
+  fixed by the global `button` appearance reset (verified: `appearance:none`, `border-top-width:0`, clean
+  vermillion CTA screenshot); (2) `verify-token-purity.mjs` hex strip regex was consuming all 4/6/8-digit hex →
+  guard silently missed `#rrggbb` → fixed (strip removed, `\b` handles SHA runs, `/styleguide` skipped;
+  self-tested). A third defect found in visual verification: `tailwind-merge` conflated `text-ui` (custom size)
+  with `text-ink-inverse` (color) and dropped the color → black button text → fixed via `extendTailwindMerge`
+  registering the custom font-size roles (verified live: color back to ink-inverse).
+
+Result:
+Complete. The app is on Tailwind v4 with themed shadcn chrome and bespoke surfaces restyled on the same tokens;
+full proof battery green at desktop and 375px; the "ink and paper" identity, surface grammar, and reserved-slot
+geometry all hold. 28B / NIL-63 / NIL-62 / NIL-43 build on this foundation. Post-build `.design-sync` chores
+(spec §12: re-run build-css, re-validate conventions.md, fix stale componentSrcMap rows) are deferred to a
+follow-up per the spec — NOT run this session.
+
+Commit:
+Not committed (commits are the user's — expected). Uncommitted tree: 22 modified + untracked `src/components/ui/`,
+`src/lib/`, `src/styles/{theme,shadcn-bridge}.css`, `src/semanticHooks.test.tsx`, `scripts/verify-token-purity.mjs`,
+`pnpm-lock.yaml`, plus the pre-existing doc additions (`docs/specs/UI-SYSTEM.md`, `docs/design/`).
+
+Blocker:
+None.
+
+Next single task:
+NIL-63 per-card replay build per `UI-SYSTEM.md` §8 (icon replay button in `IdeophoneCard`, `--motion-spin`, kana-
+measure guard, browser-loop replay waypoint), on this Tailwind/shadcn foundation.

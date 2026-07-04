@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup — Mode select (six-mode shell) · NIL-64</title>
+<!-- MOCKUP ONLY. Font substitution: LINE Seed JP is self-hosted in the app (not on
+     Google Fonts); this mockup stands in Zen Kaku Gothic New for body and Zen Maru
+     Gothic for display/kana. Composition, not font fidelity, is under review.
+     Tokens = UI-SYSTEM.md §4 drafted values. Haptic dot shows the §4.4 TSUCHI
+     recommendation (ledger L1, pending). -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;700&family=Zen+Maru+Gothic:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --surface-page:#e8e3d9; --surface-card:#fbf8f2; --surface-raised:#ffffff;
+  --ink-primary:#211e19; --ink-muted:#5e5749; --ink-inverse:#fbf8f2;
+  --accent:#c8401f; --accent-hover:#b23618; --accent-active:#9e3015;
+  --accent-auditory:#8a5512; --accent-visual:#99454f; --accent-interoceptive:#386376;
+  --accent-haptic:#5d6a2a; /* KOKE, adopted L1 2026-07-03 */
+  --border-mid:#867f70; --border-soft:#c9c2b4;
+  --font-display:"Zen Maru Gothic",sans-serif; --font-body:"Zen Kaku Gothic New",sans-serif;
+  --text-xs:.8rem; --text-sm:.92rem; --text-base:1rem; --text-md:1.2rem; --text-lg:1.45rem; --text-2xl:2.55rem;
+  --space-1:.25rem; --space-2:.5rem; --space-3:.75rem; --space-4:1rem; --space-5:1.5rem; --space-6:2rem;
+  --radius-md:7px; --radius-pill:999px; --tracking-wide:.04em;
+  --container-read:760px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--surface-page);color:var(--ink-primary);font-family:var(--font-body)}
+.site-header{display:flex;align-items:center;justify-content:space-between;min-height:62px;
+  padding:.75rem 2rem;background:var(--surface-card);border-bottom:1px solid var(--border-soft)}
+.site-title{font-family:var(--font-display);font-weight:700;font-size:var(--text-lg)}
+.user-controls{color:var(--ink-muted);font-size:var(--text-sm)}
+.mode-select{width:min(100%,var(--container-read));margin:0 auto;padding:var(--space-5) var(--space-4) var(--space-6);text-align:center}
+.mode-select h1{margin:0 0 var(--space-2);font-family:var(--font-display);font-size:var(--text-2xl);line-height:1.15}
+.mode-select>p{margin:0 0 var(--space-6);color:var(--ink-muted)}
+.mode-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--space-4);text-align:left}
+.mode-card{display:grid;grid-template-rows:auto auto 1fr auto;align-items:start;gap:var(--space-2);
+  padding:var(--space-4);border:1px solid var(--border-mid);border-radius:var(--radius-md);
+  background:var(--surface-card);color:var(--ink-primary);text-align:left;cursor:pointer;font:inherit}
+@media (prefers-reduced-motion:no-preference){.mode-card{transition:border-color 150ms ease-out,background-color 150ms ease-out}}
+.mode-card:hover:not(:disabled){border-color:var(--accent);background:var(--surface-raised)}
+.mode-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mode-card:disabled{cursor:not-allowed;border-color:var(--border-soft);color:var(--ink-muted)}
+.specimen{display:inline-block;justify-self:start;color:var(--ink-muted);font-size:var(--text-xs);
+  font-weight:700;letter-spacing:var(--tracking-wide);text-transform:uppercase}
+.specimen.tinted{color:var(--accent)}
+.mode-card-title{font-family:var(--font-display);font-size:var(--text-md);font-weight:700;line-height:1.2}
+.mode-card-copy{color:var(--ink-muted);font-size:var(--text-sm);line-height:1.45}
+.mode-card:disabled .mode-card-title{color:var(--ink-muted)}
+.status-slot{min-height:1.6rem;display:flex;align-items:center;gap:var(--space-2)}
+.pill{display:inline-block;padding:var(--space-1) var(--space-2);border:1px solid var(--border-soft);
+  border-radius:var(--radius-pill);color:var(--ink-muted);font-size:var(--text-xs);font-weight:700;
+  letter-spacing:var(--tracking-wide);text-transform:uppercase}
+.floor-dots{display:inline-flex;gap:6px}
+.floor-dots i{width:.65rem;height:.65rem;border-radius:50%;display:inline-block}
+</style>
+</head>
+<body>
+<header class="site-header">
+  <span class="site-title">Ideophone Arena</span>
+  <span class="user-controls">nils · Log out</span>
+</header>
+
+<main class="mode-select">
+  <h1>Choose a mode</h1>
+  <p>Pick how you want to explore Japanese ideophones today.</p>
+
+  <div class="mode-list">
+    <button class="mode-card" type="button">
+      <span class="specimen tinted">Measure · Guessing</span>
+      <span class="mode-card-title">Meaning Match</span>
+      <span class="mode-card-copy">Hear two Japanese words, then choose the card that best fits the target meaning. Script Lab lives here.</span>
+      <span class="status-slot"></span>
+    </button>
+
+    <button class="mode-card" type="button">
+      <span class="specimen tinted">Measure · Reflection</span>
+      <span class="mode-card-title">Rating Lab</span>
+      <span class="mode-card-copy">Listen again to words you have met and rate how much each one resembles its meaning.</span>
+      <span class="status-slot"></span>
+    </button>
+
+    <button class="mode-card" type="button" disabled>
+      <span class="specimen">Journey · Perception</span>
+      <span class="mode-card-title">Perception Ladder</span>
+      <span class="mode-card-copy">Work through words for sounds, sights, and inner feelings, one rung at a time.</span>
+      <span class="status-slot">
+        <span class="pill">Coming soon</span>
+        <span class="floor-dots" title="Floors: sound, sight, inner states, touch (haptic = KOKE, adopted L1)">
+          <i style="background:#8a5512"></i><i style="background:#99454f"></i><i style="background:#386376"></i><i style="background:#5d6a2a"></i>
+        </span>
+      </span>
+    </button>
+
+    <button class="mode-card" type="button" disabled>
+      <span class="specimen">Measure · Production</span>
+      <span class="mode-card-title">Word Mint</span>
+      <span class="mode-card-copy">Coin your own ideophone for a meaning, then see how close your instincts run to real Japanese.</span>
+      <span class="status-slot"><span class="pill">Coming soon</span></span>
+    </button>
+
+    <button class="mode-card" type="button" disabled>
+      <span class="specimen">Structure · Patterns</span>
+      <span class="mode-card-title">Word Anatomy</span>
+      <span class="mode-card-copy">Probe the anatomy of ideophones — which word doubles, snaps short, or hums long, and what that shape tends to mean.</span>
+      <span class="status-slot"><span class="pill">Coming soon</span></span>
+    </button>
+
+    <button class="mode-card" type="button" disabled>
+      <span class="specimen">Transfer · 5 languages</span>
+      <span class="mode-card-title">Lingua Quest</span><!-- name pair unresolved: Lingua Quest / Polyglot Challenge, pick at XL kickoff -->
+      <span class="mode-card-copy">Siwu, Ewe, Semai, Korean, Japanese — languages you have never heard. Does your ear still carry you?</span>
+      <span class="status-slot"><span class="pill">Coming soon</span></span>
+    </button>
+  </div>
+</main>
+</body>
+</html>

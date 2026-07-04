@@ -402,8 +402,10 @@ try {
     1,
     "the meaning line should render exactly once with a bold meaning",
   );
+  // §11.2: count by class prefix so appended Tailwind utilities never break
+  // the tally (the semantic hook stays first per the §5 contract).
   assertEqual(
-    countOccurrences(ratingMarkup, 'class="rating-scale-button"'),
+    (ratingMarkup.match(/class="rating-scale-button[ "]/g) ?? []).length,
     7,
     "the rating scale should render exactly seven buttons",
   );
@@ -414,6 +416,9 @@ try {
       `the rating trial must not leak "${leaked}" — the stimulus stays audio-only`,
     );
   }
+  // §11.2: the "rating-reveal slot-hidden" adjacency survives because the §5
+  // stable-hook contract keeps the semantic classes first (utilities, if any,
+  // are appended after slot-hidden — never between the two hooks).
   for (const slot of ["rating-reveal slot-hidden", "status-line"]) {
     assertEqual(
       ratingMarkup.includes(slot),

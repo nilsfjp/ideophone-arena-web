@@ -31,7 +31,12 @@ import {
   RATING_SENTENCE_END,
   RATING_WHILE,
 } from "../experimentText";
-import { buildLabRecordRows, type LabRecordRow } from "../labRecord";
+import {
+  buildLabRecordRows,
+  readWordMeta,
+  rememberWordMeta,
+  type LabRecordRow,
+} from "../labRecord";
 import { fetchRatingPool, type RatingPoolWord } from "../ratingPool";
 import { resolveStimulusSource } from "../stimulusMedia";
 import StimulusPlayback from "./StimulusPlayback";
@@ -149,6 +154,26 @@ export default function RatingLab({
       setReveal(null);
       setStatusMessage("");
 
+      // Remember each word's romaji/gloss while it is still rateable, so the
+      // lab record can fall back to it on a later visit if divergence fails
+      // (NIL-65 rider). Pool words carry both; divergence adds any it has.
+      rememberWordMeta(
+        poolWords.map((word) => ({
+          ideophoneId: word.ideophoneId,
+          romaji: word.romaji,
+          gloss: word.meaning,
+        })),
+      );
+      if (divergence) {
+        rememberWordMeta(
+          [...divergence.values()].map((row) => ({
+            ideophoneId: row.ideophoneId,
+            romaji: row.romaji,
+            gloss: row.gloss,
+          })),
+        );
+      }
+
       if (poolWords.length === 0 && ratingsMap.size === 0) {
         setPhase("empty");
       } else if (unrated.length === 0) {
@@ -202,6 +227,13 @@ export default function RatingLab({
       .then((rows) => {
         const refreshed = toDivergenceMap(rows);
         setDivergenceMap(refreshed);
+        rememberWordMeta(
+          rows.map((row) => ({
+            ideophoneId: row.ideophoneId,
+            romaji: row.romaji,
+            gloss: row.gloss,
+          })),
+        );
         setReveal((current) =>
           current
             ? {
@@ -374,7 +406,7 @@ export default function RatingLab({
     return (
       <RatingDonePanel
         hasQueueRun={queue.length > 0}
-        rows={buildLabRecordRows(existingRatings, divergenceMap, pool)}
+        rows={buildLabRecordRows(existingRatings, divergenceMap, pool, readWordMeta())}
         onBackToHome={onBackToHome}
       />
     );
@@ -721,8 +753,8 @@ export function RatingDonePanel({
       <h1 id="rating-done-title">Rating Lab</h1>
       <p>
         {hasQueueRun
-          ? "That is every word you have encountered so far. New words join the lab whenever you play the Choosing Task."
-          : "You have rated every word you have encountered so far. New words join the lab whenever you play the Choosing Task."}
+          ? "That is every word you have encountered so far. New words join the lab whenever you play Meaning Match."
+          : "You have rated every word you have encountered so far. New words join the lab whenever you play Meaning Match."}
       </p>
 
       <LabRecordPanel rows={rows} />
@@ -749,13 +781,13 @@ export function RatingEmptyState({
     <section className="complete-panel rating-empty" aria-labelledby="rating-empty-title">
       <h1 id="rating-empty-title">Rating Lab</h1>
       <p>
-        The Rating Lab works with words you have already met. Play the Choosing
-        Task first — every word you hear there becomes available to rate.
+        The Rating Lab works with words you have already met. Play Meaning
+        Match first — every word you hear there becomes available to rate.
       </p>
 
       <div className="completion-actions">
         <button className="primary-button" type="button" onClick={onGoToChoosing}>
-          Go to the Choosing Task
+          Go to Meaning Match
         </button>
         <button className="secondary-button" type="button" onClick={onBackToHome}>
           Back to modes

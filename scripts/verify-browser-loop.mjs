@@ -398,7 +398,11 @@ async function run() {
   // Retry the click: right after Page.reload the auth-screen text can match
   // the pre-reload DOM while the new document is still mounting (seen on a
   // cold Vite + fresh browser profile).
-  await waitFor(() => clickText(ws, "Register"), "Register tab");
+  // The auth mode switcher is now a shadcn (Radix) Tabs control, whose triggers
+  // activate on real focus/mousedown, not on a synthetic element.click(). Drive
+  // it with focus+Enter (Radix activates on onFocus) — immune to the mobile-
+  // emulation coordinate drift that makes pointer dispatch miss at 375px.
+  await waitFor(() => trustedPressEnterOnText(ws, "Register"), "Register tab");
   await waitFor(
     async () => (await bodyText(ws)).includes("Email"),
     "register form",
@@ -419,7 +423,9 @@ async function run() {
     `(() => [...document.querySelectorAll("button.mode-card:disabled")]
       .map((button) => button.textContent))()`,
   );
-  for (const mode of ["Modality Ladder"]) {
+  // Adopted mode-name slate (NIL-64 §10.2): Meaning Match / Rating Lab
+  // available, Perception Ladder coming-soon.
+  for (const mode of ["Perception Ladder"]) {
     if (!comingSoonModes.some((text) => text.includes(mode))) {
       throw new Error(`${mode} is not shown as a disabled coming-soon mode`);
     }
@@ -429,16 +435,16 @@ async function run() {
     `(() => [...document.querySelectorAll("button.mode-card:not(:disabled)")]
       .map((button) => button.textContent))()`,
   );
-  for (const mode of ["Choosing Task", "Rating Lab"]) {
+  for (const mode of ["Meaning Match", "Rating Lab"]) {
     if (!enabledModes.some((text) => text.includes(mode))) {
       throw new Error(`${mode} is not shown as an enabled mode card`);
     }
   }
-  if (!(await clickText(ws, "Choosing Task"))) {
-    throw new Error("Choosing Task mode card not found");
+  if (!(await clickText(ws, "Meaning Match"))) {
+    throw new Error("Meaning Match mode card not found");
   }
   await waitFor(
-    async () => (await bodyText(ws)).includes("Choosing Task Instructions"),
+    async () => (await bodyText(ws)).includes("Meaning Match Instructions"),
     "instructions after mode select",
   );
   await assertScriptLabSelector(ws);
@@ -609,7 +615,8 @@ async function run() {
 
   const leaderboardProof = await verifyLeaderboard(ws);
 
-  if (!(await clickText(ws, "Recent attempts"))) {
+  // shadcn (Radix) Tabs trigger — activate with focus+Enter, as above.
+  if (!(await trustedPressEnterOnText(ws, "Recent attempts"))) {
     throw new Error("Recent attempts tab is not clickable after completion");
   }
   await waitFor(

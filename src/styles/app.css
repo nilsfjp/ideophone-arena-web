@@ -3,7 +3,28 @@
    invariant 5) are unchanged by the token pass. A few odd in-between sizes
    that predate the type scale stay literal where substitution would move
    layout mid-trial. */
+
+/* --------------------------------------------------------------------------
+   Tailwind v4 wiring (NIL-65). Preflight is intentionally OMITTED: app.css
+   already carries the base resets and — critically — the reserved-slot
+   geometry (invariant 5). Tailwind's preflight would reset headings, buttons,
+   and margins app-wide and risk the exact geometry drift §11.4's screenshots
+   guard against. Utilities + the @theme mapping are all we need.
+
+   The legacy rules below live in `@layer app`, declared BEFORE `utilities`, so
+   Tailwind utilities win wherever a shadcn/chrome component appends them
+   (unlayered CSS would otherwise beat the utilities layer). Bespoke experiment
+   surfaces append NO utilities and therefore render from @layer app exactly as
+   before — the stable-hook contract (§5) keeps their semantic classes first.
+   -------------------------------------------------------------------------- */
+@layer theme, base, components, app, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 @import "./tokens.css";
+@import "./theme.css";
+@import "./shadcn-bridge.css";
+
+@layer app {
 
 * {
   box-sizing: border-box;
@@ -28,7 +49,17 @@ a {
 }
 
 button {
+  /* Tailwind preflight is intentionally omitted (see the wiring note above), so
+     neutralize the native button chrome here that preflight would otherwise
+     handle: without this, shadcn fill/ghost/link variants and Radix TabsTriggers
+     that set no border show the UA bevel border and buttonface background.
+     Bespoke buttons and shadcn variants set their own border/background on top
+     (class + utility rules win over these element defaults). */
   font: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0 solid;
 }
 
 .app {
@@ -66,7 +97,7 @@ button {
 }
 
 .site-main {
-  width: min(100%, 1120px);
+  width: min(100%, var(--container-app));
   margin: 0 auto;
   padding: 2.5rem 2rem 4rem;
 }
@@ -76,7 +107,7 @@ button {
 .complete-panel,
 .feedback,
 .trial-stage {
-  width: min(100%, 760px);
+  width: min(100%, var(--container-read));
   margin: 0 auto;
 }
 
@@ -123,7 +154,7 @@ button {
 .auth-form {
   display: grid;
   gap: 1rem;
-  width: min(100%, 420px);
+  width: min(100%, var(--container-form));
   margin: 1.5rem auto 0;
   text-align: left;
 }
@@ -193,6 +224,9 @@ button {
   gap: 0.75rem;
 }
 
+/* Cards-as-buttons state grammar (§1/§6): rest sits on washi with the -mid
+   affordance border; hover LIFTS to raised fill + accent border (the lift is a
+   state, not a resting elevation); selected draws the inset vermillion ring. */
 .condition-option {
   display: grid;
   gap: var(--space-2);
@@ -200,10 +234,15 @@ button {
   padding: var(--space-3);
   border: 1px solid var(--border-mid);
   border-radius: var(--radius-md);
-  background: var(--surface-raised);
+  background: var(--surface-card);
   color: var(--ink-primary);
   text-align: left;
   cursor: pointer;
+}
+
+.condition-option:hover:not(.active) {
+  border-color: var(--accent);
+  background: var(--surface-raised);
 }
 
 .condition-option.active {
@@ -305,6 +344,23 @@ button {
   opacity: 0.62;
 }
 
+/* Motion (§7): color/border/fill state changes ride --motion-micro, opt-in
+   under prefers-reduced-motion. No transforms, no scale-on-hover — paper does
+   not stretch; the lift is fill + border only. */
+@media (prefers-reduced-motion: no-preference) {
+  .primary-button,
+  .secondary-button,
+  .mode-card,
+  .condition-option,
+  .choice-button,
+  .media-play-button {
+    transition:
+      background-color var(--motion-micro) ease-out,
+      border-color var(--motion-micro) ease-out,
+      color var(--motion-micro) ease-out;
+  }
+}
+
 .trial-stage {
   min-height: 760px;
   padding-top: 1.75rem;
@@ -374,12 +430,20 @@ button {
   display: block;
   height: 100%;
   background: var(--accent);
-  transition: width 180ms ease;
+}
+
+/* Motion policy (§7): the progress-track width fill is the ONE sanctioned
+   layout-property animation (decorative feedback on a reserved geometry), but
+   it still stays opt-in — reduced-motion users get an instant fill. */
+@media (prefers-reduced-motion: no-preference) {
+  .progress-track span {
+    transition: width 180ms ease;
+  }
 }
 
 .trial-copy {
   margin-bottom: 1.6rem;
-  font-size: 2rem;
+  font-size: var(--text-prompt);
   line-height: 1.3;
 }
 
@@ -554,12 +618,12 @@ button {
 
 .translation-lines {
   display: grid;
-  grid-template-columns: minmax(0, 760px);
+  grid-template-columns: minmax(0, var(--container-read));
   justify-content: center;
   gap: 0.35rem;
   min-height: 96px;
   margin-top: 1.6rem;
-  font-size: 1.55rem;
+  font-size: var(--text-question);
   line-height: 1.45;
 }
 
@@ -583,7 +647,7 @@ button {
 
 .question-text {
   margin: 0;
-  font-size: 1.55rem;
+  font-size: var(--text-question);
   line-height: 1.35;
 }
 
@@ -722,7 +786,7 @@ button {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 1.5rem;
-  width: min(100%, 760px);
+  width: min(100%, var(--container-read));
   margin: 1.5rem auto 0;
 }
 
@@ -807,12 +871,15 @@ td {
   text-align: center;
 }
 
+/* Surface grammar (§1): completion is chrome — it sits flat on washi with a
+   hairline border and casts NO shadow. Elevation is reserved for the
+   instrument's voice (feedback panel, reveal). */
 .complete-panel {
-  margin-top: 4rem;
-  padding: 2rem;
-  background: var(--surface-raised);
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  background: var(--surface-card);
+  border: 1px solid var(--border-soft);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
   text-align: center;
 }
 
@@ -820,7 +887,7 @@ td {
   display: grid;
   grid-template-columns: max-content 1fr;
   gap: 0.5rem 1rem;
-  width: min(100%, 420px);
+  width: min(100%, var(--container-form));
   margin: 1.5rem auto 0;
   text-align: left;
 }
@@ -853,16 +920,18 @@ td {
   background: var(--surface-card);
 }
 
+/* Surface grammar (§1): the error panel is chrome — washi + hairline, no
+   shadow (matches .complete-panel). */
 .error-panel {
-  margin-top: 4rem;
-  padding: 2rem;
-  background: var(--surface-raised);
+  margin-top: var(--space-8);
+  padding: var(--space-6);
+  background: var(--surface-card);
+  border: 1px solid var(--border-soft);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
 }
 
 .mode-select {
-  width: min(100%, 760px);
+  width: min(100%, var(--container-read));
   margin: 0 auto;
   padding-top: var(--space-5);
   text-align: center;
@@ -873,16 +942,21 @@ td {
   color: var(--ink-muted);
 }
 
+/* Six-mode home shell (§2.3): auto-fill scales 3→6 cards with no code change
+   (3x2 desktop, 2-3 col ~700px, 1-col <=640 via the media query). */
 .mode-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: var(--space-4);
   text-align: left;
 }
 
+/* Card anatomy top->bottom: measure chip, title, one-line description, then a
+   status slot pinned to the bottom (reserved even when empty; margin-top:auto
+   plus grid stretch keeps a row's cards equal-height). */
 .mode-card {
-  display: grid;
-  align-content: start;
+  display: flex;
+  flex-direction: column;
   gap: var(--space-2);
   min-height: 44px;
   padding: var(--space-4);
@@ -892,6 +966,15 @@ td {
   color: var(--ink-primary);
   text-align: left;
   cursor: pointer;
+}
+
+/* Measure chip — the specimen-label primitive (§3.4), plain variant. */
+.mode-card-measure {
+  color: var(--ink-muted);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
 }
 
 .mode-card:hover:not(:disabled) {
@@ -927,8 +1010,10 @@ td {
   line-height: var(--leading-body);
 }
 
+/* Status slot pinned to the card bottom (specimen-label pill variant, §3.4). */
 .mode-card-status {
-  justify-self: start;
+  align-self: flex-start;
+  margin-top: auto;
   padding: var(--space-1) var(--space-2);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-pill);
@@ -937,6 +1022,15 @@ td {
   font-weight: 700;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
+}
+
+/* Available cards keep the slot present (equal structure, §2.3) but draw no
+   pill — reserved even when empty. */
+.mode-card-status:empty {
+  margin-top: auto;
+  min-height: 1.5rem;
+  padding: 0;
+  border: none;
 }
 
 @media (max-width: 860px) {
@@ -948,17 +1042,12 @@ td {
     font-size: var(--text-ui);
   }
 
-  .mode-list {
-    grid-template-columns: 1fr;
-  }
-
   .trial-stage {
     min-height: 620px;
   }
 
-  .trial-copy {
-    font-size: 1.55rem;
-  }
+  /* --text-prompt (§3.2) is a clamp; it scales down on its own, so the old
+     .trial-copy breakpoint literal is gone. */
 
   .stimulus-row {
     grid-template-columns: repeat(2, minmax(138px, 1fr));
@@ -976,13 +1065,10 @@ td {
     aspect-ratio: 16 / 9;
   }
 
-  .translation-lines,
+  /* .translation-lines and .question-text now scale via --text-question
+     (§3.2, clamp floor 1.25rem); only .small-copy keeps a breakpoint size. */
   .small-copy {
     font-size: 1.1rem;
-  }
-
-  .question-text {
-    font-size: 1.45rem;
   }
 
   .feedback-choice-grid {
@@ -1002,6 +1088,12 @@ td {
 @media (max-width: 640px) {
   .site-main {
     padding-top: 0.75rem;
+  }
+
+  /* Six-mode grid collapses to a single column on the narrow viewport (§2.3);
+     640-860px is left to the auto-fill track (2-3 columns). */
+  .mode-list {
+    grid-template-columns: 1fr;
   }
 
   .site-header {
@@ -1044,7 +1136,6 @@ td {
 
   .trial-copy {
     margin-bottom: 0.65rem;
-    font-size: 1.25rem;
   }
 
   .stimulus-row {
@@ -1097,10 +1188,6 @@ td {
     margin-top: 0.8rem;
   }
 
-  .question-text {
-    font-size: 1.25rem;
-  }
-
   .feedback {
     margin-top: var(--space-3);
     padding: var(--space-3);
@@ -1142,7 +1229,7 @@ td {
    arena-record slot. Tokens only.
    ========================================================================== */
 .rating-lab {
-  width: min(100%, 760px);
+  width: min(100%, var(--container-read));
   margin: 0 auto;
 }
 
@@ -1280,6 +1367,8 @@ td {
 
 /* Reserved arena-record slot: mounted from first paint at its final size so
    the reveal never shifts the scale (invariant-5 discipline). */
+/* Surface grammar (§1): the arena record is instrument output — raised paper,
+   and it gains --shadow-card for consistency with the feedback verdict. */
 .rating-reveal {
   width: min(100%, 520px);
   min-height: 9.5rem;
@@ -1287,6 +1376,7 @@ td {
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-md);
   background: var(--surface-raised);
+  box-shadow: var(--shadow-card);
   text-align: center;
 }
 
@@ -1356,3 +1446,5 @@ td {
     gap: 2px;
   }
 }
+
+} /* @layer app */

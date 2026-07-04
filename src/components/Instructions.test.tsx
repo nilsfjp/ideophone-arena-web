@@ -35,15 +35,17 @@ describe("Instructions", () => {
   });
 
   it("gates Start Game on the sound check", () => {
+    // The shadcn Button carries `disabled:` utility classes, so assert the
+    // disabled ATTRIBUTE (disabled="") rather than the substring "disabled".
     const idleStart = renderInstructions({ soundCheckStatus: "idle" })
       .split("<button")
       .find((chunk) => chunk.includes("Start Game"));
-    expect(idleStart).toContain("disabled");
+    expect(idleStart).toContain('disabled=""');
 
     const readyStart = renderInstructions({ soundCheckStatus: "ready" })
       .split("<button")
       .find((chunk) => chunk.includes("Start Game"));
-    expect(readyStart).not.toContain("disabled");
+    expect(readyStart).not.toContain('disabled=""');
   });
 
   it("renders Back to modes only when onBackToHome is provided", () => {
