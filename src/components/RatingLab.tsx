@@ -540,6 +540,9 @@ export function RatingTrialPanel({
   const isRevealed = phase === "revealed";
   const isSubmitting = phase === "submitting";
   const nextDisabled = isSubmitting || (!isRevealed && selectedRating === null);
+  // Spin-on-activation for the icon, restarted per click by a remount. Local so
+  // it never fires on the per-word replayToken bump (word start), only clicks.
+  const [replaySpin, setReplaySpin] = useState(0);
 
   return (
     <section className="rating-lab rating-trial" aria-label="Rating trial">
@@ -556,8 +559,29 @@ export function RatingTrialPanel({
         className="secondary-button rating-replay-button"
         disabled={isSubmitting}
         type="button"
-        onClick={onReplay}
+        onClick={() => {
+          onReplay();
+          setReplaySpin((count) => count + 1);
+        }}
       >
+        <svg
+          key={replaySpin}
+          className={
+            replaySpin > 0 ? "card-replay-icon is-spinning" : "card-replay-icon"
+          }
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+          <path d="M21 3v5h-5" />
+        </svg>
         {RATING_REPLAY_BUTTON}
       </button>
 

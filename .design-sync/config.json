@@ -11,7 +11,6 @@
   "docsMap": {
     "Instructions": null
   },
-  "extraEntries": ["./.design-sync/router-reexport.mjs"],
   "overrides": {
     "TrialPlayer": { "cardMode": "column" }
   },
@@ -28,9 +27,6 @@
     "StimulusDisplay": "src/components/StimulusDisplay.tsx",
     "StimulusPlayback": "src/components/StimulusPlayback.tsx",
     "AuthForm": "src/components/AuthForm.tsx",
-    "HomePage": "src/pages/HomePage.tsx",
-    "ResultsPage": "src/pages/ResultsPage.tsx",
-    "NotFoundPage": "src/pages/NotFoundPage.tsx",
     "App": null,
     "StyleGuide": null
   },

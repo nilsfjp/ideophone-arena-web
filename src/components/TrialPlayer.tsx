@@ -48,6 +48,14 @@ export default function TrialPlayer({
   const choiceStartedAtRef = useRef<number | null>(null);
   const roundTokenRef = useRef(0);
   const rightDelayTimeoutRef = useRef<number | null>(null);
+  // Per-card replay (§8): a bumped counter feeds StimulusPlayback's
+  // autoplayToken and a `replaying` flag forces `playing` true during
+  // choice/feedback (where the sequential-playback flags are false). This
+  // component remounts per round (App keys on roundId), so these reset per round.
+  const [replayCountA, setReplayCountA] = useState(0);
+  const [replayCountB, setReplayCountB] = useState(0);
+  const [replayingA, setReplayingA] = useState(false);
+  const [replayingB, setReplayingB] = useState(false);
   const targetTranslation = getTargetTranslation(round);
   const otherTranslation = round.translations?.other?.trim();
   const roundProblem = getRoundProblem(round, targetTranslation);
@@ -248,36 +256,56 @@ export default function TrialPlayer({
 
         <div className="stimulus-row" aria-label="Ideophone word cards">
           <IdeophoneCard
-            autoplayToken={round.roundId * 10 + 1}
+            autoplayToken={round.roundId * 100 + replayCountA}
             disabled={!isChoice || phase === "submitting"}
             meaning={leftMeaning}
-            mediaPlaying={isLeftPlaying}
+            mediaPlaying={isLeftPlaying || replayingA}
             mediaVisible={isLeftPlaying || isChoice || hasFeedback}
             mode={cardsAreChoices ? "button" : "display"}
             option={round.left}
             positionLabel="A"
             presentation={presentation}
+            replayDisabled={phase === "submitting"}
+            replayVisible={isChoice || hasFeedback}
             revealDetails={hasFeedback}
             visible={isLeftPlaying || isChoice || hasFeedback}
-            onEnded={handleLeftEnded}
+            onEnded={
+              isChoice || hasFeedback
+                ? () => setReplayingA(false)
+                : handleLeftEnded
+            }
             onError={handlePlaybackError}
+            onReplay={() => {
+              setReplayCountA((count) => count + 1);
+              setReplayingA(true);
+            }}
             onSelect={handleSelect}
           />
 
           <IdeophoneCard
-            autoplayToken={round.roundId * 10 + 2}
+            autoplayToken={round.roundId * 100 + 50 + replayCountB}
             disabled={!isChoice || phase === "submitting"}
             meaning={rightMeaning}
-            mediaPlaying={isRightPlaying}
+            mediaPlaying={isRightPlaying || replayingB}
             mediaVisible={isRightPlaying || isChoice || hasFeedback}
             mode={cardsAreChoices ? "button" : "display"}
             option={round.right}
             positionLabel="B"
             presentation={presentation}
+            replayDisabled={phase === "submitting"}
+            replayVisible={isChoice || hasFeedback}
             revealDetails={hasFeedback}
             visible={isRightPlaying || isChoice || hasFeedback}
-            onEnded={handleRightEnded}
+            onEnded={
+              isChoice || hasFeedback
+                ? () => setReplayingB(false)
+                : handleRightEnded
+            }
             onError={handlePlaybackError}
+            onReplay={() => {
+              setReplayCountB((count) => count + 1);
+              setReplayingB(true);
+            }}
             onSelect={handleSelect}
           />
 

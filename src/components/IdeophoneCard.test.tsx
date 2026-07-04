@@ -49,4 +49,42 @@ describe("IdeophoneCard choice accessibility", () => {
     expect(markup).toContain("empty");
     expect(markup).toContain("placeholder-display");
   });
+
+  // §8 identity symmetry: both cards must carry byte-identical replay
+  // affordances so nothing marks the target. The only permitted difference is
+  // the position label in the aria-label.
+  it("renders byte-identical replay controls on card A and card B", () => {
+    function replayControl(label: string) {
+      const markup = renderToStaticMarkup(
+        <IdeophoneCard
+          mode="button"
+          option={option}
+          positionLabel={label}
+          presentation={getConditionPresentation("CONDITION_1_SOKUON")}
+          replayVisible
+          visible
+          onReplay={() => {}}
+        />,
+      );
+      const match = markup.match(
+        /<button[^>]*card-replay-button[\s\S]*?<\/button>/,
+      );
+      expect(match, `card ${label} should render a replay control`).not.toBeNull();
+      return match![0];
+    }
+
+    const a = replayControl("A");
+    const b = replayControl("B");
+
+    // Position-only label (invariant 7); never the word.
+    expect(a).toContain('aria-label="Replay card A"');
+    expect(b).toContain('aria-label="Replay card B"');
+    for (const control of [a, b]) {
+      expect(control).not.toMatch(/katakata|かたかた|カタカタ/);
+    }
+
+    expect(a.replace("Replay card A", "Replay card X")).toBe(
+      b.replace("Replay card B", "Replay card X"),
+    );
+  });
 });

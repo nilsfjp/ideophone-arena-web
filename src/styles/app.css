@@ -341,7 +341,8 @@ a {
   .mode-card,
   .condition-option,
   .choice-button,
-  .media-play-button {
+  .media-play-button,
+  .card-replay-button {
     transition:
       background-color var(--motion-micro) ease-out,
       border-color var(--motion-micro) ease-out,
@@ -475,6 +476,17 @@ a {
   visibility: hidden;
 }
 
+/* Positioning context for the per-card replay control (§8): the control is a
+   sibling of the card, not a child (nesting it in the choice <button> is an
+   a11y fault). The slot has the card's footprint, so an absolutely-positioned
+   button lands in the card's top-right without touching reserved geometry.
+   (Named to avoid the "ideophone-card" substring the reserved-slot guard
+   counts.) */
+.card-slot {
+  position: relative;
+  display: grid;
+}
+
 .stimulus-media {
   position: absolute;
   inset: 0;
@@ -574,6 +586,19 @@ a {
   overflow-wrap: anywhere;
 }
 
+/* Kana-measure guard (§8): on a replay-capable card, narrow the centered kana
+   measure symmetrically so a 6-mora word (そろりそろり-class) wraps clear of the
+   top-right control on both corners. Scoped to the pre-feedback faces
+   (`:not(.revealed-display)`) — playback and choice, where only the kana shows
+   and there is vertical room — so the measure is stable from playback through
+   choice (invariant 5) but the reveal face keeps its full measure (the canonical
+   word + romaji + meaning must fit the fixed card without a forced extra line).
+   Card dimensions unchanged (§2.4): this narrows only the text measure. */
+.ideophone-card.has-replay .text-display:not(.revealed-display) .script-display-text {
+  max-width: calc(100% - 2 * (36px + var(--space-2)));
+  margin-inline: auto;
+}
+
 .romaji-display-text {
   min-height: 1.2em;
   color: var(--ink-muted);
@@ -602,6 +627,82 @@ a {
   color: var(--ink-primary);
   cursor: pointer;
   font-weight: 700;
+}
+
+/* Per-card replay control (§8): instrument hardware, not chrome — same raised
+   fill + 2px ink border + pill DNA as .media-play-button / .placeholder-mark.
+   A 36px visual circle with a 44x44 hit area, absolutely positioned in the
+   card's top-right padding. Identity-symmetric: A and B are byte-identical. */
+.card-replay-button {
+  position: absolute;
+  inset-block-start: var(--space-2);
+  inset-inline-end: var(--space-2);
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 2px solid var(--ink-primary);
+  border-radius: var(--radius-pill);
+  background: var(--surface-raised);
+  color: var(--ink-primary);
+  cursor: pointer;
+}
+
+/* 44x44 hit area (§8) without growing the visual circle. */
+.card-replay-button::before {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+}
+
+.card-replay-button:hover:not(:disabled) {
+  border-color: var(--vermillion);
+}
+
+.card-replay-button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.card-replay-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.card-replay-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+/* Spin-on-activation (§8/§7): the icon (not the button) turns one revolution.
+   Motion-safe only; restarted per click by an icon remount (React key), never
+   on first appearance. */
+@keyframes card-replay-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .card-replay-icon.is-spinning {
+    animation: card-replay-spin var(--motion-spin) ease-in-out;
+  }
+}
+
+/* Reduced-motion fallback (§8): an instant border→vermillion flash (state
+   change, no movement), held ~--motion-micro by a JS timer. Deliberately not a
+   transition/animation, so the token-purity motion gate stays green. */
+@media (prefers-reduced-motion: reduce) {
+  .card-replay-button.is-active {
+    border-color: var(--vermillion);
+  }
 }
 
 .translation-lines {
@@ -1247,8 +1348,16 @@ td {
   margin: 0;
 }
 
+/* Rating Lab replay, unified to the trial-card control language (§8): the same
+   circular-arrow icon + the frozen "Replay" label in a pill secondary button
+   (icon left, text right), same spin-on-activate, same tokens. */
 .rating-replay-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
   min-width: 120px;
+  border-radius: var(--radius-pill);
 }
 
 .rating-stimulus-card {

@@ -618,3 +618,94 @@ None.
 Next single task:
 NIL-63 per-card replay build per `UI-SYSTEM.md` §8 + §12 riders (icon replay button in `IdeophoneCard`,
 `--motion-spin`, kana-measure guard, browser-loop replay waypoint), on this harmonized foundation.
+
+## 2026-07-04 (NIL-63)
+
+Session goal:
+Ship the §8 per-card replay affordance on every ideophone card (retiring Gorilla's four-card
+workaround), unify Rating Lab's replay to the same control language, add the browser-loop replay
+waypoint, and land the deferred §12 `.design-sync` riders. Presentation/affordance layer only — no
+change to trial flow, scoring, or phase timing.
+
+Changed:
+- `src/components/IdeophoneCard.tsx`: wrap the card in a `.card-slot` positioning context and render a
+  sibling icon `<button class="card-replay-button">` (inline Lucide `rotate-cw`, `aria-label="Replay
+  card A/B"`, `stopPropagation`) when `onReplay && replayVisible` — never nested in the choice button.
+  New props `onReplay`/`replayVisible`/`replayDisabled`; `.has-replay` on the card drives the kana
+  guard. Icon spin restarts per click via a `spinCount` React key (only after the first click, never on
+  mount); a JS-timer `is-active` flag drives the reduced-motion pulse.
+- `src/components/TrialPlayer.tsx`: per-card `replayCount`/`replaying` state (reset per round via the
+  App's roundId-keyed remount); `autoplayToken = roundId*100 + replayCountA` (A) / `+50 + replayCountB`
+  (B); `mediaPlaying = playFlag || replaying`; `onReplay` bumps count + sets replaying; phase-swapped
+  `onEnded` — during choice/feedback it only clears `replaying`, so `handleRightEnded` never re-fires
+  and the RT anchor is untouched; `replayVisible = choice||feedback`. `performance.now()` anchors and
+  phase machine unchanged.
+- `src/components/StimulusPlayback.tsx`: unchanged. The engine is reused as-is; `onEndedRef` already
+  reads the current handler, so the phase-dependent `onEnded` swap is closure-safe.
+- `src/styles/app.css`: `.card-slot`; `.card-replay-button` (36px circle, 44×44 `::before` hit area,
+  `--surface-raised`/`--ink-primary`/`--radius-pill` DNA, hover→`--vermillion`, focus ring); spin
+  `@keyframes` gated inside a `prefers-reduced-motion: no-preference` block; reduced-motion `is-active`
+  border→`--vermillion` inside a `reduce` block (a plain color change, no transition/animation — the
+  token-purity motion gate stays green). Kana-measure guard on
+  `.ideophone-card.has-replay .text-display:not(.revealed-display) .script-display-text`
+  (`max-width: calc(100% - 2*(36px + var(--space-2)))`) — pre-feedback faces only. `.rating-replay-button`
+  restyled to an icon+label pill.
+- `src/components/RatingLab.tsx`: the replay button gains the same inline `rotate-cw` icon (keyed spin)
+  before the frozen `RATING_REPLAY_BUTTON` = "Replay" (string untouched; `experimentText.ts` untouched).
+- `src/semanticHooks.test.tsx`: `card-replay-button` added to `PINNED_HOOKS` and rendered in the battery.
+  `src/components/IdeophoneCard.test.tsx`: identity-symmetry test (A/B replay markup byte-identical
+  modulo the position label).
+- `scripts/verify-browser-loop.mjs`: replay waypoint in the choice phase (once) — instruments
+  `HTMLMediaElement.prototype.play`, asserts 2 controls + A/B byte-identical markup, clicks card A's
+  `.card-replay-button`, asserts a second `play()` and unchanged phase/selection; `.stimulus-row button`
+  → `.stimulus-row .choice-button` (the row now holds 4 buttons).
+- §12 riders: re-ran `.design-sync/build-css.mjs` (bundle 1152→1709 lines — gains the post-migration
+  Tailwind layer + replay CSS; gitignored artifact); removed the dead `componentSrcMap` rows +
+  previews for `HomePage`/`ResultsPage`/`NotFoundPage` + the `router-reexport.mjs` extraEntry (react-
+  router is gone since 27C); re-validated `conventions.md` (`--accent*`→`--vermillion*`, modality →
+  `--modality-*`, added `.card-slot`/`.card-replay-button`, corrected the router prose); updated
+  `NOTES.md`. `README.md`: one-line replay note in the browser path.
+
+Proof:
+- Static battery green at exit: `pnpm lint` · `pnpm build` · `pnpm vitest run` (84 — was 83 + the
+  symmetry test) · `node scripts/verify-presentation-logic.mjs` · `node scripts/verify-token-purity.mjs`.
+- `verify-browser-loop.mjs` full pass (exit 0, `relevantConsoleErrorCount: 0`) at BOTH desktop and 375px,
+  including the new replay waypoint. (The two 375px false-starts were the documented Edge-occlusion /
+  Web-Audio-throttling flake — "Timed out waiting for choice phase" and a leaderboard-pager CDP hang,
+  both unrelated to the trial-phase changes; a background `/json/activate` tab poller kept the tab
+  foreground and the run then passed clean. Noted in the browser-proof-environment memory.)
+- Waypoint (both viewports): 2 replay controls in choice, A/B byte-identical markup, card A's replay
+  fires a second `play()`, and `.question-text`/no-`.feedback`/2 `.choice-button` confirm phase and
+  selection are unchanged.
+- Kana-measure guard (both viewports, injected そろりそろり at a pre-feedback face): `max-width: calc(100%
+  - 88px)`, wraps to 2 lines, `clearsRightCorner: true` — screenshot shows the 6-mora word clearing both
+  top corners (A-label and replay control) symmetrically.
+- Reduced-motion (both viewports): icon `animationName: "none"` (spin gated off) and the screenshot shows
+  the vermillion border pulse on the activated card only.
+- Feedback-overflow fix: an early screenshot caught the guard force-wrapping a 4-mora katakana at the
+  reveal (ニコニコ overflowing the fixed card). Scoped the guard to `:not(.revealed-display)`; re-verified
+  ガタン / ゴツゴツ render on one line with romaji + meaning fitting at desktop and 375px.
+- Screenshots at both viewports: choice + feedback with replay controls, 6-mora wrap, reduced-motion
+  pulse, plus practice/leaderboard.
+
+Result:
+Complete. Every ideophone card carries the §8 replay control (icon-only, top-right, byte-identical A/B),
+Rating Lab is unified to the same icon+label pill, the browser loop asserts the replay waypoint at both
+viewports, and the four §12 riders landed. Reserved-slot geometry (§2.4) is byte-unchanged — the replay
+button is out-of-flow and the guard narrows only the text measure. One design nuance surfaced and was
+resolved in-session: the kana guard must not apply to the reveal face, or medium katakana overflows.
+
+Commit:
+Not committed (commits are the user's — expected). Uncommitted tree: modified
+`src/components/{IdeophoneCard,TrialPlayer,RatingLab}.tsx`, `src/components/IdeophoneCard.test.tsx`,
+`src/semanticHooks.test.tsx`, `src/styles/app.css`, `scripts/verify-browser-loop.mjs`, `README.md`,
+`.design-sync/{config.json,conventions.md,NOTES.md}`; deleted
+`.design-sync/previews/{HomePage,ResultsPage,NotFoundPage}.tsx` + `.design-sync/router-reexport.mjs`.
+(`.design-sync/ds-bundle-styles.css` was regenerated but is gitignored.)
+
+Blocker:
+None. (375px browser proof needs a `/json/activate` tab poller to survive Web-Audio throttling in a
+headless run — an environment workaround, not a code issue.)
+
+Next single task:
+28A/28B Perception Ladder (per `TASKS.md` sequence; M1 `game_mode` rides 28A).

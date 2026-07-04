@@ -106,7 +106,10 @@ shows a Previous/Next pager when `totalPages > 1`.
    the practice checkbox on for 2 unscored warm-up rounds, or untick it to
    start at Round 1 immediately.
 5. Start Game.
-6. Watch the fixation, left word, right word, and choice phase.
+6. Watch the fixation, left word, right word, and choice phase. In the choice
+   and feedback phases each card carries a replay button (top-right circular
+   arrow) to re-hear that word; replay never changes the phase, timing, or
+   selection.
 7. Choose one card.
 8. Confirm backend feedback identifies selected and correct card details.
 9. Click `Next round` to continue.

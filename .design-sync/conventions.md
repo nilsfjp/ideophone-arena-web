@@ -22,8 +22,8 @@ Token families (all `var(--*)`):
 |---|---|
 | Surfaces | `--surface-page`, `--surface-card`, `--surface-raised` |
 | Ink | `--ink-primary`, `--ink-muted`, `--ink-inverse` |
-| Accent | `--accent`, `--accent-hover`, `--accent-active` (vermillion) |
-| Modality | `--accent-auditory`, `--accent-visual`, `--accent-interoceptive` (+ `-soft` fills) |
+| Accent | `--vermillion`, `--vermillion-hover`, `--vermillion-active` |
+| Modality | `--modality-auditory`, `--modality-visual`, `--modality-interoceptive`, `--modality-haptic` (+ `-soft` fills) |
 | State | `--positive`, `--negative` (+ `-soft`) |
 | Borders | `--border-soft`, `--border-mid`, `--border-strong`, `--focus-ring` |
 | Fonts | `--font-body`, `--font-display`, `--font-stimuli` (Japanese kana) |
@@ -32,7 +32,8 @@ Token families (all `var(--*)`):
 | Radius / shadow | `--radius-sm/md/lg/pill`, `--shadow-card`, `--shadow-raised` |
 
 Component class vocabulary (reuse, don't reinvent): `.ideophone-card`,
-`.choice-button`, `.stimulus-display`, `.feedback` (+ `.feedback-choice-grid`,
+`.card-slot` (per-card positioning wrapper), `.card-replay-button` (per-card
+replay control), `.choice-button`, `.stimulus-display`, `.feedback` (+ `.feedback-choice-grid`,
 `.feedback-choice-card`), `.instructions`, `.script-lab-selector`,
 `.condition-option`, `.auth-form` / `.auth-panel`, `.score-section`,
 `.leaderboard-pager`, `.primary-button`, `.secondary-button`, `.muted`,
@@ -43,10 +44,10 @@ Component class vocabulary (reuse, don't reinvent): `.ideophone-card`,
 - **No global provider is required** — components read tokens from the shipped
   CSS, not a theme context. Just ensure `styles.css` (and its `@import`
   closure) is loaded.
-- **Router-coupled components** (`NotFoundPage` renders a `<Link>`) must be
-  wrapped in a router. A `MemoryRouter` is re-exported on the bundle global —
-  `window.IdeophoneArena.MemoryRouter` — use that one (a `MemoryRouter` from a
-  separately-imported `react-router-dom` yields a null router context).
+- **No router.** The app is a single view-state shell (`App.tsx`); react-router
+  was removed in the NIL-65/27C migration, so no `MemoryRouter` wrapper is needed
+  for any preview (the former `HomePage`/`ResultsPage`/`NotFoundPage` pages are
+  gone — their roles are `ModeSelect`, the inline completion panel, and nothing).
 - **Experiment components are data-driven.** `TrialPlayer`, `IdeophoneCard`,
   `StimulusDisplay`, and `FeedbackPanel` take backend shapes — `RoundResponse`,
   `IdeophoneOption` (`displayForm`/`canonicalForm`/`romaji`), `ConditionPresentation`

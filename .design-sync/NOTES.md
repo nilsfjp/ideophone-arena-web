@@ -22,9 +22,10 @@ Repo-specific gotchas for future syncs. One bullet per gotcha.
   imports. If you add/remove a weight in main.tsx, mirror it in extraFonts.
 
 ## Component coupling (preview authoring)
-- Components are app-internal: react-router (pages), the backend API client
-  (`src/api/client.ts`, JWT in localStorage), and audio playback. Expect provider needs
-  (RouterProvider) and floor cards where static render is impossible.
+- Components are app-internal: the backend API client (`src/api/client.ts`, JWT in
+  localStorage) and audio playback. Expect floor cards where static render is
+  impossible. (react-router was removed in the NIL-65/27C migration — the app is a
+  single view-state shell in `App.tsx`; no RouterProvider is needed anymore.)
 - Experiment invariants in CLAUDE.md are FROZEN — participant-facing strings live in
   `src/experimentText.ts`. Preview compositions must render real components; never rephrase
   frozen strings or reimplement trial logic.
@@ -51,10 +52,10 @@ Repo-specific gotchas for future syncs. One bullet per gotcha.
   `.design-sync/ds-bundle-styles.css` used as cssEntry. copyTokens only works
   with a separate tokens PACKAGE, so this is how the 55 design tokens reach the
   bundle. Re-run on every sync (the driver runs buildCmd).
-- `cfg.extraEntries` re-exports `MemoryRouter` (./.design-sync/router-reexport.mjs)
-  onto the global so router-coupled previews share the bundle's react-router-dom
-  instance. Preview imports MUST take MemoryRouter from 'ideophone-arena-web',
-  not 'react-router-dom'.
+- `cfg.extraEntries` / `router-reexport.mjs` (MemoryRouter re-export) were removed
+  in NIL-63 along with the `HomePage`/`ResultsPage`/`NotFoundPage` componentSrcMap
+  rows and previews — react-router is gone, so there is no router coupling left to
+  bridge.
 - `cfg.docsMap.Instructions = null`: the dead archived
   docs/instruction-archive/INSTRUCTIONS.md slug-matched the Instructions
   component; excluded so its prompt.md is synthesized. (CLAUDE.md: INSTRUCTIONS.md

@@ -83,7 +83,9 @@ function combinedMarkup(): string {
         option={OPTION_A}
         positionLabel="A"
         presentation={getConditionPresentation("CONDITION_2_SOKUON")}
+        replayVisible
         visible
+        onReplay={() => {}}
       />,
     ),
     renderToStaticMarkup(
@@ -155,6 +157,7 @@ const PINNED_HOOKS = [
   "stimulus-row",
   "ideophone-card",
   "choice-button",
+  "card-replay-button",
   "question-slot",
   "question-text",
   "feedback-next-button",

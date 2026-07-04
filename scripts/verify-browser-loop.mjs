@@ -31,6 +31,7 @@ let roundRefetchProof = null;
 const screenshots = [];
 const feedbackShotsTaken = new Set();
 let practiceShotTaken = false;
+let replayWaypointDone = false;
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -1467,7 +1468,7 @@ async function answerCurrentRound(ws, expectFixation) {
 
   const choices = await evaluate(
     ws,
-    `(() => [...document.querySelectorAll(".stimulus-row button")].map((button) =>
+    `(() => [...document.querySelectorAll(".stimulus-row .choice-button")].map((button) =>
       (button.getAttribute("aria-label") ?? button.textContent).trim()
     ))()`,
   );
@@ -1574,10 +1575,108 @@ async function answerCurrentRound(ws, expectFixation) {
     throw new Error("Legacy stimulus media is visible during active gameplay");
   }
 
+  // NIL-63 replay waypoint (§8 exit): once, during the choice phase, prove the
+  // per-card replay control re-plays card A's audio without touching phase or
+  // selection. A replay re-plays the cached blob (no network request), so this
+  // instruments HTMLMediaElement.prototype.play and asserts a play() call, not a
+  // request. It asserts audio + state only — spin is decorative, never checked.
+  if (!replayWaypointDone) {
+    replayWaypointDone = true;
+
+    const before = await evaluate(
+      ws,
+      `(() => {
+        if (!window.__replayPlaysPatched) {
+          window.__replayPlaysPatched = true;
+          window.__replayPlays = 0;
+          const proto = HTMLMediaElement.prototype;
+          const original = proto.play;
+          proto.play = function patchedPlay(...args) {
+            window.__replayPlays += 1;
+            return original.apply(this, args);
+          };
+        }
+        const buttons = [...document.querySelectorAll(".card-replay-button")];
+        const q = document.querySelector(".question-text");
+        return {
+          count: window.__replayPlays,
+          buttons: buttons.length,
+          markup: buttons.map((b) => b.outerHTML),
+          questionVisible: Boolean(q) && getComputedStyle(q).visibility !== "hidden",
+        };
+      })()`,
+    );
+    if (before.buttons !== 2) {
+      throw new Error(
+        `Expected 2 replay controls during choice, found ${before.buttons}`,
+      );
+    }
+    // §8 identity symmetry: both controls byte-identical modulo the A/B label.
+    const [markupA, markupB] = before.markup;
+    if (
+      markupA.replace("Replay card A", "Replay card X") !==
+      markupB.replace("Replay card B", "Replay card X")
+    ) {
+      throw new Error("Replay controls are not byte-identical between card A and B");
+    }
+    if (!before.questionVisible) {
+      throw new Error("Choice question is not visible before the replay waypoint");
+    }
+
+    await captureScreenshot(ws, "replay-choice");
+
+    // Click card A's replay (native button — element.click() is fine, §16 H7).
+    const clicked = await evaluate(
+      ws,
+      `(() => {
+        const button = document.querySelector(".card-replay-button");
+        if (!button) return false;
+        button.click();
+        return true;
+      })()`,
+    );
+    if (!clicked) {
+      throw new Error("Could not click the card A replay control");
+    }
+
+    const after = await waitFor(
+      async () =>
+        evaluate(
+          ws,
+          `(() => {
+            const q = document.querySelector(".question-text");
+            const state = {
+              count: window.__replayPlays,
+              choiceButtons: document.querySelectorAll(".stimulus-row .choice-button").length,
+              feedback: Boolean(document.querySelector(".feedback")),
+              questionVisible: Boolean(q) && getComputedStyle(q).visibility !== "hidden",
+            };
+            return state.count > ${before.count} ? state : null;
+          })()`,
+        ),
+      "card A replay to re-play audio",
+      5000,
+    );
+
+    // Phase/selection unchanged: still choice, no feedback, question visible,
+    // both choice cards present.
+    if (after.feedback) {
+      throw new Error("Replay advanced the trial to feedback (must not select)");
+    }
+    if (!after.questionVisible) {
+      throw new Error("Replay hid the choice question (phase changed)");
+    }
+    if (after.choiceButtons !== 2) {
+      throw new Error(
+        `Replay disturbed the choice cards, found ${after.choiceButtons}`,
+      );
+    }
+  }
+
   const selectedLabel = await evaluate(
     ws,
     `(() => {
-      const firstChoice = document.querySelector(".stimulus-row button");
+      const firstChoice = document.querySelector(".stimulus-row .choice-button");
       if (!firstChoice) return "";
       const label = firstChoice.getAttribute("aria-label") ?? firstChoice.textContent;
       firstChoice.click();
