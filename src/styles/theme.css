@@ -32,21 +32,21 @@
   --color-ink-inverse: var(--ink-inverse);
 
   /* Primary accent (vermillion) + ramp */
-  --color-accent: var(--accent);
-  --color-accent-hover: var(--accent-hover);
-  --color-accent-active: var(--accent-active);
+  --color-vermillion: var(--vermillion);
+  --color-vermillion-hover: var(--vermillion-hover);
+  --color-vermillion-active: var(--vermillion-active);
 
   /* Modality trio + haptic (each base + soft; haptic also hover/active) */
-  --color-auditory: var(--accent-auditory);
-  --color-auditory-soft: var(--accent-auditory-soft);
-  --color-visual: var(--accent-visual);
-  --color-visual-soft: var(--accent-visual-soft);
-  --color-interoceptive: var(--accent-interoceptive);
-  --color-interoceptive-soft: var(--accent-interoceptive-soft);
-  --color-haptic: var(--accent-haptic);
-  --color-haptic-soft: var(--accent-haptic-soft);
-  --color-haptic-hover: var(--accent-haptic-hover);
-  --color-haptic-active: var(--accent-haptic-active);
+  --color-auditory: var(--modality-auditory);
+  --color-auditory-soft: var(--modality-auditory-soft);
+  --color-visual: var(--modality-visual);
+  --color-visual-soft: var(--modality-visual-soft);
+  --color-interoceptive: var(--modality-interoceptive);
+  --color-interoceptive-soft: var(--modality-interoceptive-soft);
+  --color-haptic: var(--modality-haptic);
+  --color-haptic-soft: var(--modality-haptic-soft);
+  --color-haptic-hover: var(--modality-haptic-hover);
+  --color-haptic-active: var(--modality-haptic-active);
 
   /* Feedback */
   --color-positive: var(--positive);
@@ -65,39 +65,24 @@
   --font-stimuli: var(--font-stimuli);
   --font-stimuli-latin: var(--font-stimuli-latin);
 
-  /* Type ladder (§3) — Latin UI roles, trial-board prompt roles, kana display
-     roles. Line-height companions make each `text-<role>` utility
-     self-contained (bespoke surfaces still set their own leading in app.css). */
+  /* Type ladder (§3) — STANDARD Tailwind font-size names only (§16 H4). The
+     non-standard §3 roles (ui, md, prompt, question, kana-*, hero, xl-form)
+     stay tokens in tokens.css, consumed via var() in @layer app bespoke
+     surfaces and as arbitrary-value utilities (e.g. text-[length:var(--text-ui)])
+     on chrome — never as named utilities. Line-height companions keep each
+     standard `text-<role>` utility self-contained. */
   --text-xs: var(--text-xs);
   --text-xs--line-height: 1.4;
   --text-sm: var(--text-sm);
   --text-sm--line-height: 1.4;
   --text-base: var(--text-base);
   --text-base--line-height: 1.5;
-  --text-ui: var(--text-ui);
-  --text-ui--line-height: 1.2;
-  --text-md: var(--text-md);
-  --text-md--line-height: 1.3;
   --text-lg: var(--text-lg);
   --text-lg--line-height: 1.2;
   --text-xl: var(--text-xl);
   --text-xl--line-height: 1.2;
   --text-2xl: var(--text-2xl);
   --text-2xl--line-height: 1.15;
-  --text-prompt: var(--text-prompt);
-  --text-prompt--line-height: 1.3;
-  --text-question: var(--text-question);
-  --text-question--line-height: 1.35;
-  --text-kana-card: var(--text-kana-card);
-  --text-kana-card--line-height: var(--leading-kana);
-  --text-kana-feedback: var(--text-kana-feedback);
-  --text-kana-feedback--line-height: var(--leading-kana);
-  --text-kana-hero: var(--text-kana-hero);
-  --text-kana-hero--line-height: var(--leading-kana);
-  --text-hero: var(--text-hero);
-  --text-hero--line-height: 1.1;
-  --text-xl-form: var(--text-xl-form);
-  --text-xl-form--line-height: 1.15;
 
   /* Tracking + leading */
   --tracking-wide: var(--tracking-wide);

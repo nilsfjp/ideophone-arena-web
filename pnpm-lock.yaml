@@ -8,18 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@fontsource/kaisei-decol':
-        specifier: ^5.2.7
-        version: 5.2.7
-      '@fontsource/klee-one':
-        specifier: ^5.2.8
-        version: 5.2.8
       '@fontsource/line-seed-jp':
         specifier: ^5.2.2
         version: 5.2.2
-      '@fontsource/rocknroll-one':
-        specifier: ^5.2.8
-        version: 5.2.8
       '@fontsource/zen-kaku-gothic-new':
         specifier: ^5.2.7
         version: 5.2.7
@@ -223,17 +214,8 @@ packages:
     resolution: {integrity: sha512-+CNAzxglkrpNf/kKywqQfk74QjtceuOE7Qm+AF8miRvPF/wmmK5+OJOgVh3AVTT3RP2mH3+FOaxlE5v72owk0A==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  '@fontsource/kaisei-decol@5.2.7':
-    resolution: {integrity: sha512-7SvyKTqZWON4XhH7HpA0gFyCznvWIEKS2ln77elgdkPaAigySo3iw/gfL1s4sjxBViXOhnNJwQUhmo7+RfwJHA==}
-
-  '@fontsource/klee-one@5.2.8':
-    resolution: {integrity: sha512-DBJgwhCH1RLtwwqGtcQFa97KZikjYPWyotJaAZzgJTP/7VnARPsMMT4iQhHZzzdrT0fR9vKY55R+DkocRC6Uhw==}
-
   '@fontsource/line-seed-jp@5.2.2':
     resolution: {integrity: sha512-uuwnt3JJWlbUsBbP97dEKvQSVP6RpXnTDAYjG9f4SO9aHVCap96Rz8RpMcYbz58PXkYBldWfXP5VhOHdvNZWcA==}
-
-  '@fontsource/rocknroll-one@5.2.8':
-    resolution: {integrity: sha512-iDyuQiKYk/6FstkIOHz6pHN8wNlYHxOU6t3ez+x3r5JEjWBBoDj6J8rns0rgmtHI+DoOjc0hYRz8aJj4AM2Uvg==}
 
   '@fontsource/zen-kaku-gothic-new@5.2.7':
     resolution: {integrity: sha512-tfGiyBqeeBjUURHm+RIuBJCxIKhZFp46/+LEc+zCxR4sLslKwlVpWda0ZOnX/mTvOHpfr4DYjiV/pVosRXHWaw==}
@@ -1724,13 +1706,7 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
-  '@fontsource/kaisei-decol@5.2.7': {}
-
-  '@fontsource/klee-one@5.2.8': {}
-
   '@fontsource/line-seed-jp@5.2.2': {}
-
-  '@fontsource/rocknroll-one@5.2.8': {}
 
   '@fontsource/zen-kaku-gothic-new@5.2.7': {}
 

@@ -550,3 +550,71 @@ None.
 Next single task:
 NIL-63 per-card replay build per `UI-SYSTEM.md` §8 (icon replay button in `IdeophoneCard`, `--motion-spin`, kana-
 measure guard, browser-loop replay waypoint), on this Tailwind/shadcn foundation.
+
+## 2026-07-04 (NIL-69 — Tailwind/shadcn harmonization, §16 H1–H8)
+
+Session goal:
+Execute `UI-SYSTEM.md` §16 (H1–H8, NORMATIVE): retire the NIL-65 as-built workarounds to a stock-looking Tailwind
+v4 + shadcn setup — preflight enabled, standard token names, restored shadcn `--accent` bridge, standard utility
+surface with `extendTailwindMerge` gone, pnpm-only. Bar: pixel parity (zero visual change), full battery green at
+desktop + 375px. Presentation-layer only; token *values* untouched (names only). No behavior change, no commits.
+
+Changed:
+- H8 (pnpm): deleted `package-lock.json`; pinned `"packageManager": "pnpm@11.3.0"` in `package.json`.
+- H2 (token rename, values byte-identical): `tokens.css` vermillion trio `--accent{,-hover,-active}`→`--vermillion*`
+  and modality families `--accent-<mod>{…}`→`--modality-<mod>{…}` (+ internal `--focus-ring` ref, prose comment);
+  `theme.css` `--color-accent*`→`--color-vermillion*`, modality utilities keep short names with `var(--modality-*)`
+  RHS; `app.css` 15 refs; `styleguide.css` (6 defs + refs); `StyleGuide.tsx` 9 swatch token literals;
+  `shadcn-bridge.css` `--primary`/`--ring` refs. Vermillion utilities in `button/checkbox/tabs/dialog/input.tsx`
+  (`bg-accent`/`outline-accent`/`border-accent`/`text-accent`… → `-vermillion`) — this consumer rename is required
+  for parity (H3 re-points `bg-accent` at the surface-card wash) and was not in the raw work order.
+- H3 (bridge restored): `shadcn-bridge.css` `:root` + `@theme` now define `--accent: var(--surface-card)` /
+  `--accent-foreground: var(--ink-primary)` (stock wiring); collision comment rewritten; `button.tsx` ghost reverted
+  from the `hover:bg-muted` patch to stock `hover:bg-accent hover:text-accent-foreground` (same surface-card wash).
+- H4 (standard utility surface): `theme.css` `@theme` font-size map restricted to `xs/sm/base/lg/xl/2xl` (the
+  `ui/md/prompt/question/kana-*/hero/xl-form` roles stay tokens in `tokens.css` for `@layer app`/arbitrary use);
+  `button.tsx`×3 + `tabs.tsx` `text-ui`→`text-[length:var(--text-ui)] leading-[1.2]`, `card.tsx` `text-md`→
+  `text-[length:var(--text-md)]` (kept explicit leading); `lib/utils.ts` `extendTailwindMerge`→stock `twMerge`.
+- H1 (preflight ON): `app.css` head → `@import "tailwindcss";` (preflight into `base`, layer order pre-declared);
+  deleted the global `button` appearance reset. One compensating rule added in `@layer app` where the audit showed
+  drift: `body { line-height: normal }` (preflight sets root 1.5; the pre-preflight design inherited `normal`).
+  H5/H6/H7 kept as-is.
+- Font removal (user-approved remove+trim; the packages were dev-styleguide-only, not unimported as the brief
+  assumed): `pnpm remove @fontsource/{kaisei-decol,klee-one,rocknroll-one}`; dropped their imports in
+  `styleguide/main.tsx`, the 3 candidate pairings in `StyleGuide.tsx`, and their `.sg-pair-{b,c,d}` +
+  RocknRoll-weight blocks in `styleguide.css`.
+
+Proof:
+- Battery green after every step and at exit: `pnpm lint` · `pnpm build` · `pnpm vitest run` (83) ·
+  `verify-presentation-logic.mjs` · `verify-token-purity.mjs`; `verify-browser-loop.mjs` full pass at desktop AND
+  375px.
+- Invariant-5: browser-loop `phaseGeometry` — 120 numeric fields across all 5 phases BYTE-IDENTICAL to the
+  pre-session baseline at both viewports (§2.4 constants intact: fixation stage 760, cards 320×180 / 343×193).
+  H1 revert criterion NOT triggered.
+- Chrome parity (CDP computed-style probe, auth screen, both viewports): submitButton/input pixel-identical;
+  primary button bg = vermillion `oklch(0.5634 0.1781 34.51)`, text = ink-inverse `oklch(0.9798 0.0086 84.57)`
+  (proves the NIL-65 twMerge color-drop stays fixed under stock `twMerge`); size 17.6px/21.12px unchanged; shadcn
+  `--accent` wash resolves to surface-card; ghost `hover:bg-accent` == old `bg-muted`. CardTitle (unmounted)
+  synthetic check 19.2px/23.04px. Auth geometry re-measured identical after the line-height compensation.
+- Exit greps: `--accent` in `src/` only in `shadcn-bridge.css`; zero named custom-size `text-<role>` utilities in
+  TS/TSX. Styleguide `/styleguide.html` renders (1 pairing, no removed-font refs, zero console errors).
+- Screenshots (auth 1280/375, trial-board+feedback, completion+leaderboard) visually identical to baseline.
+
+Result:
+Complete; all H1–H8 landed, no revert. Only computed-style delta anywhere is `button { appearance }` `none→button`
+on shadcn TabsTriggers (preflight-owned) — pixel-inert: preflight's universal `border:0` + explicit trigger
+backgrounds + flex centering render nothing native, and the tabsList box is identical on/off. Left uncompensated
+per §16 H1 ("preflight owns it; compensate only where drift shows"), keeping the setup vanilla.
+
+Commit:
+Not committed (commits are the user's — expected). Uncommitted tree: `package-lock.json` deleted; `package.json`,
+`pnpm-lock.yaml`, `src/styles/{tokens,theme,app,shadcn-bridge,styleguide}.css`, `src/components/ui/{button,card,
+checkbox,dialog,input,tabs}.tsx`, `src/lib/utils.ts`, `src/styleguide/{main,StyleGuide}.tsx` modified.
+`docs/specs/UI-SYSTEM.md` was already modified pre-session (the re-copied §16 canon).
+
+Blocker:
+None.
+
+Next single task:
+NIL-63 per-card replay build per `UI-SYSTEM.md` §8 + §12 riders (icon replay button in `IdeophoneCard`,
+`--motion-spin`, kana-measure guard, browser-loop replay waypoint), on this harmonized foundation.

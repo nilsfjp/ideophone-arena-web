@@ -1,8 +1,8 @@
 # UI-SYSTEM — Ideophone Arena full-app design spec (NIL-64)
 
-_Fable 5 design session, 2026-07-03. Status: **ADOPTED** (ledger L1–L5 resolved in chat with Nils, 2026-07-03; resolutions recorded in §13). Consumed by: NIL-65 (migration build), NIL-63 (replay), 28B (ladder UI), NIL-62 (free-form UI), NIL-43 (landing). Companion prompt: `session-NIL-65-prompt.md`. Color derivations verified programmatically this session (OKLab reference implementation + Machado 2009 CVD matrices + WCAG 2.x relative luminance); every number in §4 is computed, not eyeballed._
+_Fable 5 design session, 2026-07-03. Status: **ADOPTED** (ledger L1–L5 resolved in chat with Nils, 2026-07-03; §13) → **§1–§7 LANDED by NIL-65, 2026-07-04**; as-built wiring canonized as **§16 (normative)**. Consumed by: NIL-65 (migration build — done), NIL-63 (replay — next; companion prompt `session-NIL-63-prompt.md`), 28B (ladder UI), NIL-62 (free-form UI), NIL-43 (landing). The consumed NIL-65 prompt lives in the planning folder's `archive/`. Color derivations verified programmatically the design session (OKLab reference implementation + Machado 2009 CVD matrices + WCAG 2.x relative luminance); every number in §4 is computed, not eyeballed._
 
-_Binding context: Tailwind v4 + selective shadcn/ui (settled 2026-07-03); `tokens.css` stays the single source of truth via `@theme`; frozen `experimentText.ts` strings and invariants 1–3 untouchable; kana rendered verbatim — typography may style, never transform. This spec drafts token values; NIL-65 lands them._
+_Binding context: Tailwind v4 + selective shadcn/ui (settled 2026-07-03); `tokens.css` stays the single source of truth via `@theme`; frozen `experimentText.ts` strings and invariants 1–3 untouchable; kana rendered verbatim — typography may style, never transform. This spec drafted the token values; **NIL-65 landed them (2026-07-04, full proof battery green at 1280px and 375px)**. Second-pass adjudication same day: **harmonize to vanilla Tailwind/shadcn expectations** — §16 is the normative wiring canon (H1–H8 target table; **NIL-69 executes it**), including the H2 token rename map (`--vermillion`, `--modality-*`) applied to this spec's prose 2026-07-04. Until NIL-69 lands, code matches §16's as-built column. Web-repo package manager: **pnpm** (canonical 2026-07-04; all proof commands are pnpm)._
 
 ---
 
@@ -132,7 +132,7 @@ Reserved face token: `--font-stimuli-latin` — IPA-capable face for XL word for
 
 `--text-xs` · weight 700 · `letter-spacing: var(--tracking-wide)` · `text-transform: uppercase` · default ink `--ink-muted`.
 
-Variants: **plain** (reveal label, rating progress), **pill** (1px border, `--radius-pill`, `--space-1/2` padding — practice note, mode status), **ring** (circled — card side labels A/B), **tinted** (modality text color — floor labels, feedback research-note label). Consumers today: `.card-side-label`, `.practice-note`, `.mode-card-status`, `.rating-reveal-label`, `.rating-progress`, `.feedback-side`. Consumers tomorrow: measure chips (§2.3), Ladder floor labels (`FLOOR 1 · SOUND` in `--accent-auditory`), XL language chips (small caps, **no flags** — languages ≠ countries), Template axis chips (`SHAPE · REPETITION`), free-form feature chips. One CSS class (or one tiny component in the bespoke layer), six modes fed.
+Variants: **plain** (reveal label, rating progress), **pill** (1px border, `--radius-pill`, `--space-1/2` padding — practice note, mode status), **ring** (circled — card side labels A/B), **tinted** (modality text color — floor labels, feedback research-note label). Consumers today: `.card-side-label`, `.practice-note`, `.mode-card-status`, `.rating-reveal-label`, `.rating-progress`, `.feedback-side`. Consumers tomorrow: measure chips (§2.3), Ladder floor labels (`FLOOR 1 · SOUND` in `--modality-auditory`), XL language chips (small caps, **no flags** — languages ≠ countries), Template axis chips (`SHAPE · REPETITION`), free-form feature chips. One CSS class (or one tiny component in the bespoke layer), six modes fed.
 
 ---
 
@@ -150,15 +150,15 @@ Method: exact sRGB→OKLab per Ottosson's reference; round-trip verified (`oklch
 | `--ink-primary` | `#211e19` | `oklch(23.66% 0.0104 80.60)` |
 | `--ink-muted` | `#5e5749` | `oklch(45.92% 0.0237 84.56)` |
 | `--ink-inverse` | `#fbf8f2` | `oklch(97.98% 0.0086 84.57)` |
-| `--accent` | `#c8401f` | `oklch(56.34% 0.1781 34.51)` |
-| `--accent-hover` | `#b23618` | `oklch(51.42% 0.1654 34.39)` |
-| `--accent-active` | `#9e3015` | `oklch(47.22% 0.1504 34.55)` |
-| `--accent-auditory` | `#8a5512` | `oklch(49.87% 0.1035 65.93)` |
-| `--accent-auditory-soft` | `#ebd7b0` | `oklch(88.58% 0.0559 83.97)` |
-| `--accent-visual` | `#99454f` | `oklch(50.16% 0.1127 14.70)` |
-| `--accent-visual-soft` | `#e9c4c7` | `oklch(85.29% 0.0423 12.49)` |
-| `--accent-interoceptive` | `#386376` | `oklch(47.64% 0.0568 228.32)` |
-| `--accent-interoceptive-soft` | `#b9d3dc` | `oklch(85.04% 0.0306 220.63)` |
+| `--vermillion` | `#c8401f` | `oklch(56.34% 0.1781 34.51)` |
+| `--vermillion-hover` | `#b23618` | `oklch(51.42% 0.1654 34.39)` |
+| `--vermillion-active` | `#9e3015` | `oklch(47.22% 0.1504 34.55)` |
+| `--modality-auditory` | `#8a5512` | `oklch(49.87% 0.1035 65.93)` |
+| `--modality-auditory-soft` | `#ebd7b0` | `oklch(88.58% 0.0559 83.97)` |
+| `--modality-visual` | `#99454f` | `oklch(50.16% 0.1127 14.70)` |
+| `--modality-visual-soft` | `#e9c4c7` | `oklch(85.29% 0.0423 12.49)` |
+| `--modality-interoceptive` | `#386376` | `oklch(47.64% 0.0568 228.32)` |
+| `--modality-interoceptive-soft` | `#b9d3dc` | `oklch(85.04% 0.0306 220.63)` |
 | `--positive` | `#2a6b43` | `oklch(47.44% 0.0930 153.74)` |
 | `--positive-soft` | `#adcab8` | `oklch(81.24% 0.0400 158.15)` |
 | `--negative` | `#9d2c1a` | `oklch(46.64% 0.1520 31.81)` |
@@ -177,13 +177,13 @@ The existing hover/active ramp is **not** a pure L-shift — it darkens *and* de
 
 > **hover** = base `L − 0.049`, `C − 0.013`, `H` const · **active** = base `L − 0.091`, `C − 0.028`, `H` const
 
-Verified: this model reproduces the shipped `--accent-hover`/`--accent-active` (ΔE 0.013/0.028 ≈ imperceptible at interaction speed) and produces in-gamut ramps for every modality color and every haptic candidate (§4.4 table). Disabled state stays `opacity: 0.62` (composited, works on any surface) — no disabled color tokens.
+Verified: this model reproduces the shipped `--vermillion-hover`/`--vermillion-active` (ΔE 0.013/0.028 ≈ imperceptible at interaction speed) and produces in-gamut ramps for every modality color and every haptic candidate (§4.4 table). Disabled state stays `opacity: 0.62` (composited, works on any surface) — no disabled color tokens.
 
 ### 4.3 Derived-trio stats (the derivation inputs)
 
 Modality text variants: mean `L 0.4922`, `C 0.0910` (aud 65.9°, vis 14.7°, int 228.3°); all clear AA on both papers (4.85–5.11:1 page, 5.85–6.16:1 card). Soft fills: mean `L 0.8630`, `C 0.0429`.
 
-**Baseline CVD finding (existing palette, disclosed):** under protanopia, `--accent-auditory` vs `--accent` separate by only ΔE 0.013, and under deuteranopia aud/vis sit at 0.060. The palette's own floor is therefore ~0.06 under deutan and the aud/accent protan pair is already a known collision. Mitigation is structural and already app policy: **modality color is never the sole carrier** — always paired with a specimen label or text ("Research note: auditory", floor names, chip text). This rule graduates from habit to invariant-adjacent guideline in this spec.
+**Baseline CVD finding (existing palette, disclosed):** under protanopia, `--modality-auditory` vs `--vermillion` separate by only ΔE 0.013, and under deuteranopia aud/vis sit at 0.060. The palette's own floor is therefore ~0.06 under deutan and the aud/accent protan pair is already a known collision. Mitigation is structural and already app policy: **modality color is never the sole carrier** — always paired with a specimen label or text ("Research note: auditory", floor names, chip text). This rule graduates from habit to invariant-adjacent guideline in this spec.
 
 ### 4.4 Haptic (fourth modality) candidates — ledger item L1, Nils picks
 
@@ -191,7 +191,7 @@ Derivation rule from the brief: match trio L/C, rotate hue. Two findings before 
 
 | | **C1 · UME (plum)** | **C2 · KOKE (moss)** | **C3 · TSUCHI (deep clay)** — recommended |
 |---|---|---|---|
-| `--accent-haptic` | `#855380` · `oklch(51.52% 0.0910 330)` | `#5d6a2a` · `oklch(49.95% 0.0910 120)` | `#743d0e` · `oklch(42.00% 0.0950 55)` |
+| `--modality-haptic` | `#855380` · `oklch(51.52% 0.0910 330)` | `#5d6a2a` · `oklch(49.95% 0.0910 120)` | `#743d0e` · `oklch(42.00% 0.0950 55)` |
 | Derivation | rule-faithful (L/C matched) | rule-faithful (L/C matched) | hue from the ladder spec's clay hint; **L lowered 0.49→0.42** (disclosed break) |
 | Contrast page/card | 4.63 / 5.59 ✓AA | 4.61 / 5.56 ✓AA | **6.80 / 8.20** ✓AA+ |
 | Worst ΔE vs trio+accent, normal | 0.080 (vis) ✓ | 0.088 (aud) ✓ | 0.080 (aud) ✓ |
@@ -210,23 +210,33 @@ Killed in testing: matched-L clay (normal-vision collision above), teal H195 (0.
 Adopted tokens (NIL-65 lands them):
 
 ```css
---accent-haptic:        #5d6a2a; /* oklch(49.95% 0.0910 120) — KOKE; AA 4.61:1 page, 5.56:1 card */
---accent-haptic-soft:   #ced7b7; /* oklch(86.30% 0.0429 120) — fill/chart tint; ink-on-it 11.09:1 */
---accent-haptic-hover:  #505b26; /* §4.2 ramp model, in gamut */
---accent-haptic-active: #464f26; /* §4.2 ramp model, in gamut */
+--modality-haptic:        #5d6a2a; /* oklch(49.95% 0.0910 120) — KOKE; AA 4.61:1 page, 5.56:1 card */
+--modality-haptic-soft:   #ced7b7; /* oklch(86.30% 0.0429 120) — fill/chart tint; ink-on-it 11.09:1 */
+--modality-haptic-hover:  #505b26; /* §4.2 ramp model, in gamut */
+--modality-haptic-active: #464f26; /* §4.2 ramp model, in gamut */
 ```
 
 ### 4.5 Non-text and utility checks (verified)
 
-Focus ring `--accent` on page 3.90:1, card 4.71:1, raised 4.99:1 — clears the 3:1 non-text bar everywhere. **Accent as colored text: card/raised surfaces only, never on the page ground** (3.90 < 4.5 — tokens.css already documents this; restated here because specimen-label `tinted` variants must obey it). Button text `--ink-inverse` on `--accent` 4.71:1 ✓AA. `--border-mid` affordance 3.11:1 page / 3.75:1 card ✓. `--ink-muted` 5.59/6.75 ✓. `--positive` 5.00, `--negative` 5.85 on page ✓. No changes needed; the table exists so NIL-65's guard test (§11.3) has canonical expected values.
+Focus ring `--vermillion` on page 3.90:1, card 4.71:1, raised 4.99:1 — clears the 3:1 non-text bar everywhere. **Accent as colored text: card/raised surfaces only, never on the page ground** (3.90 < 4.5 — tokens.css already documents this; restated here because specimen-label `tinted` variants must obey it). Button text `--ink-inverse` on `--vermillion` 4.71:1 ✓AA. `--border-mid` affordance 3.11:1 page / 3.75:1 card ✓. `--ink-muted` 5.59/6.75 ✓. `--positive` 5.00, `--negative` 5.85 on page ✓. No changes needed; the table exists so NIL-65's guard test (§11.3) has canonical expected values.
 
 ### 4.6 Tailwind v4 wiring and the shadcn theme map
 
-`tokens.css` stays byte-canonical and keeps its semantic names. Tailwind consumes it via **`@theme inline` referencing the existing custom properties** — zero value duplication:
+`tokens.css` stays byte-canonical (values and provenance; names per the §16 H2 map). Tailwind consumes it via **`@theme inline` referencing the existing custom properties** — zero value duplication. **Harmonized wiring (§16 H1, NIL-69 target):** vanilla import with preflight, legacy CSS in `@layer app`:
 
 ```css
+/* app.css head — harmonized (H1). Vanilla import incl. preflight; layer order
+   pre-declared so legacy @layer app sits under utilities. */
+@layer theme, base, components, app, utilities;
 @import "tailwindcss";
 @import "./tokens.css";
+@import "./theme.css";          /* @theme inline token → utility map (sibling file) */
+@import "./shadcn-bridge.css";  /* shadcn vars ← tokens */
+```
+
+`@layer app` is declared before `utilities`, so appended utilities win on shadcn/chrome components while bespoke surfaces (which append no utilities) render from `@layer app` unchanged; preflight sits in `base`, under everything. Compensating base rules go in `@layer app` only where the proof battery shows drift — the invariant-5 geometry waypoints are the hard gate (H1 revert criterion). *(NIL-65 shipped without preflight + a global button reset; superseded by this wiring when NIL-69 lands.)* The `@theme inline` map itself (illustrative shape below, full version in `src/styles/theme.css`):
+
+```css
 @theme inline {
   --color-surface-page: var(--surface-page);
   --color-surface-card: var(--surface-card);
@@ -234,20 +244,24 @@ Focus ring `--accent` on page 3.90:1, card 4.71:1, raised 4.99:1 — clears the 
   --color-ink: var(--ink-primary);
   --color-ink-muted: var(--ink-muted);
   --color-ink-inverse: var(--ink-inverse);
-  --color-accent: var(--accent);            /* + hover/active */
-  --color-auditory: var(--accent-auditory); /* + soft; visual, interoceptive, haptic same pattern */
+  --color-vermillion: var(--vermillion);    /* + hover/active */
+  --color-auditory: var(--modality-auditory); /* + soft; visual, interoceptive, haptic same pattern */
   --color-positive: var(--positive);        /* + soft; negative same */
   --color-border-soft: var(--border-soft);  /* + mid, strong */
   --font-display: var(--font-display);
   --font-body: var(--font-body);
   --font-stimuli: var(--font-stimuli);
-  --text-*: …;        /* map the full §3 ladder incl. prompt/question/kana roles */
-  --spacing-*: …;     /* --space-1..8 */
+  --text-*: …;        /* STANDARD size names only (xs/sm/base/lg/xl/2xl) — H4 */
   --radius-sm/md/lg: …; --shadow-card/raised: …;
 }
 ```
 
-Utilities then read `bg-surface-card`, `text-ink-muted`, `text-auditory`, `font-stimuli`, `text-kana-card`, `rounded-md`, `shadow-card`. Radius roles: `sm` = chips/inline controls, `md` = controls + cards, `lg` = panels, `pill` = status chips.
+Utilities then read `bg-surface-card`, `text-ink-muted`, `text-auditory`, `bg-vermillion`, `font-stimuli`, `rounded-md`, `shadow-card`. Radius roles: `sm` = chips/inline controls, `md` = controls + cards, `lg` = panels, `pill` = status chips; **`--radius-xl` is aliased to `--radius-lg`** so shadcn Card/Dialog defaults (`rounded-xl`) resolve to the panel radius.
+
+Two rules the map carries (§16 H4/H5):
+
+- **Spacing is deliberately NOT remapped.** `--space-5..8` (1.5/2/3/4rem) diverge from Tailwind's numeric defaults; remapping `--spacing-*` would corrupt every shadcn component's padding, which assumes the default scale. Bespoke rhythm (§2.2) stays enforced in `app.css` via `var(--space-*)`.
+- **The utility surface uses only standard font-size names.** Tailwind's `text-*` namespace holds both sizes and colors, and stock `tailwind-merge` only disambiguates the standard size names — so the `@theme` font-size map is restricted to `xs/sm/base/lg/xl/2xl` (values still ours by reference). The non-standard §3 roles (`ui`, `md`, `prompt`, `question`, `kana-*`, `hero`, `xl-form`) stay tokens in tokens.css, consumed via `var()` in `@layer app` semantic classes or as arbitrary-value utilities (`text-[length:var(--text-ui)]`, natively size-classified by tailwind-merge) — **never as named utilities**. No `extendTailwindMerge` config exists; `cn()` is stock `twMerge`.
 
 shadcn variable bridge (its components read these; values are our tokens, again by reference):
 
@@ -257,12 +271,12 @@ shadcn variable bridge (its components read these; values are our tokens, again 
 | `--foreground` | `--ink-primary` | `--destructive` | `--negative` |
 | `--card` | `--surface-card` | `--border` | `--border-soft` |
 | `--popover` | `--surface-raised` | `--input` | `--border-mid` |
-| `--primary` | `--accent` | `--ring` | `--accent` |
+| `--primary` | `--vermillion` | `--ring` | `--vermillion` |
 | `--primary-foreground` | `--ink-inverse` | `--radius` | `--radius-md` (7px) |
 | `--secondary` | `--surface-raised` | `--muted` | `--surface-card` |
 | `--secondary-foreground` | `--ink-primary` | `--accent`* | `--surface-card` |
 
-*shadcn's `--accent` is its hover-wash var, not our vermillion — name collision documented so nobody wires vermillion into list-hover washes. The bridge lives in one `shadcn-bridge.css` layer next to tokens.css; deleting it detaches shadcn cleanly.
+*shadcn's `--accent` is its hover-wash var, not our vermillion. The H2 rename (§16) frees the name: with our vermillion token now `--vermillion`, the bridge defines shadcn's `--accent: var(--surface-card)` + `--accent-foreground: var(--ink-primary)` normally, and hand-authored `src/components/ui/*` use stock shadcn `accent` classes — future shadcn CLI output drops in unpatched. (NIL-65 shipped with these two vars omitted and `bg-muted` hand-patched in; NIL-69 restores the stock wiring.) Never wire vermillion into a list-hover wash. The bridge lives in one `shadcn-bridge.css` file next to tokens.css; deleting it detaches shadcn cleanly.
 
 ---
 
@@ -296,16 +310,18 @@ Boundary test for any new surface: *does it render frozen text, stimulus content
 
 **Stable-hook contract (load-bearing for §11):** every component root and every selector the proof battery uses keeps its semantic class as the *first* class in `className`, with Tailwind utilities appended after. The semantic set (waypoint-verified): `.trial-stage`, `.trial-board`, `.stimulus-row`, `.ideophone-card`, `.choice-button`, `.question-slot`, `.question-text`, `.feedback-next-button`, `.fixation-cross`, `.feedback`, `.sound-check`, `.mode-card`, `.rating-scale-button`(+`.selected`), `.rating-next-button`, `.rating-reveal`, `.status-line`, `.stimulus-media`, `#leaderboard-panel`, `.leaderboard-pager`, plus the display classes (`.script-display-text`, `.romaji-display-text`, `.meaning-display-text`, `.feedback-choice-card`, `.slot-hidden`). shadcn components get semantic hooks too (`.auth-tabs`, `.mode-card` on the Card root). CVA/`cn()` composition per the component-design conventions; `cn("ideophone-card", …variants)`.
 
+**Browser-loop compatibility contract (as built NIL-65, binding — §16 H7):** the proof loop drives real DOM, so chrome it must operate either stays native or ships its loop idiom in the same session. Landed idioms: the Instructions practice toggle stays a native `input[type=checkbox]` (Radix Checkbox renders no `input`, which the loop queries); AuthForm inputs stay descendants of native `<label>` (the loop associates by wrapping); mode cards stay `<button class="mode-card">`; the auth/completion Tabs ARE shadcn Radix, and the loop activates them via focus+Enter (`trustedPressEnterOnText`) because Radix ignores synthetic `element.click()` (no mousedown). Any new Radix control on a loop path must add its activation idiom to `verify-browser-loop.mjs` before the session exits.
+
 ---
 
 ## 6. Interaction states (one grammar)
 
 | State | Buttons (primary/secondary) | Cards-as-buttons (mode, condition, choice) | Scale buttons | Inputs |
 |---|---|---|---|---|
-| Rest | fill `--accent` / raised+`--border-mid` | washi/raised + `--border-mid` (interactive affordance ≥3:1) | raised + `--border-mid` | raised + `--border-mid` |
-| Hover | ramp hover fill / border→`--accent` | border→`--accent`, fill→`--surface-raised` (the "lift") | border→`--accent` | border→`--border-strong` |
-| Active | ramp active fill | inset ring 2px `--accent` | — | — |
-| Selected | — | `.active`: inset ring 2px `--accent` (condition) | `.selected`: fill `--accent`, text `--ink-inverse` — persists through disable (Gorilla-faithful) | — |
+| Rest | fill `--vermillion` / raised+`--border-mid` | washi/raised + `--border-mid` (interactive affordance ≥3:1) | raised + `--border-mid` | raised + `--border-mid` |
+| Hover | ramp hover fill / border→`--vermillion` | border→`--vermillion`, fill→`--surface-raised` (the "lift") | border→`--vermillion` | border→`--border-strong` |
+| Active | ramp active fill | inset ring 2px `--vermillion` | — | — |
+| Selected | — | `.active`: inset ring 2px `--vermillion` (condition) | `.selected`: fill `--vermillion`, text `--ink-inverse` — persists through disable (Gorilla-faithful) | — |
 | Focus-visible | `--focus-ring` outline, offset 2 | same | same | same, offset 0 |
 | Disabled | `opacity: .62`, `cursor: not-allowed` | coming-soon exception: full opacity, muted ink, pill (honest state) | `.62`, keep `.selected` fill | `.62` |
 
@@ -350,7 +366,7 @@ Retires Gorilla's four-card workaround (upper pair replayed, lower pair selected
 
 **A11y.** `aria-label="Replay card A"` / `"Replay card B"` (matches the "Choose card A" idiom; never includes the word — pre-feedback the accessibility tree must stay position-only, invariant 7). Keyboard: normal tab stop; tab order is per-card (choose A → replay A → choose B → replay B — grouping beats control-type ordering); Enter/Space activates; focus ring per §6. Announce nothing on completion (the audio is the feedback).
 
-**Motion.** On activation the *icon* (not the button) rotates one revolution: `transform: rotate(360deg)` over `--motion-spin`, then resets. Gated `motion-safe`; reduced-motion users get a `--motion-micro` border→accent pulse instead (state change, no movement). Hover: border→`--accent` per §6; no idle spin.
+**Motion.** On activation the *icon* (not the button) rotates one revolution: `transform: rotate(360deg)` over `--motion-spin`, then resets. Gated `motion-safe`; reduced-motion users get a `--motion-micro` border→vermillion pulse instead (state change, no movement). Hover: border→`--vermillion` per §6; no idle spin.
 
 **Rating Lab unification.** Rating Lab's replay keeps its frozen visible label (`RATING_REPLAY_BUTTON` = "Replay" — untouchable), restyled as the same circular-arrow icon + label in a pill secondary button: icon left, text right, same spin-on-activate, same tokens. Both affordances read as the same instrument control; the trial-side one is icon-only because no frozen string exists for it (chrome, new).
 
@@ -452,16 +468,18 @@ Spine: **"Explore how far iconicity carries you before convention takes over."**
 
 ### 10.6 The identity motif (ledger item L5)
 
-Proposal: the **wave rule** — a short seismograph-like zigzag rule (SVG, `--accent`, 2px stroke) replacing the flat underline under landing/section headings and as the hero's right-column motif (large, in `--accent-auditory`→`--accent-interoceptive` gradient stops per §4 trio). Rationale: a line that depicts sound *is* iconicity — the thesis subject drawn as chrome. Cheap, ownable, works at 375px, no kana needed (survives any L4 ruling). If L4 allows chrome kana: the hero motif is a large static **practice-set** specimen (mockup uses ガタン *gatan* "with a bang" — p0's katakana word, revealed in practice by design) with romaji + gloss caption; core-pool words banned per §10.1.
+Proposal: the **wave rule** — a short seismograph-like zigzag rule (SVG, `--vermillion`, 2px stroke) replacing the flat underline under landing/section headings and as the hero's right-column motif (large, in `--modality-auditory`→`--modality-interoceptive` gradient stops per §4 trio). Rationale: a line that depicts sound *is* iconicity — the thesis subject drawn as chrome. Cheap, ownable, works at 375px, no kana needed (survives any L4 ruling). If L4 allows chrome kana: the hero motif is a large static **practice-set** specimen (mockup uses ガタン *gatan* "with a bang" — p0's katakana word, revealed in practice by design) with romaji + gloss caption; core-pool words banned per §10.1.
 
 ---
 
 ## 11. NIL-65 migration plan and test fallout (plan it, don't discover it)
 
+> **Status: LANDED 2026-07-04** — full battery green at 1280px and 375px; see the web repo's `docs/progress-log.md` entry "2026-07-04 (NIL-65)" for the build record and the adversarial-review fixes (button reset, token-purity regex, tailwind-merge font-size registration). This section is kept as the plan-of-record; the as-built deltas and their 2026-07-04 harmonization adjudication are in §16 (NIL-69 executes the harmonized target). Note: the three unimported `@fontsource` packages (kaisei-decol, klee-one, rocknroll-one) were **not** removed — the removal stays pre-approved and may ride NIL-69.
+
 ### 11.1 Build sequence (one session)
 
 1. Deps (pre-approved gate only): `tailwindcss@4`, `@tailwindcss/vite`, shadcn CLI + the §5 component set's Radix peers, `class-variance-authority`/`clsx`/`tailwind-merge` (shadcn's standard kit). **Nothing else** — new icons via inline Lucide SVG paths already vendored by shadcn components, no separate icon dep without a fresh gate. Remove-only cleanup allowed: `@fontsource/kaisei-decol`, `@fontsource/klee-one`, `@fontsource/rocknroll-one` are installed but unimported (font-adjudication leftovers) — dropping them is a dep *removal*, flag in handoff.
-2. tokens.css: hex→`oklch()` rewrite (§4.1 table, hex provenance comments), add §3.2/§3.3 new tokens + `--accent-haptic` family (ledger L1 pick) + `--motion-*` ladder + `--container-*`; append the `@theme inline` block (or sibling `theme.css`) + `shadcn-bridge.css`.
+2. tokens.css: hex→`oklch()` rewrite (§4.1 table, hex provenance comments), add §3.2/§3.3 new tokens + `--modality-haptic` family (ledger L1 pick) + `--motion-*` ladder + `--container-*`; append the `@theme inline` block (or sibling `theme.css`) + `shadcn-bridge.css`.
 3. Restyle chrome to shadcn per §5 boundary; restyle bespoke surfaces to Tailwind utilities on the same semantic hooks; apply §1 surface-grammar deltas and §2.2 rhythm.
 4. Test-battery repairs (§11.2) in the same commits as the components they pin.
 5. Proof battery (§11.4).
@@ -485,19 +503,19 @@ Note on the remembered "token-grep check": no literal token-grep exists in the f
 
 ### 11.3 New guards the migration must add
 
-1. **Semantic-hook contract test** (vitest): render each proof-battery component; assert each §5 hook exists and is the first class token on its element. This is the migration's replacement for exact-markup pinning — it guards the *waypoints'* substrate, not the styling.
-2. **Token-purity guard** (script or vitest, the successor to the old intent): grep built CSS/site source for raw hex outside `tokens.css` (allowing the provenance comments) and for `transition|animate` outside `motion-safe`/`no-preference` gates. Keeps "tokens are the only place values live" true under Tailwind.
+1. **Semantic-hook contract test** (vitest): render each proof-battery component; assert each §5 hook exists and is the first class token on its element. This is the migration's replacement for exact-markup pinning — it guards the *waypoints'* substrate, not the styling. **Landed as `src/semanticHooks.test.tsx`.**
+2. **Token-purity guard** (script or vitest, the successor to the old intent): grep built CSS/site source for raw hex outside `tokens.css` (allowing the provenance comments) and for `transition|animate` outside `motion-safe`/`no-preference` gates. Keeps "tokens are the only place values live" true under Tailwind. **Landed as `scripts/verify-token-purity.mjs`** (post-review fix: the hex-strip regex was consuming 4/6/8-digit hex and silently skipping `#rrggbb`; now self-tested).
 3. **Reserved-slot geometry note:** the browser-loop layout-stability waypoint (`.trial-board` phase geometry) already asserts this at runtime — §2.4 constants must reproduce byte-identically.
 
 ### 11.4 Exit proof battery (unchanged bar, plus)
 
-`npm run lint` · `npm run build` · `vitest` green (post-repair) · `verify-presentation-logic` green · `verify-browser-loop` full pass at desktop + 375px · §4.5 contrast spot-checks on any surface the migration re-colored · screenshots of trial board at both viewports vs pre-migration (reserved-slot geometry identical) · tree clean for Nils's review, no commits.
+**Canonical commands (pnpm, 2026-07-04):** `pnpm lint` · `pnpm build` · `pnpm vitest run` green (post-repair; incl. the two §11.3 guards) · `node scripts/verify-presentation-logic.mjs` green · `node scripts/verify-token-purity.mjs` green · `node scripts/verify-browser-loop.mjs` full pass at desktop + 375px · §4.5 contrast spot-checks on any surface the migration re-colored · screenshots of trial board at both viewports vs pre-migration (reserved-slot geometry identical) · tree clean for Nils's review, no commits. This battery is the standard exit bar for every consuming build (§15).
 
 ---
 
 ## 12. Design-sync and styleguide notes
 
-- `.design-sync/` untouched this session (its `previews/*.tsx` are component harnesses against the *shipped* bundle; pre-build HTML mockups don't belong there — they live in the planning folder, §13 note). Post-NIL-65 re-sync duties, from `.design-sync/NOTES.md` own risk list: re-run `build-css.mjs` (bundle gains Tailwind layer), re-validate `conventions.md` token/class enumeration, re-grade previews, and fix the stale `componentSrcMap` rows (`HomePage`/`ResultsPage`/`NotFoundPage` point at `src/pages/*` which no longer exists post-27C).
+- `.design-sync/` untouched by NIL-65 (its `previews/*.tsx` are component harnesses against the *shipped* bundle; pre-build HTML mockups don't belong there — they live in the planning folder, §13 note). Post-NIL-65 re-sync duties, from `.design-sync/NOTES.md` own risk list: re-run `build-css.mjs` (bundle gains Tailwind layer), re-validate `conventions.md` token/class enumeration, re-grade previews, and fix the stale `componentSrcMap` rows (`HomePage`/`ResultsPage`/`NotFoundPage` point at `src/pages/*` which no longer exists post-27C). **These chores ride NIL-63 as riders (decided 2026-07-04)** — see `session-NIL-63-prompt.md`.
 - `/styleguide.html` gains: §3.4 specimen-label variants, §4.4 haptic swatch row, §7 motion ladder demo, the shadcn-themed control row — it remains the token smoke test.
 
 ---
@@ -531,12 +549,34 @@ Run against the three mockups (`docs/design/NIL-64-mockups/`) and the spec itsel
 
 | Session | Consumes | Must not touch |
 |---|---|---|
-| **NIL-65** | §1–§7 wholesale; §4 token values; §5 boundary + hook contract; §11 plan/fallout/guards; ledger picks | frozen strings; reserved-slot constants (§2.4); shuffle/API anything |
-| **NIL-63** (rides or follows NIL-65) | §8 verbatim; §7 spin token | phase timing; frozen strings |
+| **NIL-65** — ✅ LANDED 2026-07-04 | §1–§7 wholesale; §4 token values; §5 boundary + hook contract; §11 plan/fallout/guards; ledger picks | frozen strings; reserved-slot constants (§2.4); shuffle/API anything |
+| **NIL-69** (next; harmonization) | §16 H1–H8 wholesale; §4.6 harmonized wiring; H2 rename map | frozen strings; §2.4 constants; token *values*; visual output (pixel parity) |
+| **NIL-63** (after NIL-69) | §8 verbatim; §7 spin token; §16 harmonized canon; **riders: §12 design-sync chores** | phase timing; frozen strings; §16 wiring (extend, don't rework) |
 | **28B ladder UI** | §3.4 floor labels; §4.4 **KOKE** haptic tokens (labels mandatory on haptic-colored UI); §2.3 shell (floors-from-data, no hardcoded 3); "Perception Ladder" name + `JOURNEY · PERCEPTION` chip; thesis-facts §8 tiers | pairings/backend |
 | **NIL-62 Word Mint UI** | §5 boundary row; feature chips = specimen labels in `--positive`/`--ink-muted` (per its spec §7 — non-match ≠ error); §3 scales | PhonologyService spec |
 | **NIL-43 landing** | §2.5 layout; §10.5 arc + stats + corrected line; §10.6 motif; §10.3 footnotes | stat invention — thesis-facts.md only |
 | **XL / Template builds** | reserved tokens (§3.3), chip idioms (§3.4) | their own gates |
+
+---
+
+## 16. Wiring canon — harmonization target (adjudicated 2026-07-04 second pass; NIL-69 executes) — NORMATIVE
+
+NIL-65 landed with as-built deviations (recorded verbatim in the web repo's `docs/progress-log.md` entry "2026-07-04 (NIL-65)"). Same-day second-pass adjudication (Nils): **vanilla Tailwind/shadcn alignment is preferred over canonized workarounds wherever a vanilla path exists** — the app's utility surface should read like any stock Tailwind v4 + shadcn project, with all project identity living in `tokens.css` values and `@layer app`. This table is the target; NIL-69 executes it. Until NIL-69 lands, the code matches the as-built column.
+
+| # | Item | NIL-65 as-built | Harmonized target (NIL-69) |
+|---|---|---|---|
+| **H1** | Preflight | Omitted; global `button` appearance reset in `@layer app` | **Enabled**: `@layer theme, base, components, app, utilities;` then `@import "tailwindcss";` — vanilla import, layer order pre-declared so legacy `@layer app` sits under `utilities`. Button reset deleted (preflight owns it). Compensating base rules added in `@layer app` **only** where the proof battery shows drift. **Hard revert criterion:** any invariant-5 geometry-waypoint or trial-board screenshot regression that can't be fixed with a targeted compensating rule ⇒ revert to no-preflight as-built wiring and report |
+| **H2** | Token names | tokens.css owns `--accent` (vermillion) + `--accent-<modality>` families | **Rename map (root custom properties; old names use the accent prefix):** the vermillion trio `accent`/`accent-hover`/`accent-active` → `--vermillion`/`--vermillion-hover`/`--vermillion-active` · the modality families `accent-auditory{,-soft}`, `accent-visual{,-soft}`, `accent-interoceptive{,-soft}`, `accent-haptic{,-soft,-hover,-active}` → `--modality-auditory{,-soft}`, `--modality-visual{,-soft}`, `--modality-interoceptive{,-soft}`, `--modality-haptic{,-soft,-hover,-active}`. Values, provenance hexes, and derivations unchanged. Utility names for the modality trio stay short (`text-auditory` etc. — `--color-auditory: var(--modality-auditory)`); the vermillion trio's utilities become `*-vermillion{,-hover,-active}`. Frees shadcn's `--accent` (H3) |
+| **H3** | shadcn bridge `--accent` | Omitted from bridge; ui components hand-patched to `bg-muted` hover wash | **Restored per the original §4.6 table:** `--accent: var(--surface-card)`, `--accent-foreground: var(--ink-primary)`, mapped in `@theme`. Hand-authored ui components revert to stock shadcn `accent` classes — future shadcn CLI output drops in unpatched |
+| **H4** | Utility surface / type roles | Custom font-size utilities (`text-ui`, `text-md`, …) + `extendTailwindMerge` registration in `lib/utils.ts` | **Standard names only in the utility surface.** `theme.css` font-size map restricted to Tailwind's standard names (`xs/sm/base/lg/xl/2xl`, values still ours by reference). Non-standard §3 roles (`ui`, `md`, `prompt`, `question`, `kana-*`, `hero`, `xl-form`) remain tokens in tokens.css consumed via `var()` in `@layer app` semantic classes, or as arbitrary-value utilities (`text-[length:var(--text-ui)]` — natively understood by tailwind-merge) — **never as named utilities**. `extendTailwindMerge` deleted; `cn()` uses stock `twMerge`. Pixel parity required (no size substitutions) |
+| **H5** | Spacing scale | NOT remapped (Tailwind defaults intact; §2.2 rhythm via `var(--space-*)` in app.css) | **Unchanged — already the vanilla-aligned choice** |
+| **H6** | `--radius-xl` alias → `--radius-lg` | Landed | **Keep** — it makes stock shadcn `rounded-xl` resolve to the panel radius; standard `@theme` config, zero cost |
+| **H7** | Browser-loop idioms (§5 contract): native practice checkbox, native `<label>` wrapping, focus+Enter for Radix Tabs | Landed | **Keep** — harness-vs-Radix, orthogonal to Tailwind/shadcn naming. New Radix on a loop path still ships its idiom same session |
+| **H8** | Package manager | pnpm lockfile added; `package-lock.json` still present; no pin | **Complete the migration:** delete `package-lock.json`; add `"packageManager": "pnpm@<installed version>"` to package.json; commands `pnpm lint` / `pnpm build` / `pnpm vitest run` everywhere |
+
+**Going-forward rule (the point of the pass):** the utility surface uses only vanilla Tailwind/shadcn names — anything project-specific lives in tokens.css values and `@layer app`. No custom classifier config, no bridge omissions, no preflight opt-outs.
+
+Doc note: token names throughout this spec were updated to the H2 map on 2026-07-04; the §4.4 candidate table, §13 ledger, and §14 log are decision/measurement records whose original `--accent-*` names are preserved in git history and the progress log. For the record (not deviations): the three unimported `@fontsource` packages (kaisei-decol, klee-one, rocknroll-one) remain installed; removal stays pre-approved and may ride NIL-69. `Toaster` and `Dialog` are themed and staged but untriggered.
 
 
 

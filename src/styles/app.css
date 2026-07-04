@@ -5,21 +5,17 @@
    layout mid-trial. */
 
 /* --------------------------------------------------------------------------
-   Tailwind v4 wiring (NIL-65). Preflight is intentionally OMITTED: app.css
-   already carries the base resets and — critically — the reserved-slot
-   geometry (invariant 5). Tailwind's preflight would reset headings, buttons,
-   and margins app-wide and risk the exact geometry drift §11.4's screenshots
-   guard against. Utilities + the @theme mapping are all we need.
-
-   The legacy rules below live in `@layer app`, declared BEFORE `utilities`, so
-   Tailwind utilities win wherever a shadcn/chrome component appends them
-   (unlayered CSS would otherwise beat the utilities layer). Bespoke experiment
-   surfaces append NO utilities and therefore render from @layer app exactly as
-   before — the stable-hook contract (§5) keeps their semantic classes first.
+   Tailwind v4 wiring (NIL-65 → harmonized NIL-69, §16 H1). Vanilla import incl.
+   preflight; the layer order is pre-declared so the legacy `@layer app` sits
+   BELOW `utilities` (Tailwind utilities win wherever a shadcn/chrome component
+   appends them) and preflight lands in `base`, under everything. Bespoke
+   experiment surfaces append NO utilities and render from @layer app; the
+   stable-hook contract (§5) keeps their semantic classes first. Preflight base
+   rules that would drift the reserved-slot geometry (invariant 5) are
+   compensated in @layer app below, only where the proof battery showed drift.
    -------------------------------------------------------------------------- */
 @layer theme, base, components, app, utilities;
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import "tailwindcss";
 @import "./tokens.css";
 @import "./theme.css";
 @import "./shadcn-bridge.css";
@@ -39,6 +35,12 @@ html {
 
 body {
   margin: 0;
+  /* Compensating rule (§16 H1): preflight sets the root line-height to 1.5;
+     the pre-preflight design inherited `normal`, so restore it here (@layer app
+     wins over base) to keep body-copy leading and the auth/form geometry
+     pixel-identical. Elements with explicit leading (headings, kana, controls)
+     are unaffected either way. */
+  line-height: normal;
   font-family: var(--font-body);
   background: var(--surface-page);
   color: var(--ink-primary);
@@ -46,20 +48,6 @@ body {
 
 a {
   color: inherit;
-}
-
-button {
-  /* Tailwind preflight is intentionally omitted (see the wiring note above), so
-     neutralize the native button chrome here that preflight would otherwise
-     handle: without this, shadcn fill/ghost/link variants and Radix TabsTriggers
-     that set no border show the UA bevel border and buttonface background.
-     Bespoke buttons and shadcn variants set their own border/background on top
-     (class + utility rules win over these element defaults). */
-  font: inherit;
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  border: 0 solid;
 }
 
 .app {
@@ -241,13 +229,13 @@ button {
 }
 
 .condition-option:hover:not(.active) {
-  border-color: var(--accent);
+  border-color: var(--vermillion);
   background: var(--surface-raised);
 }
 
 .condition-option.active {
-  border-color: var(--accent);
-  box-shadow: inset 0 0 0 2px var(--accent);
+  border-color: var(--vermillion);
+  box-shadow: inset 0 0 0 2px var(--vermillion);
 }
 
 .condition-option-title {
@@ -277,7 +265,7 @@ button {
   width: 1.05rem;
   height: 1.05rem;
   margin: 0;
-  accent-color: var(--accent);
+  accent-color: var(--vermillion);
   cursor: pointer;
 }
 
@@ -309,16 +297,16 @@ button {
 
 .primary-button {
   padding: 0.7rem 1.2rem;
-  background: var(--accent);
+  background: var(--vermillion);
   color: var(--ink-inverse);
 }
 
 .primary-button:hover:not(:disabled) {
-  background: var(--accent-hover);
+  background: var(--vermillion-hover);
 }
 
 .primary-button:active:not(:disabled) {
-  background: var(--accent-active);
+  background: var(--vermillion-active);
 }
 
 .secondary-button {
@@ -410,9 +398,9 @@ button {
 
 .practice-note {
   padding: 0.1rem 0.5rem;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--vermillion);
   border-radius: var(--radius-sm);
-  color: var(--accent);
+  color: var(--vermillion);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
@@ -429,7 +417,7 @@ button {
 .progress-track span {
   display: block;
   height: 100%;
-  background: var(--accent);
+  background: var(--vermillion);
 }
 
 /* Motion policy (§7): the progress-track width fill is the ONE sanctioned
@@ -677,7 +665,7 @@ button {
 
 .choice-button:hover:not(:disabled),
 .choice-button:focus-visible {
-  border-color: var(--accent);
+  border-color: var(--vermillion);
   outline: none;
 }
 
@@ -978,7 +966,7 @@ td {
 }
 
 .mode-card:hover:not(:disabled) {
-  border-color: var(--accent);
+  border-color: var(--vermillion);
   background: var(--surface-raised);
 }
 
@@ -1333,7 +1321,7 @@ td {
 }
 
 .rating-scale-button:hover:not(:disabled) {
-  border-color: var(--accent);
+  border-color: var(--vermillion);
 }
 
 .rating-scale-button:focus-visible {
@@ -1344,8 +1332,8 @@ td {
 /* The chosen number keeps its vermillion fill after the scale disables at
    submit/reveal, mirroring the Gorilla reference. */
 .rating-scale-button.selected {
-  border-color: var(--accent);
-  background: var(--accent);
+  border-color: var(--vermillion);
+  background: var(--vermillion);
   color: var(--ink-inverse);
 }
 

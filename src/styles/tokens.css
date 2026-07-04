@@ -32,18 +32,18 @@
      crimson #e90b3f. 4.99:1 with --ink-inverse text; as colored TEXT use it
      on card/raised surfaces (4.7:1) — on the page ground it only clears the
      3:1 large-text/UI bar. */
-  --accent: oklch(56.34% 0.1781 34.51); /* #c8401f */
-  --accent-hover: oklch(51.42% 0.1654 34.39); /* #b23618 */
-  --accent-active: oklch(47.22% 0.1504 34.55); /* #9e3015 */
+  --vermillion: oklch(56.34% 0.1781 34.51); /* #c8401f */
+  --vermillion-hover: oklch(51.42% 0.1654 34.39); /* #b23618 */
+  --vermillion-active: oklch(47.22% 0.1504 34.55); /* #9e3015 */
 
   /* Modality accents (thesis figures). Base = AA text on page AND card;
      -soft = the verbatim/derived figure tint for fills and chart areas. */
-  --accent-auditory: oklch(49.87% 0.1035 65.93); /* #8a5512 */
-  --accent-auditory-soft: oklch(88.58% 0.0559 83.97); /* #ebd7b0 */
-  --accent-visual: oklch(50.16% 0.1127 14.70); /* #99454f */
-  --accent-visual-soft: oklch(85.29% 0.0423 12.49); /* #e9c4c7 */
-  --accent-interoceptive: oklch(47.64% 0.0568 228.32); /* #386376 */
-  --accent-interoceptive-soft: oklch(85.04% 0.0306 220.63); /* #b9d3dc */
+  --modality-auditory: oklch(49.87% 0.1035 65.93); /* #8a5512 */
+  --modality-auditory-soft: oklch(88.58% 0.0559 83.97); /* #ebd7b0 */
+  --modality-visual: oklch(50.16% 0.1127 14.70); /* #99454f */
+  --modality-visual-soft: oklch(85.29% 0.0423 12.49); /* #e9c4c7 */
+  --modality-interoceptive: oklch(47.64% 0.0568 228.32); /* #386376 */
+  --modality-interoceptive-soft: oklch(85.04% 0.0306 220.63); /* #b9d3dc */
 
   /* Haptic — the fourth modality (KOKE moss, ledger L1, spec §4.4). Base is
      rule-faithful (trio L/C, hue rotated to 120deg). AA 4.61:1 page, 5.56:1
@@ -52,13 +52,13 @@
      text label (floor names, chips) — modality color is never the sole
      carrier (§4.3). Hover/active follow the §4.2 ramp model, in gamut.
      oklch computed from the adopted hex (round-trips byte-identically). */
-  --accent-haptic: oklch(49.87% 0.0897 119.39); /* #5d6a2a */
-  --accent-haptic-soft: oklch(86.38% 0.0441 120.10); /* #ced7b7 — fill/chart tint; ink-on-it 11.09:1 */
-  --accent-haptic-hover: oklch(44.89% 0.0773 119.38); /* #505b26 */
-  --accent-haptic-active: oklch(40.90% 0.0629 119.45); /* #464f26 */
+  --modality-haptic: oklch(49.87% 0.0897 119.39); /* #5d6a2a */
+  --modality-haptic-soft: oklch(86.38% 0.0441 120.10); /* #ced7b7 — fill/chart tint; ink-on-it 11.09:1 */
+  --modality-haptic-hover: oklch(44.89% 0.0773 119.38); /* #505b26 */
+  --modality-haptic-active: oklch(40.90% 0.0629 119.45); /* #464f26 */
 
   /* Feedback — correct/incorrect in thesis-compatible tones (paper-green ink
-     and burnt red), AA as text on both surfaces, distinct from --accent. */
+     and burnt red), AA as text on both surfaces, distinct from --vermillion. */
   --positive: oklch(47.44% 0.0930 153.74); /* #2a6b43 */
   --positive-soft: oklch(81.24% 0.0400 158.15); /* #adcab8 */
   --negative: oklch(46.64% 0.1520 31.81); /* #9d2c1a */
@@ -154,6 +154,6 @@
   --motion-spin: 400ms; /* ease-in-out */
 
   /* Focus — visible vermillion ring on any surface. */
-  --focus-ring: 2px solid var(--accent);
+  --focus-ring: 2px solid var(--vermillion);
   --focus-ring-offset: 2px;
 }

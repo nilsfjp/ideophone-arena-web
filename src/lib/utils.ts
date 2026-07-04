@@ -1,38 +1,14 @@
 import { clsx, type ClassValue } from "clsx";
-import { extendTailwindMerge } from "tailwind-merge";
-
-// Our @theme (spec §3) adds non-standard font-size names — text-ui, text-md,
-// and the trial/kana/hero roles. tailwind-merge does not know them, so out of
-// the box it treats `text-ui` (a size) and `text-ink-inverse` (a color) as the
-// same `text-*` conflict group and drops one — black-holing button text color.
-// Registering the custom sizes under `font-size` puts sizes and colors in
-// separate groups, so a variant's color and size both survive the merge.
-const twMerge = extendTailwindMerge({
-  extend: {
-    classGroups: {
-      "font-size": [
-        {
-          text: [
-            "ui",
-            "md",
-            "prompt",
-            "question",
-            "kana-card",
-            "kana-feedback",
-            "kana-hero",
-            "hero",
-            "xl-form",
-          ],
-        },
-      ],
-    },
-  },
-});
+import { twMerge } from "tailwind-merge";
 
 /**
  * `cn` — the shadcn/CVA class composer. Merges conditional class values
- * (clsx) and resolves Tailwind utility conflicts (tailwind-merge, taught our
- * custom font-size roles above).
+ * (clsx) and resolves Tailwind utility conflicts (stock tailwind-merge).
+ *
+ * The custom §3 font-size roles are no longer named utilities (§16 H4), so
+ * stock tailwind-merge suffices: sizes now ship as arbitrary-length utilities
+ * (text-[length:var(--text-ui)]), which it classifies as font-size — a group
+ * distinct from text color, so a variant's color and size both survive.
  *
  * Stable-hook contract (spec §5): when composing an experiment/chrome surface
  * that the proof battery pins, pass the semantic hook FIRST so it stays the

@@ -10,24 +10,24 @@ import { cn } from "../../lib/utils";
  * outline shared with the bespoke layer (§6). Disabled = opacity .62 (§6).
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-body font-bold cursor-pointer outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-[0.62] motion-safe:transition-colors motion-safe:duration-[var(--motion-micro)] [&_svg]:pointer-events-none [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md font-body font-bold cursor-pointer outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vermillion disabled:pointer-events-none disabled:opacity-[0.62] motion-safe:transition-colors motion-safe:duration-[var(--motion-micro)] [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-accent text-ink-inverse hover:bg-accent-hover active:bg-accent-active",
+        default: "bg-vermillion text-ink-inverse hover:bg-vermillion-hover active:bg-vermillion-active",
         destructive:
           "bg-destructive text-ink-inverse hover:bg-destructive/90 active:bg-destructive/80",
         outline:
-          "border border-border-mid bg-surface-raised text-ink hover:border-accent",
+          "border border-border-mid bg-surface-raised text-ink hover:border-vermillion",
         secondary:
-          "border border-border-mid bg-surface-raised text-ink hover:border-accent",
-        ghost: "bg-transparent text-ink hover:bg-muted",
-        link: "text-accent underline-offset-4 hover:underline",
+          "border border-border-mid bg-surface-raised text-ink hover:border-vermillion",
+        ghost: "bg-transparent text-ink hover:bg-accent hover:text-accent-foreground",
+        link: "text-vermillion underline-offset-4 hover:underline",
       },
       size: {
-        default: "min-h-11 px-[1.2rem] py-[0.7rem] text-ui",
-        sm: "min-h-11 px-[0.9rem] py-[0.55rem] text-ui",
-        lg: "min-h-11 px-6 py-3 text-ui",
+        default: "min-h-11 px-[1.2rem] py-[0.7rem] text-[length:var(--text-ui)] leading-[1.2]",
+        sm: "min-h-11 px-[0.9rem] py-[0.55rem] text-[length:var(--text-ui)] leading-[1.2]",
+        lg: "min-h-11 px-6 py-3 text-[length:var(--text-ui)] leading-[1.2]",
         icon: "size-11",
       },
     },

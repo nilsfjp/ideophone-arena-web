@@ -27,22 +27,22 @@ const SURFACE_SWATCHES: Swatch[] = [
 const INK_SWATCHES: Swatch[] = [
   { token: "--ink-primary", hex: "#211E19", note: "sumi text ink" },
   { token: "--ink-muted", hex: "#5E5749", note: "secondary text" },
-  { token: "--accent", hex: "#C8401F", note: "vermillion (shu-iro)" },
-  { token: "--accent-hover", hex: "#B23618", note: "accent hover" },
-  { token: "--accent-active", hex: "#9E3015", note: "accent active" },
+  { token: "--vermillion", hex: "#C8401F", note: "vermillion (shu-iro)" },
+  { token: "--vermillion-hover", hex: "#B23618", note: "accent hover" },
+  { token: "--vermillion-active", hex: "#9E3015", note: "accent active" },
 ];
 
 const MODALITY_SWATCHES: Swatch[] = [
-  { token: "--accent-auditory", hex: "#8A5512", note: "auditory (thesis #9C6114)" },
-  { token: "--accent-auditory-soft", hex: "#EBD7B0", note: "auditory fill" },
-  { token: "--accent-visual", hex: "#99454F", note: "visual (thesis #E9C4C7)" },
-  { token: "--accent-visual-soft", hex: "#E9C4C7", note: "visual fill" },
+  { token: "--modality-auditory", hex: "#8A5512", note: "auditory (thesis #9C6114)" },
+  { token: "--modality-auditory-soft", hex: "#EBD7B0", note: "auditory fill" },
+  { token: "--modality-visual", hex: "#99454F", note: "visual (thesis #E9C4C7)" },
+  { token: "--modality-visual-soft", hex: "#E9C4C7", note: "visual fill" },
   {
-    token: "--accent-interoceptive",
+    token: "--modality-interoceptive",
     hex: "#386376",
     note: "interoceptive (thesis #B9D3DC)",
   },
-  { token: "--accent-interoceptive-soft", hex: "#B9D3DC", note: "interoceptive fill" },
+  { token: "--modality-interoceptive-soft", hex: "#B9D3DC", note: "interoceptive fill" },
 ];
 
 const FEEDBACK_SWATCHES: Swatch[] = [
@@ -71,35 +71,6 @@ const PAIRINGS: Pairing[] = [
     body: "LINE Seed JP",
     rationale:
       "Production config: headings in rounded maru-gothic; body and stimulus kana in LINE Seed JP (OFL 1.1) — body 400, stimuli Bold 700; shared DNA between copy and cards, with the rounded headings keeping the warm-lab voice distinct. This section renders the real production faces.",
-  },
-  {
-    id: "b",
-    className: "sg-pair-b",
-    name: "Pairing B — Ink Specimen",
-    display: "Kaisei Decol",
-    body: "Zen Kaku Gothic New",
-    rationale:
-      "Decorated mincho with visible brush logic — the most editorial, ink-on-paper voice; kana read like labeled specimens.",
-  },
-  {
-    id: "c",
-    className: "sg-pair-c",
-    name: "Pairing C — Game Cabinet",
-    display: "RocknRoll One",
-    body: "Zen Kaku Gothic New",
-    rationale:
-      "Playful geometric kana with strong personality at display sizes; the most game-forward voice.",
-    flags: "Single weight (400 only) — no bold for the display face.",
-  },
-  {
-    id: "d",
-    className: "sg-pair-d",
-    name: "Pairing D — Field Notes (Claude's alternative)",
-    display: "Klee One",
-    body: "Zen Kaku Gothic New",
-    rationale:
-      "Pen-script textbook face: kana look hand-annotated, like a researcher's field notebook — the most literal 'laboratory ink' reading.",
-    flags: "Weights 400 + 600 (semibold stands in for bold).",
   },
 ];
 

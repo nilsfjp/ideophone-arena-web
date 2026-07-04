@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "packageManager": "pnpm@11.3.0",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -11,10 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fontsource/kaisei-decol": "^5.2.7",
-    "@fontsource/klee-one": "^5.2.8",
     "@fontsource/line-seed-jp": "^5.2.2",
-    "@fontsource/rocknroll-one": "^5.2.8",
     "@fontsource/zen-kaku-gothic-new": "^5.2.7",
     "@fontsource/zen-maru-gothic": "^5.2.8",
     "@radix-ui/react-checkbox": "^1.3.6",

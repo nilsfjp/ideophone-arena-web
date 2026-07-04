@@ -16,7 +16,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
       className={cn(
         "w-full min-h-11 rounded-md border border-input bg-surface-raised px-[0.75rem] py-[0.6rem] text-base text-ink",
         "placeholder:text-ink-muted",
-        "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-accent hover:border-border-strong",
+        "outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-0 focus-visible:outline-vermillion hover:border-border-strong",
         "disabled:cursor-not-allowed disabled:opacity-[0.62]",
         "motion-safe:transition-colors motion-safe:duration-[var(--motion-micro)]",
         className,

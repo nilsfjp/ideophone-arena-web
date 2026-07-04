@@ -65,7 +65,7 @@ function DialogContent({
       >
         {children}
         <DialogPrimitive.Close
-          className="absolute right-[var(--space-4)] top-[var(--space-4)] inline-flex size-8 items-center justify-center rounded-sm text-ink-muted cursor-pointer outline-none hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent motion-safe:transition-colors motion-safe:duration-[var(--motion-micro)]"
+          className="absolute right-[var(--space-4)] top-[var(--space-4)] inline-flex size-8 items-center justify-center rounded-sm text-ink-muted cursor-pointer outline-none hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-vermillion motion-safe:transition-colors motion-safe:duration-[var(--motion-micro)]"
           aria-label="Close"
         >
           <svg

@@ -5,12 +5,14 @@
    layer inherits the "ink and paper" palette with zero value duplication.
    Deleting this file detaches shadcn cleanly.
 
-   NAME-COLLISION NOTE (spec §4.6 warning): shadcn's canonical `--accent` var
-   is its LIST-HOVER WASH, not our vermillion. Our tokens.css already owns
-   `--accent` = vermillion. To avoid clobbering it, this bridge deliberately
-   does NOT define shadcn's `--accent`/`--accent-foreground`. Our hand-authored
-   components in src/components/ui use `bg-muted` / `hover:bg-muted` (washi) for
-   the hover-wash role instead. Never wire vermillion into a list-hover wash.
+   NAME NOTE (spec §4.6, harmonized NIL-69): shadcn's canonical `--accent` var
+   is its LIST-HOVER WASH, not our vermillion. The vermillion family was renamed
+   to `--vermillion*` (H2), which frees this name — so the bridge now defines
+   `--accent` = washi (`--surface-card`) and `--accent-foreground` = ink here,
+   the stock shadcn wiring. Hand-authored components in src/components/ui use the
+   stock shadcn `accent` classes (`hover:bg-accent hover:text-accent-foreground`),
+   so future shadcn CLI output drops in unpatched. Never wire vermillion (now
+   `--vermillion`) into a list-hover wash.
    ========================================================================== */
 
 :root {
@@ -20,17 +22,19 @@
   --card-foreground: var(--ink-primary);
   --popover: var(--surface-raised);
   --popover-foreground: var(--ink-primary);
-  --primary: var(--accent);
+  --primary: var(--vermillion);
   --primary-foreground: var(--ink-inverse);
   --secondary: var(--surface-raised);
   --secondary-foreground: var(--ink-primary);
   --muted: var(--surface-card);
   --muted-foreground: var(--ink-muted);
+  --accent: var(--surface-card);
+  --accent-foreground: var(--ink-primary);
   --destructive: var(--negative);
   --destructive-foreground: var(--ink-inverse);
   --border: var(--border-soft);
   --input: var(--border-mid);
-  --ring: var(--accent);
+  --ring: var(--vermillion);
   --radius: var(--radius-md);
 }
 
@@ -50,6 +54,8 @@
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
