@@ -2,18 +2,33 @@
 
 React 19 + TypeScript. Every component is on `window.IdeophoneArena.*` (bundle:
 root `_ds_bundle.js`). This is the UI of a 2AFC ideophone experiment (a research
-instrument): a "laboratory ink and paper" identity — warm paper surfaces, sumi
-ink, a vermillion accent, and a thesis-figure modality trio.
+instrument): a "laboratory ink and paper" identity — warm paper (washi)
+surfaces, sumi ink, a vermillion accent, and a thesis-figure modality trio.
 
-## Styling idiom: design tokens + semantic class names
+Two layers, both styled from the same tokens: **bespoke experiment surfaces**
+(the trial, rating, mode, leaderboard, auth screens) and a **themed shadcn/ui
+primitive layer** (Button, Card, Input, Table, Tabs, Dialog, Checkbox, Label,
+Toaster).
 
-Style via **CSS custom properties** defined in the shipped stylesheet, applied
-through **semantic class names** — there is no utility-class system and no
-style-prop API. To match the brand, use the tokens (not raw hex/px) for any new
-layout glue you write, and reuse the component class names below.
+## Styling idiom
 
-Read the truth before styling: `_ds/<folder>/styles.css` → `_ds_bundle.css`
-(it defines all tokens AND the component rules), and each component's
+The app runs **Tailwind v4**. Three compatible ways to style, in order of
+preference:
+
+1. **Design tokens** (`var(--*)`) — the source of truth for color/space/type/
+   radius/shadow. Use tokens (never raw hex/px) for any custom layout glue so it
+   stays on-brand.
+2. **Tailwind v4 utility classes** — the shipped `styles.css` carries the
+   compiled utilities the components use (e.g. `inline-flex`, `items-center`,
+   `rounded-md`, `gap-2`, `border`). Brand utilities map onto the tokens
+   (`bg-vermillion`, `text-ink`, `bg-card`, `border-border-mid`).
+3. **shadcn primitives via props** — the primitive layer is configured through
+   `variant`/`size` props (below), not by overriding its classes.
+
+Bespoke surfaces render from an `@layer app` of **semantic class names** and
+append no utilities; the shadcn primitives render from utilities + `data-slot`
+attributes. Read the truth before styling: `_ds/<folder>/styles.css` →
+`_ds_bundle.css` (defines every token AND the component/utility rules), plus each
 `<Name>.prompt.md` + `<Name>.d.ts`.
 
 Token families (all `var(--*)`):
@@ -27,48 +42,71 @@ Token families (all `var(--*)`):
 | State | `--positive`, `--negative` (+ `-soft`) |
 | Borders | `--border-soft`, `--border-mid`, `--border-strong`, `--focus-ring` |
 | Fonts | `--font-body`, `--font-display`, `--font-stimuli` (Japanese kana) |
-| Type scale | `--text-xs … --text-2xl`, plus `--text-kana-card`, `--text-kana-feedback` |
-| Space | `--space-1 … --space-8` |
-| Radius / shadow | `--radius-sm/md/lg/pill`, `--shadow-card`, `--shadow-raised` |
+| Type scale | `--text-xs … --text-2xl`, `--text-kana-card`, `--text-kana-feedback` |
+| Space / radius / shadow | `--space-1 … --space-8`, `--radius-sm/md/lg/pill`, `--shadow-card`, `--shadow-raised` |
+| shadcn bridge aliases | `--card`, `--card-foreground`, `--popover`, `--popover-foreground`, `--border`, `--input`, `--destructive` (map the primitive layer onto the ink-and-paper tokens) |
 
-Component class vocabulary (reuse, don't reinvent): `.ideophone-card`,
-`.card-slot` (per-card positioning wrapper), `.card-replay-button` (per-card
-replay control), `.choice-button`, `.stimulus-display`, `.feedback` (+ `.feedback-choice-grid`,
-`.feedback-choice-card`), `.instructions`, `.script-lab-selector`,
+## Components
+
+**shadcn primitives** — import from the bundle; the props ARE the API:
+
+- `Button` — `variant`: default | secondary | outline | ghost | link |
+  destructive; `size`: default | sm | lg | icon. Vermillion is the default fill.
+- `Card` + `CardHeader` / `CardTitle` / `CardDescription` / `CardContent` /
+  `CardFooter` — flat on washi (hairline border, no shadow).
+- `Input`, `Label`, `Checkbox` — form controls (raised fill, vermillion
+  focus/check).
+- `Table` + `TableHeader` / `TableBody` / `TableRow` / `TableHead` /
+  `TableCell` / `TableCaption` — self-scrolls horizontally.
+- `Tabs` + `TabsList` / `TabsTrigger` / `TabsContent` — segmented control
+  (`defaultValue`, or controlled `value` / `onValueChange`).
+- `Dialog` + `DialogContent` / `DialogHeader` / `DialogTitle` /
+  `DialogDescription` / `DialogFooter` / `DialogTrigger` / `DialogClose` —
+  overlay (the one at-rest surface allowed `--shadow-raised`).
+- `Toaster` — chrome-level toast host; mount once, fire toasts via sonner's
+  `toast()`.
+
+**Bespoke surfaces** — data-driven (backend shapes; see each `<Name>.d.ts`):
+`TrialPlayer`, `IdeophoneCard`, `StimulusDisplay`, `FeedbackPanel`,
+`Instructions`, `ModeSelect` (`modes` + `onSelect`), `RatingLab` (its
+presentational panels `RatingTrialPanel`, `RatingInstructionsPanel`,
+`RatingRevealContent`, `LabRecordPanel`, `RatingDonePanel`, `RatingEmptyState`
+are exported alongside it), `Leaderboard` (live-fetching) / `LeaderboardPanel`
+(presentational table), `AuthForm`. `StimulusPlayback` is an audio engine with
+no static visual.
+
+Bespoke class vocabulary (reuse, don't reinvent): `.ideophone-card`,
+`.card-slot`, `.card-replay-button`, `.choice-button`, `.stimulus-display`,
+`.feedback` (+ `.feedback-choice-grid`, `.feedback-choice-card`),
+`.instructions`, `.mode-select` / `.mode-list` / `.mode-card`, `.rating-lab` /
+`.rating-scale` / `.rating-scale-button`, `.script-lab-selector`,
 `.condition-option`, `.auth-form` / `.auth-panel`, `.score-section`,
 `.leaderboard-pager`, `.primary-button`, `.secondary-button`, `.muted`,
 `.error-text`.
 
 ## Wrapping & setup
 
-- **No global provider is required** — components read tokens from the shipped
-  CSS, not a theme context. Just ensure `styles.css` (and its `@import`
-  closure) is loaded.
-- **No router.** The app is a single view-state shell (`App.tsx`); react-router
-  was removed in the NIL-65/27C migration, so no `MemoryRouter` wrapper is needed
-  for any preview (the former `HomePage`/`ResultsPage`/`NotFoundPage` pages are
-  gone — their roles are `ModeSelect`, the inline completion panel, and nothing).
-- **Experiment components are data-driven.** `TrialPlayer`, `IdeophoneCard`,
-  `StimulusDisplay`, and `FeedbackPanel` take backend shapes — `RoundResponse`,
-  `IdeophoneOption` (`displayForm`/`canonicalForm`/`romaji`), `ConditionPresentation`
-  (`kind: "audio-only" | "script-match" | "script-mismatch"`), and
-  `AnswerResultResponse`. See each `<Name>.d.ts`. `StimulusPlayback` is an
-  audio engine with no static visual (it fetches stimulus audio at runtime).
-- **Frozen wording**: participant-facing trial text is fixed by the research
-  design — render the components verbatim; never paraphrase their copy.
+- **No global provider required** — components read tokens from the shipped CSS,
+  not a theme context. Load `styles.css` (and its `@import` closure). For toasts,
+  mount `<Toaster />` once at the app root.
+- **No router** — the app is a single view-state shell (`App.tsx`).
+- **Frozen wording** — participant-facing trial/rating text is fixed by the
+  research design; render the components verbatim, never paraphrase their copy.
 
 ## Idiomatic snippet
 
 ```tsx
-const { IdeophoneCard } = window.IdeophoneArena;
+const { Card, CardHeader, CardTitle, CardDescription, CardFooter, Button } =
+  window.IdeophoneArena;
 
-<div style={{ display: "grid", gap: "var(--space-4)", maxWidth: 320 }}>
-  <IdeophoneCard
-    option={{ ideophoneId: 1, displayForm: "きらきら", romaji: "kirakira" }}
-    presentation={{ kind: "script-match", label: "Script match", description: "" }}
-    positionLabel="A"
-    meaning="glittering, sparkling"
-    revealDetails
-  />
-</div>
+<Card style={{ padding: "var(--space-4)", maxWidth: 360 }}>
+  <CardHeader>
+    <CardTitle>Rating Lab</CardTitle>
+    <CardDescription>Rate how much each word resembles its meaning.</CardDescription>
+  </CardHeader>
+  <CardFooter>
+    <Button size="sm">Start rating</Button>
+    <Button size="sm" variant="ghost">Back</Button>
+  </CardFooter>
+</Card>
 ```
