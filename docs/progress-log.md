@@ -816,3 +816,70 @@ None.
 Next single task:
 NIL-80 (Observatory v1.1: rainclouds + integrity strip + kana labels) — blocked on NIL-79's
 endpoints (`rating-distributions`, `position-bias`, `displayForm` on DivergenceResponse).
+
+---
+
+## 2026-07-06 — NIL-81 (Observatory E1 figure-export pass)
+
+Session goal:
+Static poster-grade exports from the committed Observatory v1.0 (`ab04469`): og-image / social
+card, landing strip art for the NIL-43 Observatory strip (art-left slot, V16), and 2–3 portfolio
+figures (dumbbell + scatter) for the NIL-44 README. Assets only — no component edits.
+
+Changed:
+- `docs/design/observatory-figures/generate-figures.mjs` — data-driven SVG generator; reads the
+  vendored `src/data/observatory/*.json` (the same files the live panels read), emits four figure
+  SVGs on the UI-SYSTEM §4.1 token palette.
+- `docs/design/observatory-figures/svg/{og-image,observatory-strip,observatory-dumbbell,
+  observatory-scatter}.svg` — sources.
+- `public/og-image.png` (1200×630, social card), `public/observatory-strip.png` (1600×1200, 4:3,
+  NIL-43 strip art).
+- `docs/design/observatory-figures/observatory-{dumbbell,scatter,radar}.png` (portfolio),
+  `contact-sheet.png`, `README.md`. Full set mirrored to planning `docs/design/observatory-exports/`.
+- **Radar** (3rd portfolio figure, added after the brand-font pass): faithful to `WordRadar.tsx`
+  — six perceptual axes, kirakira vs sukkiri from the Iida & Akita norms, ink solid vs ink-muted
+  dashed, chips carry verified canonical kana. **og redesigned** as a kana specimen plate
+  (キラキラ hero) replacing the mini-scatter — stronger brand identity for a social card.
+- **Kana**: the vendored/source data is romaji-only, so canonical kana was lifted verbatim from
+  the backend seed (`ideophone-arena-api` `db/init/ideophone_arena.sql`, `canonical_form`) — never
+  transliterated (script is the thesis's own variable, invariant 1). LINE Seed JP `japanese`
+  subset installed for kana glyphs.
+- Pre-flight (SPEC-stats-dashboard re-copy from the planning folder): NOT needed — repo copy and
+  planning copy are byte-identical (both 205 lines); the 204/205 concern was already reconciled.
+
+Proof:
+- Every mark reads real vendored data — dumbbell = thesis modality means (68.6/64.2/59.7%, N=360
+  each); scatter = McLean 2023's 304 items + 30 thesis pairs. No invented numbers. No live arena
+  layer exists in a static export, so **no data mark is vermillion** (grep: the only `#c8401f` in
+  each chart SVG is the §10.6 wave-rule polyline).
+- Divergence framing verbatim ("the two measures see different things", never "orthogonal").
+- Attribution string-matches the Observatory footer (`Observatory.tsx`) — verified in-script that
+  the footer contains ATTR_THESIS and ATTR_MCLEAN, and the scatter panel contains the divergence
+  line (all true). V17 credit list honored.
+- `pnpm lint` clean; `pnpm build` green (786ms); `public/*.png` copied into `dist/`. Assets-only —
+  no `src/` touched. Rendered contact sheet reviewed at target sizes; og is legible at thumbnail.
+
+Result:
+Complete. Four assets delivered. D5 (which export fills strip 6) resolved to the **scatter** as
+primary strip art at 4:3, with the dumbbell portfolio figure as the ready alternative for Nils's
+eye — either lifts the V16 binding fallback. Typography: figures render in the **brand faces**
+(Zen Maru Gothic display + LINE Seed JP body/labels, matching `tokens.css` and the shipped
+Observatory panels), installed to fontconfig from the vendored `@fontsource` WOFF1 subsets via
+`woff2sfn` (AUR woff-tools) + Noto CJK for symbol fallback — set up mid-session after the tooling
+landed (README documents the exact steps). Rendering path: native `rsvg-convert` (WSL interop is
+disabled in this shell, so headless Edge was unavailable — rsvg is more deterministic anyway).
+Canvas-design skill consulted for craft; algorithmic-art deliberately held for NIL-82 (N2) per
+the NIL-71 stage split.
+
+Commit:
+Not committed (commits are the user's). Stage the NIL-81 paths ONLY:
+`public/og-image.png public/observatory-strip.png docs/design/observatory-figures/`. Two spec files
+(`SPEC-free-form-entry.md`, `SPEC-view-designs.md`) are modified in the tree by a concurrent NIL-83
+session (Fable, 22:51–22:53) — NOT part of this session; leave them for NIL-83's own commit.
+
+Blocker:
+None.
+
+Next single task:
+Per running order v3 — N2 = NIL-82 (Observatory generative/algorithmic-art pass, `algorithmic-art`
+skill). NIL-43 can now lift the V16 fallback and drop `public/observatory-strip.png` into strip 6.
