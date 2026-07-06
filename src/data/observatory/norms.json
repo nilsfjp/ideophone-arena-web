@@ -1,0 +1,6197 @@
+{
+  "meta": {
+    "source": "data/observatory-sources/Perceptual_strength_norms_JpnRaw.csv",
+    "citation": "Iida & Akita (2023). Perceptual strength norms for 510 Japanese words.",
+    "license": "Academic use with citation",
+    "generatedBy": "scripts/build-observatory-data.mjs",
+    "wordCount": 510,
+    "axisOrder": [
+      "auditory",
+      "visual",
+      "haptic",
+      "gustatory",
+      "olfactory",
+      "interoceptive"
+    ],
+    "axisMax": 5,
+    "arenaMatchCount": 17,
+    "defaultPair": [
+      "kirakira",
+      "sukkiri"
+    ],
+    "defaultPairL1": 9.784
+  },
+  "words": [
+    {
+      "word": "assari",
+      "axes": [
+        1.364,
+        1.636,
+        1.182,
+        4,
+        1.455,
+        2.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "bachabacha",
+      "axes": [
+        4.9,
+        3.9,
+        3.8,
+        0.6,
+        0.2,
+        3.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "bakana",
+      "axes": [
+        2.6,
+        2.9,
+        0.5,
+        0.1,
+        0.3,
+        3.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "barabara",
+      "axes": [
+        2.818,
+        4.455,
+        3.364,
+        1.455,
+        0.545,
+        2.273
+      ],
+      "arena": {
+        "romaji": "barabara",
+        "gloss": "scattered, in pieces"
+      }
+    },
+    {
+      "word": "basho",
+      "axes": [
+        2.455,
+        4.091,
+        1.818,
+        1.273,
+        1.636,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "batabata",
+      "axes": [
+        4.2,
+        4,
+        3,
+        0.5,
+        0.5,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "batchiri",
+      "axes": [
+        1.818,
+        3.818,
+        1.909,
+        2.091,
+        0.818,
+        1.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "besutona",
+      "axes": [
+        2.364,
+        2.818,
+        2.455,
+        2.091,
+        1.818,
+        3.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "betsuna",
+      "axes": [
+        2.1,
+        3.1,
+        3,
+        2.4,
+        2,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "bikkuri",
+      "axes": [
+        4.091,
+        4.091,
+        3.182,
+        2,
+        1.636,
+        3.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "bikuQ",
+      "axes": [
+        1.4,
+        2.3,
+        3.1,
+        0.4,
+        0.7,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "birabira",
+      "axes": [
+        1.3,
+        3.4,
+        2.8,
+        0,
+        0,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "boku",
+      "axes": [
+        3.182,
+        3.455,
+        1.818,
+        0.818,
+        1.364,
+        1.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "bonyari",
+      "axes": [
+        1.7,
+        3,
+        1.1,
+        1.6,
+        1,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "boribori",
+      "axes": [
+        3.7,
+        2.1,
+        3,
+        1.6,
+        0.4,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "bujina",
+      "axes": [
+        2.083,
+        3.583,
+        3.083,
+        1.25,
+        1.583,
+        3.417
+      ],
+      "arena": null
+    },
+    {
+      "word": "burabura",
+      "axes": [
+        2.182,
+        2.727,
+        1.545,
+        0.091,
+        0.273,
+        2.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "burari",
+      "axes": [
+        0.909,
+        3.182,
+        1.091,
+        0.182,
+        0.364,
+        2.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "burogu",
+      "axes": [
+        0.9,
+        4,
+        0.2,
+        0.1,
+        0,
+        0.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "busuri",
+      "axes": [
+        3.2,
+        3.5,
+        3.2,
+        0.3,
+        0.1,
+        3.3
+      ],
+      "arena": {
+        "romaji": "busuri",
+        "gloss": "poutingly, displeasure"
+      }
+    },
+    {
+      "word": "butsubutsu",
+      "axes": [
+        2.182,
+        3.818,
+        4.636,
+        1.727,
+        0.545,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "buwabuwa",
+      "axes": [
+        1.2,
+        2.7,
+        2.7,
+        0.4,
+        0.6,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "charachara",
+      "axes": [
+        3.545,
+        4.364,
+        2.636,
+        0.455,
+        1,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "chichi",
+      "axes": [
+        3,
+        3.6,
+        3.1,
+        0.1,
+        2.2,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "chigau",
+      "axes": [
+        3,
+        3.3,
+        2.9,
+        2.8,
+        2.8,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "chikai",
+      "axes": [
+        2.308,
+        4,
+        2.615,
+        0.923,
+        1.385,
+        2.923
+      ],
+      "arena": null
+    },
+    {
+      "word": "chikaku",
+      "axes": [
+        3.2,
+        3.5,
+        2.5,
+        0.4,
+        2.1,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "chikara",
+      "axes": [
+        1.3,
+        2.9,
+        3.5,
+        0.7,
+        0.2,
+        4.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "chikazuku",
+      "axes": [
+        3.273,
+        4.273,
+        2.091,
+        1,
+        2.636,
+        2.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "chiraQ",
+      "axes": [
+        0.6,
+        4.4,
+        0.5,
+        0,
+        0.1,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "chirachira",
+      "axes": [
+        1.636,
+        4.091,
+        1.273,
+        0.364,
+        0.636,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "chirari",
+      "axes": [
+        1.1,
+        4,
+        0.8,
+        0.2,
+        0.4,
+        0.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "chirochiro",
+      "axes": [
+        2.231,
+        2.308,
+        1.385,
+        0.615,
+        0.615,
+        1.538
+      ],
+      "arena": null
+    },
+    {
+      "word": "chiru",
+      "axes": [
+        1.7,
+        3.3,
+        0.8,
+        0.2,
+        0.5,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "chokichoki",
+      "axes": [
+        3.636,
+        3.909,
+        2.727,
+        0,
+        0.273,
+        3.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "choppiri",
+      "axes": [
+        1.9,
+        2.5,
+        1.3,
+        1.8,
+        1.7,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "dake",
+      "axes": [
+        1.1,
+        1.5,
+        0.3,
+        0.2,
+        0.3,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "daku",
+      "axes": [
+        1.636,
+        3.091,
+        4.091,
+        0.545,
+        1.909,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "damena",
+      "axes": [
+        2.5,
+        2.583,
+        1.5,
+        1.333,
+        1.667,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "daradara",
+      "axes": [
+        2.091,
+        3.545,
+        3.091,
+        0.636,
+        0.636,
+        3.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "dare",
+      "axes": [
+        3.455,
+        4.364,
+        2.455,
+        0.727,
+        1.818,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "dasu",
+      "axes": [
+        1.846,
+        2.846,
+        2.077,
+        0.846,
+        1.231,
+        2.462
+      ],
+      "arena": null
+    },
+    {
+      "word": "debudebu",
+      "axes": [
+        1.5,
+        4,
+        2.7,
+        0.4,
+        0.9,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "deeta",
+      "axes": [
+        1,
+        2.923,
+        0.769,
+        0.308,
+        0.308,
+        1.231
+      ],
+      "arena": null
+    },
+    {
+      "word": "dekai",
+      "axes": [
+        2.2,
+        4.6,
+        2.4,
+        0.4,
+        0.6,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "dekakeru",
+      "axes": [
+        1.7,
+        3.2,
+        2.4,
+        0.5,
+        1.4,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "dekiru",
+      "axes": [
+        2.1,
+        2.4,
+        1.7,
+        0.3,
+        0.6,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "desu",
+      "axes": [
+        2,
+        1.2,
+        0.5,
+        0.5,
+        0.6,
+        1.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "dokidoki",
+      "axes": [
+        3.3,
+        2.1,
+        2.3,
+        0.7,
+        1.2,
+        3.9
+      ],
+      "arena": {
+        "romaji": "dokidoki",
+        "gloss": "with a rapid heartbeat"
+      }
+    },
+    {
+      "word": "dokiri",
+      "axes": [
+        3,
+        2.9,
+        2.3,
+        0.4,
+        0.6,
+        4.7
+      ],
+      "arena": {
+        "romaji": "dokiri",
+        "gloss": "being startled, getting a shock"
+      }
+    },
+    {
+      "word": "doko",
+      "axes": [
+        2.538,
+        3.462,
+        1.385,
+        0.615,
+        1.385,
+        2.615
+      ],
+      "arena": null
+    },
+    {
+      "word": "dono",
+      "axes": [
+        2.364,
+        2.909,
+        2.364,
+        1.455,
+        1.545,
+        2.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "dore",
+      "axes": [
+        2.4,
+        3.3,
+        2.4,
+        1.9,
+        1.9,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "dorodoro",
+      "axes": [
+        1.5,
+        3,
+        3.9,
+        1.9,
+        1.1,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "dotadota",
+      "axes": [
+        3.7,
+        2.6,
+        0.5,
+        0.1,
+        0.2,
+        1.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "fukai",
+      "axes": [
+        2.8,
+        4.4,
+        3.3,
+        2.1,
+        1,
+        4
+      ],
+      "arena": null
+    },
+    {
+      "word": "fukameru",
+      "axes": [
+        2.8,
+        3.2,
+        2.5,
+        2.7,
+        1.7,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "fukumeru",
+      "axes": [
+        1.636,
+        2.364,
+        1.455,
+        1.273,
+        1.182,
+        1.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "fukuramu",
+      "axes": [
+        1.6,
+        3.7,
+        3.6,
+        0.6,
+        0.5,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "funyafunya",
+      "axes": [
+        2.2,
+        3.1,
+        3.6,
+        0.8,
+        0.6,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "furafura",
+      "axes": [
+        0.818,
+        2.818,
+        1.182,
+        0,
+        0.455,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "fureru",
+      "axes": [
+        1.273,
+        3.091,
+        4.455,
+        0.727,
+        1.364,
+        3.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "furina",
+      "axes": [
+        2.1,
+        3,
+        1.1,
+        0.6,
+        1,
+        3.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "furu",
+      "axes": [
+        2.6,
+        3.4,
+        3.3,
+        0.6,
+        0.6,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "furui",
+      "axes": [
+        1.727,
+        4,
+        2.727,
+        2.545,
+        3.273,
+        2.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "furuna",
+      "axes": [
+        1.4,
+        2.9,
+        1.8,
+        0.9,
+        0.2,
+        3.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "fusafusa",
+      "axes": [
+        1.909,
+        3.727,
+        4.091,
+        0.455,
+        0.364,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "fuseina",
+      "axes": [
+        2.3,
+        3.4,
+        1.5,
+        0.1,
+        0.7,
+        3.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "fushigina",
+      "axes": [
+        3.364,
+        4.091,
+        2.818,
+        2.818,
+        3,
+        3.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "futoi",
+      "axes": [
+        0.7,
+        4.1,
+        3.7,
+        0.6,
+        0.3,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "futsufutsu",
+      "axes": [
+        2.1,
+        2.2,
+        0.4,
+        1,
+        1.2,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "fuwafuwa",
+      "axes": [
+        1.1,
+        3.4,
+        4.2,
+        1.1,
+        0.8,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "gakkari",
+      "axes": [
+        3.1,
+        4.1,
+        1.4,
+        2.2,
+        1.6,
+        3.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "gakun",
+      "axes": [
+        2.333,
+        2.917,
+        2.25,
+        0.25,
+        0.167,
+        4.083
+      ],
+      "arena": null
+    },
+    {
+      "word": "garan",
+      "axes": [
+        2.538,
+        3.538,
+        1.308,
+        0.308,
+        0.923,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "garari",
+      "axes": [
+        1.455,
+        3.545,
+        0.727,
+        0.636,
+        0.545,
+        1.727
+      ],
+      "arena": {
+        "romaji": "garari",
+        "gloss": "completely, totally changed"
+      }
+    },
+    {
+      "word": "garasu",
+      "axes": [
+        2.182,
+        4,
+        3.818,
+        0.091,
+        0.091,
+        1.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "gatan",
+      "axes": [
+        4.6,
+        2.3,
+        2.3,
+        0.1,
+        0,
+        1.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "gikugiku",
+      "axes": [
+        2.455,
+        2.091,
+        2.182,
+        0.364,
+        0.545,
+        2.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "girigiri",
+      "axes": [
+        1.917,
+        3,
+        1.833,
+        0.583,
+        0.75,
+        4
+      ],
+      "arena": {
+        "romaji": "girigiri",
+        "gloss": "just barely, at the last moment"
+      }
+    },
+    {
+      "word": "gogo",
+      "axes": [
+        2.091,
+        3.636,
+        0.636,
+        0.364,
+        1,
+        3.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "guQ",
+      "axes": [
+        1.545,
+        0.727,
+        1.545,
+        0.364,
+        0.455,
+        2.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "gujiguji",
+      "axes": [
+        2.1,
+        2.3,
+        1.9,
+        1,
+        0.9,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "guruguru",
+      "axes": [
+        1.667,
+        4,
+        1.583,
+        0.667,
+        0.417,
+        4.083
+      ],
+      "arena": null
+    },
+    {
+      "word": "gurumena",
+      "axes": [
+        2.3,
+        3.8,
+        2.3,
+        4.9,
+        4.4,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "gushogusho",
+      "axes": [
+        2.182,
+        4.455,
+        4.273,
+        0.909,
+        1.545,
+        2.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "gyakuna",
+      "axes": [
+        1.3,
+        3.2,
+        0.7,
+        0.3,
+        0.1,
+        1.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "gyuQ",
+      "axes": [
+        2.273,
+        3.273,
+        4.636,
+        0.455,
+        0.727,
+        3.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "hadena",
+      "axes": [
+        2,
+        4.7,
+        1.4,
+        0.8,
+        0.4,
+        1.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "hageshii",
+      "axes": [
+        3.3,
+        3.3,
+        1.4,
+        0.7,
+        0.7,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "haha",
+      "axes": [
+        3.364,
+        3.727,
+        2.455,
+        1.727,
+        2.182,
+        2.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "haina",
+      "axes": [
+        2,
+        1.9,
+        1,
+        0.3,
+        0.8,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "hajimaru",
+      "axes": [
+        2.364,
+        2,
+        0.636,
+        0.091,
+        0.182,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "hajime",
+      "axes": [
+        3,
+        2.6,
+        1.1,
+        0.7,
+        0.8,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "hajimeru",
+      "axes": [
+        1.1,
+        2.1,
+        1.3,
+        0,
+        0.1,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "hakkiri",
+      "axes": [
+        2.4,
+        2.6,
+        1.1,
+        1.1,
+        1.4,
+        2.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "hana",
+      "axes": [
+        0.8,
+        4.3,
+        3.2,
+        0.8,
+        3.6,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "hanareru",
+      "axes": [
+        2.1,
+        3.8,
+        2.6,
+        0.8,
+        1.3,
+        2.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "hanashi",
+      "axes": [
+        4.727,
+        2.455,
+        0.818,
+        0.455,
+        0.636,
+        2.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "harari",
+      "axes": [
+        2,
+        3.4,
+        2.1,
+        0.1,
+        0.2,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "haru",
+      "axes": [
+        2.273,
+        4.182,
+        4.727,
+        0.636,
+        1.091,
+        1.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "harukana",
+      "axes": [
+        1,
+        3.2,
+        0.2,
+        0.2,
+        0.4,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "hataraki",
+      "axes": [
+        2.417,
+        3,
+        2.75,
+        1.25,
+        1.583,
+        3.167
+      ],
+      "arena": null
+    },
+    {
+      "word": "hataraku",
+      "axes": [
+        1.3,
+        2.4,
+        1.7,
+        0.1,
+        0.3,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "hayai",
+      "axes": [
+        2.909,
+        4.091,
+        1.909,
+        0.636,
+        1.091,
+        3.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "hayamena",
+      "axes": [
+        2.2,
+        1.7,
+        0.7,
+        0,
+        0,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "hazureru",
+      "axes": [
+        3.091,
+        4.091,
+        3,
+        0.909,
+        0.545,
+        3.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "heru_decrease",
+      "axes": [
+        1.9,
+        3.6,
+        2.4,
+        1,
+        0.7,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "heru_pass",
+      "axes": [
+        0.455,
+        1.545,
+        0.455,
+        0.182,
+        0.091,
+        2.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "hetana",
+      "axes": [
+        1.364,
+        3,
+        1.545,
+        1.182,
+        0.636,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "heya",
+      "axes": [
+        1.1,
+        3.3,
+        1.5,
+        0,
+        1.5,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "hidari",
+      "axes": [
+        2.4,
+        4.3,
+        0.7,
+        0,
+        1.2,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "hidoi",
+      "axes": [
+        1.2,
+        3.1,
+        1,
+        1.5,
+        1.1,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "higashi",
+      "axes": [
+        1,
+        3.583,
+        0.25,
+        0.417,
+        0.417,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "hikari",
+      "axes": [
+        0.4,
+        4.2,
+        0.9,
+        0.2,
+        0.5,
+        1
+      ],
+      "arena": null
+    },
+    {
+      "word": "hikidasu",
+      "axes": [
+        1.364,
+        2.818,
+        3.455,
+        1.091,
+        0.636,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "hiku",
+      "axes": [
+        0.909,
+        2.909,
+        3,
+        0.182,
+        0.455,
+        2.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "hikui",
+      "axes": [
+        3.455,
+        4.727,
+        2.182,
+        0.364,
+        0.364,
+        1.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "hiratai",
+      "axes": [
+        0.4,
+        4.1,
+        4.3,
+        1.8,
+        0.7,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "hirogaru",
+      "axes": [
+        1.4,
+        4,
+        1.2,
+        1.5,
+        1.5,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "hirogeru",
+      "axes": [
+        1.5,
+        3.9,
+        2,
+        0.2,
+        0.6,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "hiroi",
+      "axes": [
+        1.9,
+        4.3,
+        1.5,
+        0,
+        0.4,
+        2.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "hisashii",
+      "axes": [
+        2.2,
+        2,
+        1.3,
+        1.8,
+        1.8,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "hisokana",
+      "axes": [
+        2.727,
+        2.455,
+        1.545,
+        1.273,
+        1.545,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "hissori",
+      "axes": [
+        2.833,
+        2.583,
+        1.333,
+        0.25,
+        0.667,
+        2.667
+      ],
+      "arena": null
+    },
+    {
+      "word": "hito",
+      "axes": [
+        3.455,
+        4.273,
+        3.545,
+        0.636,
+        2.636,
+        3.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "hitoshii",
+      "axes": [
+        1.2,
+        2.7,
+        1.8,
+        0.8,
+        0.3,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "hiyari",
+      "axes": [
+        1,
+        2.8,
+        3.9,
+        3.4,
+        1.3,
+        4
+      ],
+      "arena": null
+    },
+    {
+      "word": "hiyohiyo",
+      "axes": [
+        2.273,
+        2.636,
+        1.818,
+        0.182,
+        0.273,
+        2.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "hoQ",
+      "axes": [
+        3.6,
+        2.7,
+        1.8,
+        1.4,
+        0.7,
+        4.6
+      ],
+      "arena": {
+        "romaji": "hoQ",
+        "gloss": "with a feeling of relief"
+      }
+    },
+    {
+      "word": "hodo",
+      "axes": [
+        2.5,
+        2.8,
+        1.7,
+        1.2,
+        1.3,
+        2.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "hodokosu",
+      "axes": [
+        0.6,
+        1.9,
+        1.9,
+        0,
+        0.4,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "hogo",
+      "axes": [
+        0.6,
+        2.5,
+        2.2,
+        0.2,
+        0.3,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "hoka",
+      "axes": [
+        2.6,
+        3.1,
+        1.5,
+        1.5,
+        1.6,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "hoshii",
+      "axes": [
+        2.5,
+        4.2,
+        2.7,
+        2.5,
+        1.6,
+        3.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "hosoi",
+      "axes": [
+        1,
+        4.7,
+        4.4,
+        0.5,
+        0.5,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "hoteru",
+      "axes": [
+        2.3,
+        4.4,
+        2.2,
+        1.3,
+        1.4,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "iraira",
+      "axes": [
+        2.3,
+        3,
+        0.9,
+        0.5,
+        1.3,
+        4.3
+      ],
+      "arena": {
+        "romaji": "iraira",
+        "gloss": "to get irritated, annoyed"
+      }
+    },
+    {
+      "word": "jiki",
+      "axes": [
+        2.231,
+        2.692,
+        1.308,
+        1.615,
+        1.692,
+        2.769
+      ],
+      "arena": null
+    },
+    {
+      "word": "jikkuri",
+      "axes": [
+        3,
+        4.3,
+        3.1,
+        3,
+        1.6,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "jiko_accident",
+      "axes": [
+        4.6,
+        4.6,
+        3.2,
+        0.5,
+        2.2,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "jiko_self",
+      "axes": [
+        1,
+        2.1,
+        1.2,
+        1.2,
+        0.9,
+        2.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "jimina",
+      "axes": [
+        1.2,
+        3.9,
+        0.3,
+        0.6,
+        0.1,
+        1.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "jimoto",
+      "axes": [
+        2.8,
+        4.6,
+        1.8,
+        2.6,
+        2.9,
+        3.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "jimu",
+      "axes": [
+        2.455,
+        3.364,
+        1.545,
+        0,
+        0.545,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kachakacha",
+      "axes": [
+        4.2,
+        2,
+        2.3,
+        0,
+        0,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "kachi",
+      "axes": [
+        2.1,
+        3.4,
+        2.6,
+        1.9,
+        1.7,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kagayaku",
+      "axes": [
+        1.091,
+        4.455,
+        0.727,
+        0.455,
+        0.364,
+        2.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "kagiri",
+      "axes": [
+        0.917,
+        2.667,
+        1.833,
+        0.333,
+        0.583,
+        2.167
+      ],
+      "arena": null
+    },
+    {
+      "word": "kakageru",
+      "axes": [
+        1.273,
+        4.273,
+        3.182,
+        0.091,
+        0.545,
+        1.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "kakawaru",
+      "axes": [
+        1.4,
+        2.3,
+        1.5,
+        0,
+        0.5,
+        3.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "kako",
+      "axes": [
+        2.727,
+        2.455,
+        2,
+        1.727,
+        2.091,
+        3.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "kaku",
+      "axes": [
+        1.727,
+        4.273,
+        3.455,
+        0,
+        0.182,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "kakureru",
+      "axes": [
+        1.3,
+        3.2,
+        0.8,
+        0.5,
+        0.5,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kamera",
+      "axes": [
+        1.4,
+        3.7,
+        2.1,
+        0.1,
+        0.1,
+        1.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "kami",
+      "axes": [
+        1.3,
+        1,
+        0.5,
+        0,
+        0.2,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "kanashii",
+      "axes": [
+        2.3,
+        3.1,
+        0.3,
+        0.1,
+        0.1,
+        4.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "kane",
+      "axes": [
+        1.833,
+        3.917,
+        2.833,
+        0.417,
+        1.5,
+        2.083
+      ],
+      "arena": null
+    },
+    {
+      "word": "karada",
+      "axes": [
+        2.3,
+        3.2,
+        3.4,
+        1.7,
+        1.9,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "karari",
+      "axes": [
+        2.4,
+        2.6,
+        1.8,
+        1.1,
+        0.3,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "kare",
+      "axes": [
+        1.9,
+        3.6,
+        2.6,
+        0.4,
+        1.7,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "kariru",
+      "axes": [
+        0.8,
+        2.3,
+        1.7,
+        0.3,
+        0.4,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "karui",
+      "axes": [
+        1.385,
+        2.385,
+        3.538,
+        1.385,
+        0.923,
+        3.077
+      ],
+      "arena": null
+    },
+    {
+      "word": "kasanaru",
+      "axes": [
+        2.4,
+        4.3,
+        3.1,
+        1.4,
+        1.3,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kasaneru",
+      "axes": [
+        2.2,
+        4,
+        3.5,
+        1.7,
+        0.7,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "kashikoi",
+      "axes": [
+        1.9,
+        2.7,
+        0.5,
+        0.8,
+        0.6,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "kashira",
+      "axes": [
+        1.7,
+        3.5,
+        1.9,
+        0.3,
+        0.3,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kasukana",
+      "axes": [
+        2.5,
+        1.9,
+        1.8,
+        1.9,
+        2.1,
+        1.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "katachi",
+      "axes": [
+        1.6,
+        4.8,
+        4.2,
+        2.1,
+        0.7,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "katai",
+      "axes": [
+        2.364,
+        3.455,
+        4.909,
+        2,
+        0.455,
+        2.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "kawari",
+      "axes": [
+        1.7,
+        2.4,
+        1,
+        0.7,
+        0.2,
+        1.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kazu",
+      "axes": [
+        2.333,
+        3.75,
+        2.333,
+        0.417,
+        0.167,
+        1.917
+      ],
+      "arena": null
+    },
+    {
+      "word": "kebakeba",
+      "axes": [
+        1.1,
+        4,
+        4.2,
+        1.1,
+        0.3,
+        1.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "kerakera",
+      "axes": [
+        3,
+        2.6,
+        0.1,
+        0.1,
+        0.1,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "kewashii",
+      "axes": [
+        1.5,
+        3.5,
+        1.917,
+        0.417,
+        0.667,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "kibishii",
+      "axes": [
+        1.6,
+        2.1,
+        0.4,
+        0.1,
+        0.5,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "kibo",
+      "axes": [
+        1.917,
+        4,
+        1.667,
+        0.083,
+        0.833,
+        2.583
+      ],
+      "arena": null
+    },
+    {
+      "word": "kichiQ",
+      "axes": [
+        1.8,
+        3.4,
+        1.7,
+        0.8,
+        0.9,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "kigaruna",
+      "axes": [
+        1.455,
+        1.364,
+        0.727,
+        0.182,
+        0.455,
+        2.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "kiku",
+      "axes": [
+        5,
+        1.083,
+        0.5,
+        0.083,
+        0.167,
+        2.917
+      ],
+      "arena": null
+    },
+    {
+      "word": "kimazui",
+      "axes": [
+        1.6,
+        2.5,
+        1,
+        0.5,
+        1,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "kimeru",
+      "axes": [
+        1.3,
+        1.6,
+        1.3,
+        1.2,
+        0.7,
+        3.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "kimi",
+      "axes": [
+        2.818,
+        2.545,
+        1.364,
+        0.182,
+        0.818,
+        1.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "kimochi",
+      "axes": [
+        1.2,
+        1.7,
+        1.3,
+        0.4,
+        0.7,
+        4.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "kippari",
+      "axes": [
+        1.909,
+        1.182,
+        0.545,
+        0.091,
+        0.273,
+        2.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "kirakira",
+      "axes": [
+        3.2,
+        4.7,
+        1,
+        0.6,
+        0.6,
+        1.3
+      ],
+      "arena": {
+        "romaji": "kirakira",
+        "gloss": "glittering, sparkling"
+      }
+    },
+    {
+      "word": "kiru_cut",
+      "axes": [
+        3.2,
+        3.8,
+        3.5,
+        0.3,
+        0.7,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "kiru_put.on",
+      "axes": [
+        1.4,
+        4.4,
+        3.8,
+        0,
+        0.2,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kishikishi",
+      "axes": [
+        4.4,
+        2.3,
+        4,
+        1.3,
+        0.1,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "kitanai",
+      "axes": [
+        2.182,
+        4.545,
+        3.545,
+        1.091,
+        4.364,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "kitchiri",
+      "axes": [
+        0.9,
+        2.9,
+        1.3,
+        0.4,
+        0.6,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "kitsui",
+      "axes": [
+        2.154,
+        2.615,
+        2,
+        2.154,
+        2.538,
+        4.077
+      ],
+      "arena": null
+    },
+    {
+      "word": "kiyoi",
+      "axes": [
+        2.364,
+        3.727,
+        1.364,
+        0.727,
+        1.364,
+        2.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "kodawaru",
+      "axes": [
+        2.636,
+        3.727,
+        2.455,
+        2.909,
+        1.818,
+        2.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "kodomo",
+      "axes": [
+        3,
+        4,
+        2.3,
+        0.3,
+        1.3,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "kogatana",
+      "axes": [
+        0.692,
+        3,
+        2.077,
+        0.462,
+        0.385,
+        1.308
+      ],
+      "arena": null
+    },
+    {
+      "word": "koko",
+      "axes": [
+        2.182,
+        3.818,
+        1.727,
+        1.091,
+        1.182,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kokoro",
+      "axes": [
+        1.4,
+        1,
+        0.4,
+        0.1,
+        0.1,
+        4.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "komakai",
+      "axes": [
+        3,
+        4.3,
+        4.1,
+        1.8,
+        0.9,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "komakana",
+      "axes": [
+        1.727,
+        3.818,
+        2.909,
+        1.364,
+        1,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "kono",
+      "axes": [
+        2.1,
+        3,
+        2.2,
+        1.5,
+        1.1,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "kore",
+      "axes": [
+        2.455,
+        2.818,
+        2,
+        0.727,
+        1.273,
+        1.727
+      ],
+      "arena": null
+    },
+    {
+      "word": "koro",
+      "axes": [
+        2.3,
+        2.8,
+        1.3,
+        1,
+        0.9,
+        4.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "korori",
+      "axes": [
+        2.2,
+        3.8,
+        2.6,
+        0.6,
+        0.1,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "koso",
+      "axes": [
+        1.8,
+        1.2,
+        0.3,
+        0,
+        0,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "kossori",
+      "axes": [
+        3.2,
+        3.3,
+        1.9,
+        1,
+        0.8,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "kotoba",
+      "axes": [
+        4.545,
+        3.636,
+        1.091,
+        1.182,
+        1.091,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kotonaru",
+      "axes": [
+        3.2,
+        4,
+        2.7,
+        2.4,
+        2.1,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kotoshi",
+      "axes": [
+        0.9,
+        1.1,
+        0,
+        0.2,
+        0,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kotowaru",
+      "axes": [
+        1.1,
+        1.5,
+        0.2,
+        0.1,
+        0.1,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kowai",
+      "axes": [
+        3.4,
+        4,
+        2.3,
+        0.7,
+        0.9,
+        4.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "kowareru",
+      "axes": [
+        3,
+        3.8,
+        3,
+        0.8,
+        1.2,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "kubi",
+      "axes": [
+        1.3,
+        4.4,
+        3.7,
+        0.2,
+        0.5,
+        3.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuchi",
+      "axes": [
+        2.1,
+        2.7,
+        3,
+        3.8,
+        2.2,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "kukkiri",
+      "axes": [
+        3,
+        4.7,
+        2.4,
+        1.6,
+        1.8,
+        3.3
+      ],
+      "arena": {
+        "romaji": "kukkiri",
+        "gloss": "clearly, distinctly, sharply"
+      }
+    },
+    {
+      "word": "kuni",
+      "axes": [
+        2,
+        3,
+        0.7,
+        1.6,
+        1.5,
+        0.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuraberu",
+      "axes": [
+        3.6,
+        3.9,
+        2.5,
+        2.6,
+        2.2,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kurai",
+      "axes": [
+        0.9,
+        4.5,
+        0.5,
+        0.1,
+        0.3,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kurasu",
+      "axes": [
+        2,
+        3,
+        1.6,
+        0,
+        1,
+        1.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuro",
+      "axes": [
+        0.9,
+        4.9,
+        0.5,
+        0.9,
+        0.8,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuroi",
+      "axes": [
+        0.8,
+        4.9,
+        0.4,
+        0.2,
+        0.1,
+        1.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuru",
+      "axes": [
+        4.1,
+        4,
+        1.3,
+        0.4,
+        2,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "kurukuru",
+      "axes": [
+        1.8,
+        3.8,
+        2.3,
+        0.2,
+        0.1,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuruma",
+      "axes": [
+        3.3,
+        3.9,
+        2.7,
+        0.1,
+        1.7,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "kurushii",
+      "axes": [
+        1.2,
+        2.3,
+        1.1,
+        1,
+        1.4,
+        4.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "kurushimu",
+      "axes": [
+        2.1,
+        3.1,
+        1.4,
+        0.9,
+        1.2,
+        4.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "kusai",
+      "axes": [
+        0.846,
+        1.846,
+        1.308,
+        2.538,
+        4.923,
+        2.615
+      ],
+      "arena": null
+    },
+    {
+      "word": "kusuri",
+      "axes": [
+        1.077,
+        3.231,
+        2.692,
+        4,
+        3.231,
+        3.154
+      ],
+      "arena": null
+    },
+    {
+      "word": "kutsukutsu",
+      "axes": [
+        4.1,
+        3.3,
+        1.6,
+        0.8,
+        1.7,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuwashii",
+      "axes": [
+        1.7,
+        2.1,
+        0.2,
+        0.4,
+        0.1,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuwawaru",
+      "axes": [
+        1.154,
+        2.462,
+        0.769,
+        0.692,
+        0.692,
+        2.154
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuyashii",
+      "axes": [
+        2.167,
+        2.583,
+        0.833,
+        0.5,
+        0.167,
+        4.25
+      ],
+      "arena": null
+    },
+    {
+      "word": "kuzureru",
+      "axes": [
+        3.308,
+        4.077,
+        2.462,
+        0.615,
+        0.769,
+        2.615
+      ],
+      "arena": null
+    },
+    {
+      "word": "kyoton",
+      "axes": [
+        1,
+        3.182,
+        0.364,
+        0,
+        0.455,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "mabushii",
+      "axes": [
+        0.4,
+        4.8,
+        0.7,
+        0.2,
+        0.7,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "machigau",
+      "axes": [
+        2.818,
+        2.818,
+        1.273,
+        0.545,
+        0.818,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "mada",
+      "axes": [
+        1.7,
+        2,
+        0.7,
+        0.3,
+        0.4,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "made",
+      "axes": [
+        2.182,
+        3.091,
+        2,
+        1.091,
+        0.818,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "majikana",
+      "axes": [
+        1.5,
+        3.2,
+        1.6,
+        0.2,
+        0.8,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "majimena",
+      "axes": [
+        2.3,
+        3.8,
+        1.4,
+        0.4,
+        0.9,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "majina",
+      "axes": [
+        1.727,
+        1.636,
+        0.636,
+        0.818,
+        0.455,
+        1.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "makaseru",
+      "axes": [
+        0.5,
+        2.4,
+        0.9,
+        0,
+        0.1,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "mama",
+      "axes": [
+        1.636,
+        2.273,
+        1.455,
+        1,
+        0.909,
+        2.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "mamoru",
+      "axes": [
+        1.4,
+        2.7,
+        2.9,
+        0.4,
+        1,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "marena",
+      "axes": [
+        1.727,
+        3.091,
+        1.455,
+        1.727,
+        0.909,
+        3.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "marui",
+      "axes": [
+        0.692,
+        4.308,
+        3.385,
+        1,
+        0.462,
+        1.923
+      ],
+      "arena": null
+    },
+    {
+      "word": "masu",
+      "axes": [
+        3.182,
+        1.364,
+        0.636,
+        0.364,
+        0.455,
+        0.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "matomeru",
+      "axes": [
+        0.7,
+        2.3,
+        2.7,
+        0.5,
+        0.2,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "matomona",
+      "axes": [
+        1.909,
+        3.455,
+        1.273,
+        1.636,
+        1.545,
+        2.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "matsu",
+      "axes": [
+        2.091,
+        3.091,
+        0.727,
+        0.636,
+        0.636,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "matsuri",
+      "axes": [
+        3.7,
+        4.2,
+        1.5,
+        1.8,
+        2,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "mawari",
+      "axes": [
+        1.9,
+        4.1,
+        1.8,
+        0.4,
+        1,
+        1.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "mazui",
+      "axes": [
+        0.8,
+        2.1,
+        0.7,
+        5,
+        2.9,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "mazushii",
+      "axes": [
+        1.333,
+        3.167,
+        1.167,
+        1.917,
+        1.083,
+        2.833
+      ],
+      "arena": null
+    },
+    {
+      "word": "mechakucha",
+      "axes": [
+        3.455,
+        4.182,
+        2.364,
+        1.545,
+        1.727,
+        2.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "medetai",
+      "axes": [
+        2.545,
+        2.727,
+        1.273,
+        0.727,
+        0.545,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "meeru",
+      "axes": [
+        1.6,
+        4.5,
+        0.5,
+        0,
+        0,
+        0.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "mejaana",
+      "axes": [
+        2.8,
+        3.3,
+        1.7,
+        2.1,
+        1.6,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "michi",
+      "axes": [
+        1.6,
+        4.2,
+        1.2,
+        0,
+        0.9,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "michibiku",
+      "axes": [
+        1.5,
+        2.7,
+        2.1,
+        0.3,
+        0.6,
+        1.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "midori",
+      "axes": [
+        1.2,
+        4.8,
+        1.7,
+        1.3,
+        2.4,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "migi",
+      "axes": [
+        2.727,
+        4.273,
+        2.273,
+        0,
+        0.545,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "migotona",
+      "axes": [
+        3,
+        4.2,
+        2.2,
+        2,
+        1.4,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "mijikai",
+      "axes": [
+        1.692,
+        3.846,
+        2.077,
+        0.462,
+        0.615,
+        2.231
+      ],
+      "arena": null
+    },
+    {
+      "word": "mijikana",
+      "axes": [
+        2.364,
+        3.273,
+        1.727,
+        1.727,
+        2,
+        3.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "mijimena",
+      "axes": [
+        1.923,
+        2.308,
+        1.077,
+        0.692,
+        0.769,
+        2.769
+      ],
+      "arena": null
+    },
+    {
+      "word": "mimamoru",
+      "axes": [
+        0.8,
+        4,
+        0.7,
+        0,
+        0,
+        1.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "mimi",
+      "axes": [
+        4.364,
+        3,
+        3.091,
+        0.091,
+        0.545,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "minami",
+      "axes": [
+        1.3,
+        4.1,
+        1.4,
+        0.8,
+        0.9,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "minikui",
+      "axes": [
+        1.7,
+        4.8,
+        1.2,
+        0.3,
+        0.8,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "miru",
+      "axes": [
+        1.455,
+        4.909,
+        0.909,
+        1,
+        1.182,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "mise",
+      "axes": [
+        1.7,
+        3.8,
+        0.8,
+        2,
+        1.4,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "miseru",
+      "axes": [
+        2,
+        5,
+        2.8,
+        1,
+        0.8,
+        2.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "mitomeru",
+      "axes": [
+        2.364,
+        2.909,
+        1.091,
+        0.364,
+        0.455,
+        3.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "mitsukaru",
+      "axes": [
+        2,
+        4.25,
+        1.917,
+        0.417,
+        1.083,
+        2.583
+      ],
+      "arena": null
+    },
+    {
+      "word": "mitsukeru",
+      "axes": [
+        3.3,
+        4.7,
+        3.4,
+        1.8,
+        2.4,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "mitsumeru",
+      "axes": [
+        1,
+        5,
+        1.182,
+        0.273,
+        0.364,
+        2.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "mizu",
+      "axes": [
+        4.2,
+        4.4,
+        4.1,
+        4.7,
+        2.4,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "moderu",
+      "axes": [
+        1.182,
+        4.545,
+        1,
+        0.364,
+        0.818,
+        1.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "moji",
+      "axes": [
+        1.545,
+        4.636,
+        1.364,
+        0.091,
+        0.182,
+        1.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "mono",
+      "axes": [
+        2,
+        4.333,
+        4,
+        1.417,
+        1.667,
+        1.833
+      ],
+      "arena": null
+    },
+    {
+      "word": "motarasu",
+      "axes": [
+        1.182,
+        3.182,
+        1.727,
+        1.182,
+        0.909,
+        2.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "motozuku",
+      "axes": [
+        1.2,
+        1.5,
+        0.2,
+        0.1,
+        0.1,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "motsu",
+      "axes": [
+        0.4,
+        3,
+        4.1,
+        0,
+        0,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "mudana",
+      "axes": [
+        1.2,
+        2.8,
+        0.6,
+        0.7,
+        0.6,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "mukashi",
+      "axes": [
+        1.667,
+        3,
+        1.25,
+        1.5,
+        2.25,
+        2.917
+      ],
+      "arena": null
+    },
+    {
+      "word": "munashii",
+      "axes": [
+        1.7,
+        2.3,
+        0.8,
+        0.3,
+        0.4,
+        4.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "mune",
+      "axes": [
+        1.4,
+        3.1,
+        2.9,
+        0.6,
+        0.9,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "musuko",
+      "axes": [
+        2.5,
+        3,
+        2.3,
+        0.1,
+        0.8,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "musume",
+      "axes": [
+        1.5,
+        3.8,
+        1.3,
+        0.1,
+        0.4,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "nado",
+      "axes": [
+        1.636,
+        1.909,
+        1.182,
+        1.182,
+        1.273,
+        1.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "nagai",
+      "axes": [
+        2.8,
+        4.6,
+        3.4,
+        0.4,
+        0.3,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "nagameru",
+      "axes": [
+        0.4,
+        5,
+        0.3,
+        0,
+        0.2,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "nagare",
+      "axes": [
+        2.4,
+        3.9,
+        1.7,
+        0,
+        0.3,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "nagareru",
+      "axes": [
+        3.7,
+        4.6,
+        3.7,
+        1.5,
+        1.3,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "naka",
+      "axes": [
+        1.417,
+        2.917,
+        2.25,
+        0.5,
+        0.75,
+        3.583
+      ],
+      "arena": null
+    },
+    {
+      "word": "nakama",
+      "axes": [
+        1.7,
+        3,
+        1.5,
+        0.1,
+        0.7,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "naku",
+      "axes": [
+        2.818,
+        3.182,
+        1.818,
+        0.909,
+        0.727,
+        3.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "nakunaru",
+      "axes": [
+        3.1,
+        4.3,
+        3.1,
+        3,
+        2.2,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "namida",
+      "axes": [
+        1.1,
+        3.2,
+        2.4,
+        1.3,
+        0.4,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "nani",
+      "axes": [
+        2.6,
+        2.6,
+        1.8,
+        1.3,
+        1.9,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "naraberu",
+      "axes": [
+        1.4,
+        4.5,
+        3.8,
+        0.6,
+        0.3,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "nareru",
+      "axes": [
+        2,
+        2.667,
+        2.167,
+        1.917,
+        1.75,
+        4.083
+      ],
+      "arena": null
+    },
+    {
+      "word": "naritatsu",
+      "axes": [
+        0.7,
+        1.6,
+        0.4,
+        0.2,
+        0.1,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "naru",
+      "axes": [
+        1.1,
+        1.9,
+        1.3,
+        1,
+        0.9,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "natsu",
+      "axes": [
+        3,
+        4.077,
+        2.154,
+        2.308,
+        2.462,
+        4
+      ],
+      "arena": null
+    },
+    {
+      "word": "nebaneba",
+      "axes": [
+        1.615,
+        3.846,
+        4.077,
+        2.308,
+        1.231,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "nemui",
+      "axes": [
+        1.364,
+        2.545,
+        1.364,
+        0.364,
+        0.545,
+        4.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "neru",
+      "axes": [
+        0.8,
+        2.1,
+        0.8,
+        0,
+        0.1,
+        4.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "nezuyoi",
+      "axes": [
+        0.7,
+        2.2,
+        0.9,
+        0.4,
+        0.5,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "nibui",
+      "axes": [
+        2,
+        2.2,
+        1.4,
+        1.3,
+        1.1,
+        3.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "nigai",
+      "axes": [
+        1.2,
+        2.5,
+        0.9,
+        4.5,
+        3.1,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "nigatena",
+      "axes": [
+        3.727,
+        4.273,
+        3.455,
+        3.727,
+        3.818,
+        4
+      ],
+      "arena": null
+    },
+    {
+      "word": "nigeru",
+      "axes": [
+        1.7,
+        3.5,
+        0.4,
+        0.2,
+        0.1,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "nikkori",
+      "axes": [
+        1.1,
+        4.8,
+        0.3,
+        0.1,
+        0,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "nikoniko",
+      "axes": [
+        3.4,
+        4.4,
+        2.4,
+        1.7,
+        1.2,
+        4.1
+      ],
+      "arena": {
+        "romaji": "nikoniko",
+        "gloss": "smilingly, with a grin"
+      }
+    },
+    {
+      "word": "nikui",
+      "axes": [
+        0.6,
+        2.5,
+        0.6,
+        0.2,
+        0.4,
+        3.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "niru",
+      "axes": [
+        2,
+        4.4,
+        1.6,
+        1.7,
+        1.3,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "noberu",
+      "axes": [
+        2.455,
+        1.182,
+        0.636,
+        0.091,
+        0.182,
+        1.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "nomi",
+      "axes": [
+        2.182,
+        1.818,
+        1.091,
+        0.818,
+        0.818,
+        1.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "nomu",
+      "axes": [
+        1.6,
+        2.8,
+        2.2,
+        4.5,
+        2,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "nonbiri",
+      "axes": [
+        3.182,
+        3.818,
+        2.273,
+        0.818,
+        1.273,
+        4.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "noomaruna",
+      "axes": [
+        1.833,
+        2.667,
+        2.25,
+        1.917,
+        1.667,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "noru",
+      "axes": [
+        1.273,
+        3.818,
+        2.727,
+        0.091,
+        0.545,
+        3.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "nosori",
+      "axes": [
+        1.2,
+        2.5,
+        1,
+        0.1,
+        0.2,
+        2.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "nukeru",
+      "axes": [
+        3.1,
+        3.1,
+        2.9,
+        1.3,
+        1.2,
+        3.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "nurui",
+      "axes": [
+        0.7,
+        2.1,
+        3.5,
+        2.2,
+        0.5,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "oishii",
+      "axes": [
+        1.1,
+        3,
+        1.1,
+        4.9,
+        3.7,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "omoi",
+      "axes": [
+        2,
+        3.455,
+        3.909,
+        1.091,
+        1.182,
+        3.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "paQ",
+      "axes": [
+        3.727,
+        4.273,
+        2.182,
+        1.364,
+        1,
+        2.545
+      ],
+      "arena": {
+        "romaji": "paQ",
+        "gloss": "suddenly, in a flash"
+      }
+    },
+    {
+      "word": "parari",
+      "axes": [
+        2.6,
+        2.9,
+        2.2,
+        1.1,
+        0.3,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "pekon",
+      "axes": [
+        2.833,
+        3.083,
+        3.417,
+        0.25,
+        0.417,
+        2.417
+      ],
+      "arena": null
+    },
+    {
+      "word": "petan",
+      "axes": [
+        3.4,
+        3.2,
+        2.8,
+        0.6,
+        0.5,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "pikari",
+      "axes": [
+        2,
+        4.727,
+        0.636,
+        0.182,
+        0.273,
+        1.727
+      ],
+      "arena": null
+    },
+    {
+      "word": "pitari",
+      "axes": [
+        1.154,
+        3.231,
+        2.462,
+        0.692,
+        0.769,
+        2.538
+      ],
+      "arena": {
+        "romaji": "pitari",
+        "gloss": "tightly connected, no space in between"
+      }
+    },
+    {
+      "word": "pittari",
+      "axes": [
+        1.2,
+        3.2,
+        3.5,
+        0.8,
+        0.6,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "pokan",
+      "axes": [
+        1,
+        3.1,
+        1.1,
+        0.3,
+        0.2,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "pokipoki",
+      "axes": [
+        4.3,
+        2.9,
+        4.2,
+        1.1,
+        0.1,
+        3.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "pokupoku",
+      "axes": [
+        2.9,
+        1.7,
+        1.1,
+        0.8,
+        0.4,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "potopoto",
+      "axes": [
+        3.4,
+        3,
+        2.6,
+        0.8,
+        0.7,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "potsun",
+      "axes": [
+        3,
+        4.3,
+        2.5,
+        0.3,
+        0.4,
+        4.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "purasu",
+      "axes": [
+        2.2,
+        3.1,
+        1.3,
+        0.5,
+        0.4,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "rareru",
+      "axes": [
+        2.1,
+        3.1,
+        2,
+        0.7,
+        0.4,
+        2.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "rashii",
+      "axes": [
+        2.1,
+        2,
+        1,
+        0.7,
+        0.6,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "reberu",
+      "axes": [
+        1.818,
+        2.909,
+        2.091,
+        1.091,
+        1.091,
+        2.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "rookaruna",
+      "axes": [
+        1.9,
+        3.3,
+        1.2,
+        1.2,
+        1.3,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "saQ",
+      "axes": [
+        4.3,
+        3.9,
+        3.6,
+        0.3,
+        0.6,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "sabishii",
+      "axes": [
+        2.4,
+        3.4,
+        1,
+        0.4,
+        0.2,
+        4.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "sadameru",
+      "axes": [
+        1.4,
+        2.4,
+        0.5,
+        0.1,
+        0.2,
+        1.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "sakana",
+      "axes": [
+        1.5,
+        3.7,
+        3.2,
+        3.3,
+        3.6,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "saki",
+      "axes": [
+        1.455,
+        3.182,
+        2.273,
+        0.455,
+        0.636,
+        2.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "sakura",
+      "axes": [
+        1.417,
+        4.5,
+        2.5,
+        1.333,
+        2.75,
+        2.25
+      ],
+      "arena": null
+    },
+    {
+      "word": "samui",
+      "axes": [
+        1.2,
+        2.7,
+        2.8,
+        0.6,
+        1.2,
+        3.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "sappari",
+      "axes": [
+        1.1,
+        2,
+        2.4,
+        3.3,
+        1.2,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "sarasara",
+      "axes": [
+        2.231,
+        2.923,
+        4.077,
+        0.923,
+        0.615,
+        2.769
+      ],
+      "arena": null
+    },
+    {
+      "word": "saseru",
+      "axes": [
+        1.3,
+        2,
+        2,
+        0.6,
+        0.7,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "sashidasu",
+      "axes": [
+        1.1,
+        3.4,
+        2.2,
+        0.1,
+        0.5,
+        1.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "sassa",
+      "axes": [
+        1.545,
+        2.364,
+        1,
+        0.273,
+        0.364,
+        1.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "sate",
+      "axes": [
+        0.7,
+        0.4,
+        0.1,
+        0.3,
+        0.1,
+        1.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "sekushiina",
+      "axes": [
+        2.3,
+        4.6,
+        1.5,
+        0.4,
+        1.8,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "semai",
+      "axes": [
+        0.6,
+        4.3,
+        2,
+        0,
+        0,
+        2.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "setsunai",
+      "axes": [
+        1.6,
+        1.9,
+        0.9,
+        0.3,
+        1.1,
+        4.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "shakishaki",
+      "axes": [
+        3.545,
+        3.091,
+        3.818,
+        2.909,
+        1.091,
+        2.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "shibui",
+      "axes": [
+        0.909,
+        1.545,
+        0.727,
+        3.727,
+        1.909,
+        2.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "shigoto",
+      "axes": [
+        3.7,
+        4.2,
+        2.4,
+        0.3,
+        0.9,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "shiharau",
+      "axes": [
+        1.273,
+        3.455,
+        3.091,
+        0.091,
+        0.182,
+        3.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "shika",
+      "axes": [
+        2.2,
+        3,
+        1.9,
+        1.2,
+        0.7,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "shikata",
+      "axes": [
+        0.7,
+        1.3,
+        0.4,
+        0,
+        0,
+        0.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "shikkari",
+      "axes": [
+        3.3,
+        4,
+        3.3,
+        3.7,
+        2.5,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "shimeru",
+      "axes": [
+        1.273,
+        2.818,
+        1,
+        1.091,
+        0.818,
+        1.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "shinashina",
+      "axes": [
+        0.6,
+        3.6,
+        3.5,
+        1.6,
+        0.2,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "shinu",
+      "axes": [
+        1.8,
+        4.1,
+        2,
+        0.5,
+        1.4,
+        4.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "shiraberu",
+      "axes": [
+        3.182,
+        4.182,
+        2.909,
+        2.182,
+        2.455,
+        2.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "shiraseru",
+      "axes": [
+        4.2,
+        3.6,
+        2.1,
+        0.5,
+        0.8,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "shireru",
+      "axes": [
+        2.818,
+        3.545,
+        2.091,
+        1.364,
+        1.273,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "shiro",
+      "axes": [
+        1.273,
+        5,
+        0.727,
+        0.909,
+        0.727,
+        0.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "shiroi",
+      "axes": [
+        0.8,
+        4.7,
+        1,
+        0.9,
+        0.5,
+        1
+      ],
+      "arena": null
+    },
+    {
+      "word": "shiru",
+      "axes": [
+        2.8,
+        3.4,
+        2.6,
+        2,
+        2.2,
+        2.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "shita",
+      "axes": [
+        1,
+        3.636,
+        1.273,
+        0.091,
+        0.364,
+        1.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "shitagau",
+      "axes": [
+        1.615,
+        1.615,
+        0.769,
+        0.462,
+        0.462,
+        2.615
+      ],
+      "arena": null
+    },
+    {
+      "word": "shitashii",
+      "axes": [
+        2,
+        3.583,
+        2.667,
+        0.5,
+        1.667,
+        3.583
+      ],
+      "arena": null
+    },
+    {
+      "word": "shitsukoi",
+      "axes": [
+        2.154,
+        1.615,
+        1.077,
+        1.231,
+        1.077,
+        2.769
+      ],
+      "arena": null
+    },
+    {
+      "word": "shittori",
+      "axes": [
+        1.909,
+        3.545,
+        4.636,
+        2.273,
+        1.273,
+        2.727
+      ],
+      "arena": null
+    },
+    {
+      "word": "shizukana",
+      "axes": [
+        4.2,
+        2.2,
+        0.6,
+        0,
+        0.9,
+        2.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "shobon",
+      "axes": [
+        2.3,
+        2.1,
+        0.6,
+        0.1,
+        0.1,
+        2.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "shori",
+      "axes": [
+        2.3,
+        3.7,
+        2.6,
+        1,
+        1.4,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "shugi",
+      "axes": [
+        2.9,
+        3.2,
+        0.8,
+        0.5,
+        0.6,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "sochi",
+      "axes": [
+        0.455,
+        2.545,
+        1,
+        0.273,
+        0.091,
+        0.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "sodateru",
+      "axes": [
+        2,
+        3.5,
+        3.8,
+        1.2,
+        1.6,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "sofutona",
+      "axes": [
+        1.231,
+        2,
+        3.615,
+        1.615,
+        1.077,
+        2.462
+      ],
+      "arena": null
+    },
+    {
+      "word": "sokkuri",
+      "axes": [
+        2.091,
+        4.636,
+        2.364,
+        2.091,
+        1.636,
+        2.818
+      ],
+      "arena": {
+        "romaji": "sokkuri",
+        "gloss": "exactly alike, spitting image"
+      }
+    },
+    {
+      "word": "soko",
+      "axes": [
+        2.091,
+        3.636,
+        2.545,
+        0.545,
+        1.273,
+        2.364
+      ],
+      "arena": null
+    },
+    {
+      "word": "sora",
+      "axes": [
+        1,
+        4.417,
+        0.667,
+        0.333,
+        1.167,
+        2.583
+      ],
+      "arena": null
+    },
+    {
+      "word": "sore",
+      "axes": [
+        2.1,
+        3.9,
+        2,
+        1.1,
+        0.7,
+        1.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "soto",
+      "axes": [
+        3.2,
+        4.1,
+        1.5,
+        0,
+        2,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "suQ",
+      "axes": [
+        3.5,
+        3.2,
+        2.7,
+        1.3,
+        1.7,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "subayai",
+      "axes": [
+        3.2,
+        4.6,
+        2.9,
+        0.1,
+        0.3,
+        4
+      ],
+      "arena": null
+    },
+    {
+      "word": "subete",
+      "axes": [
+        3.6,
+        4,
+        2.6,
+        2.1,
+        1.8,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "sugata",
+      "axes": [
+        1,
+        4.7,
+        1.7,
+        0.2,
+        0.3,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "sugiru",
+      "axes": [
+        2.091,
+        4,
+        0.818,
+        1.091,
+        1.364,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "sugoi",
+      "axes": [
+        3.455,
+        3.636,
+        2.364,
+        2.182,
+        1.909,
+        4.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "sukina",
+      "axes": [
+        3.818,
+        4.182,
+        3.545,
+        4.091,
+        3.273,
+        4.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "sukkari",
+      "axes": [
+        0.7,
+        1.8,
+        0.4,
+        0.7,
+        0.4,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "sukkiri",
+      "axes": [
+        2,
+        2.846,
+        1.692,
+        2.692,
+        2.154,
+        3.692
+      ],
+      "arena": {
+        "romaji": "sukkiri",
+        "gloss": "refreshingly, with a feeling of relief"
+      }
+    },
+    {
+      "word": "sukunai",
+      "axes": [
+        2,
+        4.364,
+        2.909,
+        2.091,
+        1,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "sumaseru",
+      "axes": [
+        1,
+        1.6,
+        0.2,
+        0.3,
+        0.1,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "sumu",
+      "axes": [
+        1,
+        2.4,
+        1.2,
+        0.3,
+        0.7,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "surudoi",
+      "axes": [
+        2.9,
+        3.9,
+        4.6,
+        1.6,
+        2.6,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "susumeru",
+      "axes": [
+        1.154,
+        2.769,
+        1.385,
+        0.692,
+        0.615,
+        2.385
+      ],
+      "arena": null
+    },
+    {
+      "word": "sutekina",
+      "axes": [
+        3.4,
+        3.9,
+        2.3,
+        1.8,
+        2.5,
+        3.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "suteru",
+      "axes": [
+        2.1,
+        4.2,
+        3.1,
+        1.3,
+        1.4,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "suzushii",
+      "axes": [
+        2.364,
+        3,
+        4,
+        1.364,
+        0.818,
+        4.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "tabako",
+      "axes": [
+        0.75,
+        2.75,
+        1.833,
+        2.333,
+        4.417,
+        1.917
+      ],
+      "arena": null
+    },
+    {
+      "word": "taberu",
+      "axes": [
+        2.7,
+        3.3,
+        3.7,
+        5,
+        4.2,
+        4.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "tachiba",
+      "axes": [
+        1.308,
+        2,
+        0.692,
+        0.308,
+        0.385,
+        2.846
+      ],
+      "arena": null
+    },
+    {
+      "word": "tadashii",
+      "axes": [
+        2.727,
+        3.727,
+        2.091,
+        1.545,
+        1.545,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "tagaru",
+      "axes": [
+        2.545,
+        2.818,
+        2.364,
+        1.727,
+        1.364,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "takai",
+      "axes": [
+        1.5,
+        4.2,
+        1,
+        0,
+        0.6,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "takamaru",
+      "axes": [
+        2.909,
+        3.545,
+        2.364,
+        1.909,
+        2.182,
+        4
+      ],
+      "arena": null
+    },
+    {
+      "word": "takameru",
+      "axes": [
+        2.7,
+        3.7,
+        2.6,
+        1.9,
+        2,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "takumina",
+      "axes": [
+        2.167,
+        3.5,
+        2.333,
+        1.333,
+        0.75,
+        2.75
+      ],
+      "arena": null
+    },
+    {
+      "word": "tamago",
+      "axes": [
+        1.4,
+        4.5,
+        3.8,
+        4.8,
+        2.8,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "tame",
+      "axes": [
+        1,
+        1.5,
+        0.5,
+        0.5,
+        0.5,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "tanoshii",
+      "axes": [
+        3.818,
+        4,
+        3,
+        2.545,
+        2.182,
+        4.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "tanoshimu",
+      "axes": [
+        3.5,
+        4.1,
+        2.9,
+        3,
+        2.4,
+        3.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "tappuri",
+      "axes": [
+        1.3,
+        3.5,
+        2.7,
+        1.3,
+        1.2,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "tara",
+      "axes": [
+        1.2,
+        0.3,
+        0.1,
+        0,
+        0.2,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "tashikana",
+      "axes": [
+        2.8,
+        3.8,
+        2.5,
+        1.5,
+        1.5,
+        2.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "tasukeru",
+      "axes": [
+        2.818,
+        3.636,
+        2.364,
+        0.182,
+        1.091,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "tatakai",
+      "axes": [
+        2.8,
+        3.5,
+        2.2,
+        0.2,
+        0.6,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "tatakau",
+      "axes": [
+        2.3,
+        2.6,
+        3,
+        0.9,
+        0.9,
+        2.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "tateru",
+      "axes": [
+        2.2,
+        4.3,
+        3.4,
+        0.9,
+        0.5,
+        3.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "tatsu",
+      "axes": [
+        2.273,
+        4.727,
+        2.727,
+        0.636,
+        0.545,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "tayasui",
+      "axes": [
+        1.364,
+        1.364,
+        0.909,
+        0.273,
+        0.455,
+        2.727
+      ],
+      "arena": null
+    },
+    {
+      "word": "tazuneru",
+      "axes": [
+        2.8,
+        2.8,
+        0.7,
+        0.2,
+        0.2,
+        2.1
+      ],
+      "arena": null
+    },
+    {
+      "word": "teeburu",
+      "axes": [
+        0.6,
+        4.6,
+        3.6,
+        0.1,
+        0.5,
+        0.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "tegami",
+      "axes": [
+        1.4,
+        4.5,
+        3.5,
+        0,
+        1.7,
+        1.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "tegaruna",
+      "axes": [
+        0.7,
+        2,
+        1.9,
+        1.3,
+        0.5,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "terebi",
+      "axes": [
+        4.455,
+        4.455,
+        0.545,
+        0.545,
+        0.364,
+        2.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "tetsudau",
+      "axes": [
+        2.636,
+        3.818,
+        2.818,
+        0.727,
+        0.545,
+        2.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "tobidasu",
+      "axes": [
+        2.6,
+        4.6,
+        3.2,
+        0.5,
+        0.3,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "tobikomu",
+      "axes": [
+        2.4,
+        3.6,
+        2.9,
+        0.2,
+        0.5,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "toboshii",
+      "axes": [
+        1,
+        3,
+        0.9,
+        1.5,
+        1.6,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "tobu",
+      "axes": [
+        2.1,
+        4.3,
+        1.6,
+        0.2,
+        0.3,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "tochi",
+      "axes": [
+        0.545,
+        4.364,
+        1.636,
+        0,
+        1.182,
+        1.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "togetoge",
+      "axes": [
+        1,
+        3.727,
+        4.636,
+        0.636,
+        0.545,
+        3.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "toki",
+      "axes": [
+        3.2,
+        3.7,
+        1.3,
+        1.5,
+        1.7,
+        3.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "tomeru",
+      "axes": [
+        2.3,
+        3.2,
+        2.2,
+        0.6,
+        0.5,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "tomonau",
+      "axes": [
+        1,
+        2.2,
+        1.6,
+        0.6,
+        0.5,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "toridasu",
+      "axes": [
+        1.727,
+        3.909,
+        4.273,
+        0.818,
+        0.818,
+        1.636
+      ],
+      "arena": null
+    },
+    {
+      "word": "torikumu",
+      "axes": [
+        1.471,
+        3.294,
+        3.353,
+        0.647,
+        0.882,
+        3.647
+      ],
+      "arena": null
+    },
+    {
+      "word": "toru",
+      "axes": [
+        1.364,
+        3.818,
+        4.091,
+        0.273,
+        0.364,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "toshi",
+      "axes": [
+        2.5,
+        3.6,
+        0.3,
+        0.1,
+        1,
+        1.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsubuyaku",
+      "axes": [
+        4,
+        1.3,
+        0.5,
+        0.2,
+        0.2,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsuchi",
+      "axes": [
+        1,
+        4.182,
+        4.273,
+        0.455,
+        3.273,
+        1.545
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsugi",
+      "axes": [
+        1.6,
+        2.5,
+        0.6,
+        0.2,
+        0.1,
+        1.9
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsukareru",
+      "axes": [
+        2.2,
+        3.4,
+        2.3,
+        0.8,
+        1.4,
+        4.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsukeru",
+      "axes": [
+        1.545,
+        3.273,
+        4,
+        0.818,
+        0.909,
+        2.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsuki",
+      "axes": [
+        0.8,
+        4.2,
+        0.1,
+        0.1,
+        0,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsuku",
+      "axes": [
+        1.364,
+        1.818,
+        2.091,
+        0.455,
+        1.182,
+        1.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsuma",
+      "axes": [
+        2.455,
+        4.182,
+        1.909,
+        1.091,
+        1.818,
+        1.727
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsumetai",
+      "axes": [
+        1.8,
+        3.1,
+        4.8,
+        3.4,
+        1.6,
+        4.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsumori",
+      "axes": [
+        1.909,
+        1.727,
+        1,
+        0.727,
+        0.727,
+        1.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsunagaru",
+      "axes": [
+        1.2,
+        2.5,
+        2.4,
+        0.2,
+        0.7,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsurai",
+      "axes": [
+        2,
+        2.636,
+        2.182,
+        0.818,
+        1.636,
+        4
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsuratsura",
+      "axes": [
+        1.692,
+        1.615,
+        0.769,
+        0.385,
+        0.462,
+        1.846
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsureru",
+      "axes": [
+        0.6,
+        2.5,
+        1.7,
+        0.1,
+        0.2,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsururi",
+      "axes": [
+        1.818,
+        3.091,
+        3.909,
+        2.727,
+        0.455,
+        3.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsutawaru",
+      "axes": [
+        4.1,
+        4.2,
+        4,
+        2.6,
+        2.3,
+        3.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsutomeru",
+      "axes": [
+        0.3,
+        2,
+        0.5,
+        0.1,
+        0.1,
+        2.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsutsu",
+      "axes": [
+        2.2,
+        2.9,
+        1.6,
+        1.2,
+        1.3,
+        1.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsuyoi",
+      "axes": [
+        1.8,
+        2.3,
+        2.3,
+        0.9,
+        0.7,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "tsuzukeru",
+      "axes": [
+        2,
+        2.333,
+        1.75,
+        0.833,
+        1.25,
+        3.083
+      ],
+      "arena": null
+    },
+    {
+      "word": "ukkari",
+      "axes": [
+        0.846,
+        1.385,
+        0.923,
+        0.615,
+        0.615,
+        3
+      ],
+      "arena": null
+    },
+    {
+      "word": "unzari",
+      "axes": [
+        2.909,
+        2.818,
+        0.909,
+        1.273,
+        0.636,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "urouro",
+      "axes": [
+        2.7,
+        3.9,
+        1.1,
+        0,
+        0.9,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "uttori",
+      "axes": [
+        2.769,
+        3.385,
+        1.846,
+        2.231,
+        2.077,
+        3.692
+      ],
+      "arena": null
+    },
+    {
+      "word": "wakai",
+      "axes": [
+        1.5,
+        3.8,
+        2.2,
+        0.8,
+        1.5,
+        3.5
+      ],
+      "arena": null
+    },
+    {
+      "word": "wakareru",
+      "axes": [
+        2.273,
+        4.091,
+        2.727,
+        1,
+        0.455,
+        2.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "wake",
+      "axes": [
+        1.9,
+        1,
+        0.2,
+        0.2,
+        0.2,
+        1.2
+      ],
+      "arena": null
+    },
+    {
+      "word": "wakeru",
+      "axes": [
+        2.364,
+        3.818,
+        3.545,
+        2,
+        1.818,
+        2.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "wakuwaku",
+      "axes": [
+        2.667,
+        3.667,
+        1.667,
+        1.5,
+        1.5,
+        3.833
+      ],
+      "arena": {
+        "romaji": "wakuwaku",
+        "gloss": "excitement, nervous"
+      }
+    },
+    {
+      "word": "warui",
+      "axes": [
+        2.636,
+        3.818,
+        2.091,
+        2,
+        1.909,
+        3.455
+      ],
+      "arena": null
+    },
+    {
+      "word": "wasawasa",
+      "axes": [
+        3.5,
+        4.333,
+        4.167,
+        0.5,
+        1,
+        3.833
+      ],
+      "arena": null
+    },
+    {
+      "word": "wasureru",
+      "axes": [
+        1.8,
+        1.8,
+        0.5,
+        0.9,
+        1.2,
+        2.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "yabai",
+      "axes": [
+        3.7,
+        4.4,
+        2.8,
+        2.8,
+        3.1,
+        4.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "yagaru",
+      "axes": [
+        1.2,
+        1.2,
+        0.3,
+        0,
+        0,
+        1
+      ],
+      "arena": null
+    },
+    {
+      "word": "yaku",
+      "axes": [
+        3.5,
+        3.5,
+        2.2,
+        2.1,
+        3.3,
+        1.6
+      ],
+      "arena": null
+    },
+    {
+      "word": "yakuzana",
+      "axes": [
+        1.4,
+        2.2,
+        1,
+        0,
+        0.9,
+        0.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "yama",
+      "axes": [
+        1.4,
+        4.5,
+        0.8,
+        0,
+        1.5,
+        1.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "yameru",
+      "axes": [
+        2.3,
+        2.8,
+        2,
+        0.7,
+        0.8,
+        2.4
+      ],
+      "arena": null
+    },
+    {
+      "word": "yaru",
+      "axes": [
+        3.1,
+        3.4,
+        2.4,
+        0.6,
+        0.7,
+        3.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "yasashii",
+      "axes": [
+        3,
+        3.727,
+        2.636,
+        1.636,
+        1.364,
+        3.727
+      ],
+      "arena": null
+    },
+    {
+      "word": "yasui",
+      "axes": [
+        2.5,
+        3.333,
+        2.167,
+        1.667,
+        1.333,
+        2.667
+      ],
+      "arena": null
+    },
+    {
+      "word": "yatsu",
+      "axes": [
+        2.182,
+        3.455,
+        1.091,
+        0.091,
+        1.273,
+        1.818
+      ],
+      "arena": null
+    },
+    {
+      "word": "yobu",
+      "axes": [
+        4.455,
+        2.909,
+        0.818,
+        0.364,
+        0.545,
+        3.091
+      ],
+      "arena": null
+    },
+    {
+      "word": "yokeru",
+      "axes": [
+        2.455,
+        4.364,
+        3,
+        0.545,
+        0.818,
+        3.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "yomu",
+      "axes": [
+        1.7,
+        4.7,
+        1,
+        0.1,
+        0.3,
+        1.8
+      ],
+      "arena": null
+    },
+    {
+      "word": "yori",
+      "axes": [
+        2.364,
+        3.364,
+        1.091,
+        1.364,
+        1,
+        2
+      ],
+      "arena": null
+    },
+    {
+      "word": "yorokobu",
+      "axes": [
+        3.2,
+        4.1,
+        2.5,
+        2.2,
+        1.3,
+        4.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "yoroshii",
+      "axes": [
+        2.545,
+        2.909,
+        2.364,
+        1.636,
+        1.455,
+        2.273
+      ],
+      "arena": null
+    },
+    {
+      "word": "yoru_approach",
+      "axes": [
+        2.3,
+        3.4,
+        1.8,
+        0.1,
+        1.1,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "yoru_night",
+      "axes": [
+        2,
+        4.636,
+        0.545,
+        0.545,
+        1.273,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "yowai",
+      "axes": [
+        3,
+        3.636,
+        3.273,
+        2,
+        1.727,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "yukkuri",
+      "axes": [
+        2.3,
+        3.4,
+        1.6,
+        0.5,
+        0.4,
+        2.7
+      ],
+      "arena": null
+    },
+    {
+      "word": "yuku",
+      "axes": [
+        1.273,
+        2.182,
+        0.091,
+        0.091,
+        0.091,
+        1.909
+      ],
+      "arena": null
+    },
+    {
+      "word": "yume",
+      "axes": [
+        2.545,
+        3.273,
+        1.727,
+        1.636,
+        1.455,
+        4.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "yururi",
+      "axes": [
+        1.2,
+        1.9,
+        1,
+        0.4,
+        0.1,
+        2.3
+      ],
+      "arena": null
+    },
+    {
+      "word": "yutakana",
+      "axes": [
+        3,
+        4.273,
+        3.455,
+        3.273,
+        2.636,
+        3.182
+      ],
+      "arena": null
+    },
+    {
+      "word": "yuttari",
+      "axes": [
+        3.455,
+        3.364,
+        1.727,
+        0.727,
+        1.182,
+        4.364
+      ],
+      "arena": {
+        "romaji": "yuttari",
+        "gloss": "comfortable, calm, relaxed"
+      }
+    }
+  ]
+}

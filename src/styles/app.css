@@ -19,6 +19,7 @@
 @import "./tokens.css";
 @import "./theme.css";
 @import "./shadcn-bridge.css";
+@import "./observatory.css";
 
 @layer app {
 

@@ -1,0 +1,281 @@
+{
+  "meta": {
+    "source": "ideophone-arena-api src/main/resources/db/init/ideophone_arena.sql (ideophones INSERT, line 149; extracted 2026-07-05)",
+    "note": "Authoritative API romaji, Kunrei-shiki with Q/N (sitosito, zyaazyaa, syoboN, sakuQ). Norms joins use strict string equality only - transliteration is forbidden (invariant 1 adjacent).",
+    "wordCount": 68
+  },
+  "words": [
+    {
+      "romaji": "barabara",
+      "gloss": "scattered, in pieces"
+    },
+    {
+      "romaji": "batyabatya",
+      "gloss": "splashing"
+    },
+    {
+      "romaji": "bissiri",
+      "gloss": "closely lined up, densely"
+    },
+    {
+      "romaji": "boNyari",
+      "gloss": "dim, faint, indistinct"
+    },
+    {
+      "romaji": "bosabosa",
+      "gloss": "ruffled, disheveled"
+    },
+    {
+      "romaji": "bosori",
+      "gloss": "in a whisper, in a murmur"
+    },
+    {
+      "romaji": "busuri",
+      "gloss": "poutingly, displeasure"
+    },
+    {
+      "romaji": "doNyori",
+      "gloss": "dark, gloomy"
+    },
+    {
+      "romaji": "dogimagi",
+      "gloss": "flurried, nervous"
+    },
+    {
+      "romaji": "dokidoki",
+      "gloss": "with a rapid heartbeat"
+    },
+    {
+      "romaji": "dokiri",
+      "gloss": "being startled, getting a shock"
+    },
+    {
+      "romaji": "dosari",
+      "gloss": "with a thud"
+    },
+    {
+      "romaji": "dosidosi",
+      "gloss": "tramping, stomping"
+    },
+    {
+      "romaji": "dotabata",
+      "gloss": "noisily, with heavy feet"
+    },
+    {
+      "romaji": "gaNgaN",
+      "gloss": "clanging, banging"
+    },
+    {
+      "romaji": "garari",
+      "gloss": "completely, totally changed"
+    },
+    {
+      "romaji": "garigari",
+      "gloss": "very skinny, emaciated"
+    },
+    {
+      "romaji": "gataN",
+      "gloss": "with a bang"
+    },
+    {
+      "romaji": "gatugatu",
+      "gloss": "ravenously, greedily"
+    },
+    {
+      "romaji": "geNnari",
+      "gloss": "weary, fed up, dejected"
+    },
+    {
+      "romaji": "girigiri",
+      "gloss": "just barely, at the last moment"
+    },
+    {
+      "romaji": "gisigisi",
+      "gloss": "with a creak, squeak"
+    },
+    {
+      "romaji": "gizagiza",
+      "gloss": "jagged, serrated"
+    },
+    {
+      "romaji": "gosogoso",
+      "gloss": "with a rustling sound"
+    },
+    {
+      "romaji": "gotugotu",
+      "gloss": "rugged, scragged, angular"
+    },
+    {
+      "romaji": "harahara",
+      "gloss": "anxious, nervous"
+    },
+    {
+      "romaji": "hirahira",
+      "gloss": "fluttering, dangling"
+    },
+    {
+      "romaji": "hoQ",
+      "gloss": "with a feeling of relief"
+    },
+    {
+      "romaji": "hokkori",
+      "gloss": "feeling warm and fluffy, soft"
+    },
+    {
+      "romaji": "huNwari",
+      "gloss": "gently, airily, fluffy"
+    },
+    {
+      "romaji": "iraira",
+      "gloss": "to get irritated, annoyed"
+    },
+    {
+      "romaji": "katakata",
+      "gloss": "clattering, rattling"
+    },
+    {
+      "romaji": "katiQ",
+      "gloss": "click, snap"
+    },
+    {
+      "romaji": "kirakira",
+      "gloss": "glittering, sparkling"
+    },
+    {
+      "romaji": "kiriQ",
+      "gloss": "crisp appearance, stiffly"
+    },
+    {
+      "romaji": "kukkiri",
+      "gloss": "clearly, distinctly, sharply"
+    },
+    {
+      "romaji": "kurikuri",
+      "gloss": "big and round"
+    },
+    {
+      "romaji": "kyaakyaa",
+      "gloss": "shrieking, squealing"
+    },
+    {
+      "romaji": "marumaru",
+      "gloss": "plump, rotund, chubby"
+    },
+    {
+      "romaji": "mogomogo",
+      "gloss": "mumbling, chewing"
+    },
+    {
+      "romaji": "mukumuku",
+      "gloss": "billowing, plump"
+    },
+    {
+      "romaji": "nikoniko",
+      "gloss": "smilingly, with a grin"
+    },
+    {
+      "romaji": "noNbiri",
+      "gloss": "at leisure, in a relaxed manner"
+    },
+    {
+      "romaji": "nobinobi",
+      "gloss": "comfortable, peaceful"
+    },
+    {
+      "romaji": "paQ",
+      "gloss": "suddenly, in a flash"
+    },
+    {
+      "romaji": "pitari",
+      "gloss": "tightly connected, no space in between"
+    },
+    {
+      "romaji": "poripori",
+      "gloss": "munching, crunching"
+    },
+    {
+      "romaji": "potapota",
+      "gloss": "dripping, trickling"
+    },
+    {
+      "romaji": "ruNruN",
+      "gloss": "happy, elated, euphoric"
+    },
+    {
+      "romaji": "sakuQ",
+      "gloss": "with a crunch"
+    },
+    {
+      "romaji": "sitosito",
+      "gloss": "drizzling"
+    },
+    {
+      "romaji": "sokkuri",
+      "gloss": "exactly alike, spitting image"
+    },
+    {
+      "romaji": "sororisorori",
+      "gloss": "slowly and quietly"
+    },
+    {
+      "romaji": "sorosoro",
+      "gloss": "slowly, quietly"
+    },
+    {
+      "romaji": "sotto",
+      "gloss": "softly, gently"
+    },
+    {
+      "romaji": "sukkiri",
+      "gloss": "refreshingly, with a feeling of relief"
+    },
+    {
+      "romaji": "syakisyaki",
+      "gloss": "crisp, crunchy"
+    },
+    {
+      "romaji": "syoboN",
+      "gloss": "downhearted, dejected"
+    },
+    {
+      "romaji": "tiratira",
+      "gloss": "flickering, fluttering"
+    },
+    {
+      "romaji": "tyaNto",
+      "gloss": "attentive, proper attitude"
+    },
+    {
+      "romaji": "uNzari",
+      "gloss": "boredom, tedious, fed up with"
+    },
+    {
+      "romaji": "wakuwaku",
+      "gloss": "excitement, nervous"
+    },
+    {
+      "romaji": "yuttari",
+      "gloss": "comfortable, calm, relaxed"
+    },
+    {
+      "romaji": "ziriziri",
+      "gloss": "sizzling, oozing"
+    },
+    {
+      "romaji": "zitto",
+      "gloss": "motionless, fixedly"
+    },
+    {
+      "romaji": "zokuzoku",
+      "gloss": "shivering, feeling chilly"
+    },
+    {
+      "romaji": "zuruzuru",
+      "gloss": "with a slurp"
+    },
+    {
+      "romaji": "zyaazyaa",
+      "gloss": "noisily gushing"
+    }
+  ]
+}

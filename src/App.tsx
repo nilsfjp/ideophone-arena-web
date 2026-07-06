@@ -24,6 +24,7 @@ import { Button } from "./components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 import { MODES, type ModeId } from "./modes";
+import Observatory from "./observatory/Observatory";
 
 const USERNAME_STORAGE_KEY = "ideophone-arena-username";
 const ROLE_STORAGE_KEY = "ideophone-arena-role";
@@ -36,7 +37,7 @@ type AuthState = {
   role?: string;
 };
 
-type AppView = "auth" | "home" | "instructions" | "game" | "rating";
+type AppView = "auth" | "home" | "instructions" | "game" | "rating" | "observatory";
 type SoundCheckStatus = "idle" | "checking" | "ready" | "error";
 type CompletionScoreView = "leaderboard" | "attempts";
 
@@ -79,6 +80,11 @@ export default function App() {
   );
   const [sessionStats, setSessionStats] =
     useState<SessionStats>(EMPTY_SESSION_STATS);
+  // Set when entering the Observatory via the completion panel's "See where
+  // this session lands"; null for the header entry (no session crosshair).
+  const [observatorySessionAccuracy, setObservatorySessionAccuracy] = useState<
+    number | null
+  >(null);
   const [soundCheckStatus, setSoundCheckStatus] =
     useState<SoundCheckStatus>("idle");
   const [soundCheckError, setSoundCheckError] = useState("");
@@ -292,6 +298,15 @@ export default function App() {
       return <ModeSelect modes={MODES} onSelect={handleModeSelect} />;
     }
 
+    if (view === "observatory") {
+      return (
+        <Observatory
+          sessionAccuracy={observatorySessionAccuracy}
+          onBackToHome={handleBackToHome}
+        />
+      );
+    }
+
     if (view === "instructions") {
       return (
         <Instructions
@@ -368,6 +383,20 @@ export default function App() {
                 onClick={() => setCompletionScoreView("leaderboard")}
               >
                 View leaderboard
+              </Button>
+              <Button
+                variant="secondary"
+                type="button"
+                onClick={() => {
+                  setObservatorySessionAccuracy(
+                    sessionStats.answered > 0
+                      ? sessionStats.correct / sessionStats.answered
+                      : null,
+                  );
+                  setView("observatory");
+                }}
+              >
+                See where this session lands
               </Button>
               {auth ? (
                 <Button
@@ -468,6 +497,17 @@ export default function App() {
         {auth ? (
           <div className="user-controls">
             <span>{auth.username}</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              type="button"
+              onClick={() => {
+                setObservatorySessionAccuracy(null);
+                setView("observatory");
+              }}
+            >
+              Observatory
+            </Button>
             <Button variant="ghost" size="sm" type="button" onClick={handleLogout}>
               Logout
             </Button>

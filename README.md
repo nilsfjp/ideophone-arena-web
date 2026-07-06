@@ -129,12 +129,26 @@ A dev-only style guide at `http://localhost:5174/styleguide.html` renders the
 palette, font-pairing candidates, and feedback states; it is not part of the
 production build or the player flow.
 
+## The Observatory
+
+A read-only research surface (header link, plus "See where this session
+lands" from the completion panel) charting the whole arena's record: guessing
+accuracy per modality against the thesis means, the guessing/rating divergence
+scatter over a McLean 2023 backdrop, and per-word perceptual-strength radar
+profiles from the Iida & Akita norms. Live data comes solely from the public
+`GET /api/research/divergence`; the reference layers are vendored JSON in
+`src/data/observatory/`, regenerated from the licensed CSVs in
+`data/observatory-sources/` by `node scripts/build-observatory-data.mjs`.
+Spec: `docs/specs/SPEC-stats-dashboard.md`.
+
 ## Scripts
 
 ```bash
-npm run dev
-npm run build
-npm run test
-npm run preview
+pnpm dev
+pnpm build
+pnpm test
+pnpm preview
 node scripts/verify-presentation-logic.mjs
+node scripts/verify-token-purity.mjs
+node scripts/build-observatory-data.mjs
 ```

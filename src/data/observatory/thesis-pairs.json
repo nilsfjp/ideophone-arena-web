@@ -1,0 +1,364 @@
+{
+  "meta": {
+    "source": "data/observatory-sources/thesis-per-pair-stats.csv",
+    "citation": "Paulsson (2026), MA thesis — per-pair 2AFC guessing and 1–7 rating stats, N = 36 participants, 30 pairs",
+    "license": "Author's own data",
+    "generatedBy": "scripts/build-observatory-data.mjs",
+    "pairCount": 30,
+    "ratingScale": "1-7",
+    "ratingMean": 4.257,
+    "ratingSd": 0.591
+  },
+  "byModality": {
+    "auditory": {
+      "accuracy": 0.6861,
+      "n": 360,
+      "meanRating": 4.08,
+      "pairs": 10
+    },
+    "visual": {
+      "accuracy": 0.6417,
+      "n": 360,
+      "meanRating": 4.24,
+      "pairs": 10
+    },
+    "interoceptive": {
+      "accuracy": 0.5972,
+      "n": 360,
+      "meanRating": 4.45,
+      "pairs": 10
+    }
+  },
+  "pairs": [
+    {
+      "pairing": "a0",
+      "modality": "auditory",
+      "romaji": "gosogoso",
+      "accuracy": 0.6944,
+      "nCorrect": 25,
+      "n": 36,
+      "meanRating": 3.78,
+      "medianRtMs": 13323,
+      "meanRatingZ": -0.8071
+    },
+    {
+      "pairing": "a1",
+      "modality": "auditory",
+      "romaji": "batyabatya",
+      "accuracy": 0.5833,
+      "nCorrect": 21,
+      "n": 36,
+      "meanRating": 4.53,
+      "medianRtMs": 13157,
+      "meanRatingZ": 0.4619
+    },
+    {
+      "pairing": "a2",
+      "modality": "auditory",
+      "romaji": "zyaazyaa",
+      "accuracy": 0.7222,
+      "nCorrect": 26,
+      "n": 36,
+      "meanRating": 4.11,
+      "medianRtMs": 12431,
+      "meanRatingZ": -0.2487
+    },
+    {
+      "pairing": "a3",
+      "modality": "auditory",
+      "romaji": "syakisyaki",
+      "accuracy": 0.6667,
+      "nCorrect": 24,
+      "n": 36,
+      "meanRating": 4.86,
+      "medianRtMs": 11413,
+      "meanRatingZ": 1.0203
+    },
+    {
+      "pairing": "a4",
+      "modality": "auditory",
+      "romaji": "zuruzuru",
+      "accuracy": 0.6389,
+      "nCorrect": 23,
+      "n": 36,
+      "meanRating": 4.97,
+      "medianRtMs": 13235,
+      "meanRatingZ": 1.2064
+    },
+    {
+      "pairing": "a5",
+      "modality": "auditory",
+      "romaji": "dotabata",
+      "accuracy": 0.5,
+      "nCorrect": 18,
+      "n": 36,
+      "meanRating": 4.28,
+      "medianRtMs": 11291,
+      "meanRatingZ": 0.0389
+    },
+    {
+      "pairing": "a6",
+      "modality": "auditory",
+      "romaji": "dosari",
+      "accuracy": 0.6667,
+      "nCorrect": 24,
+      "n": 36,
+      "meanRating": 3.28,
+      "medianRtMs": 12600,
+      "meanRatingZ": -1.6531
+    },
+    {
+      "pairing": "a7",
+      "modality": "auditory",
+      "romaji": "gisigisi",
+      "accuracy": 0.8333,
+      "nCorrect": 30,
+      "n": 36,
+      "meanRating": 3.89,
+      "medianRtMs": 13231,
+      "meanRatingZ": -0.621
+    },
+    {
+      "pairing": "a8",
+      "modality": "auditory",
+      "romaji": "bosori",
+      "accuracy": 0.6111,
+      "nCorrect": 22,
+      "n": 36,
+      "meanRating": 3.22,
+      "medianRtMs": 14096,
+      "meanRatingZ": -1.7546
+    },
+    {
+      "pairing": "a9",
+      "modality": "auditory",
+      "romaji": "sakuQ",
+      "accuracy": 0.9444,
+      "nCorrect": 34,
+      "n": 36,
+      "meanRating": 3.86,
+      "medianRtMs": 12016,
+      "meanRatingZ": -0.6717
+    },
+    {
+      "pairing": "v0",
+      "modality": "visual",
+      "romaji": "kukkiri",
+      "accuracy": 0.7222,
+      "nCorrect": 26,
+      "n": 36,
+      "meanRating": 4.64,
+      "medianRtMs": 15731,
+      "meanRatingZ": 0.6481
+    },
+    {
+      "pairing": "v1",
+      "modality": "visual",
+      "romaji": "gizagiza",
+      "accuracy": 0.5833,
+      "nCorrect": 21,
+      "n": 36,
+      "meanRating": 3.94,
+      "medianRtMs": 14689,
+      "meanRatingZ": -0.5364
+    },
+    {
+      "pairing": "v2",
+      "modality": "visual",
+      "romaji": "doNyori",
+      "accuracy": 0.8333,
+      "nCorrect": 30,
+      "n": 36,
+      "meanRating": 4.14,
+      "medianRtMs": 11885,
+      "meanRatingZ": -0.198
+    },
+    {
+      "pairing": "v3",
+      "modality": "visual",
+      "romaji": "hirahira",
+      "accuracy": 0.5833,
+      "nCorrect": 21,
+      "n": 36,
+      "meanRating": 4.39,
+      "medianRtMs": 15197,
+      "meanRatingZ": 0.225
+    },
+    {
+      "pairing": "v4",
+      "modality": "visual",
+      "romaji": "bissiri",
+      "accuracy": 0.4722,
+      "nCorrect": 17,
+      "n": 36,
+      "meanRating": 3.78,
+      "medianRtMs": 13874,
+      "meanRatingZ": -0.8071
+    },
+    {
+      "pairing": "v5",
+      "modality": "visual",
+      "romaji": "nikoniko",
+      "accuracy": 0.6667,
+      "nCorrect": 24,
+      "n": 36,
+      "meanRating": 4.42,
+      "medianRtMs": 11740,
+      "meanRatingZ": 0.2758
+    },
+    {
+      "pairing": "v6",
+      "modality": "visual",
+      "romaji": "huNwari",
+      "accuracy": 0.5556,
+      "nCorrect": 20,
+      "n": 36,
+      "meanRating": 4.11,
+      "medianRtMs": 13146,
+      "meanRatingZ": -0.2487
+    },
+    {
+      "pairing": "v7",
+      "modality": "visual",
+      "romaji": "kiriQ",
+      "accuracy": 0.6944,
+      "nCorrect": 25,
+      "n": 36,
+      "meanRating": 4.58,
+      "medianRtMs": 13706,
+      "meanRatingZ": 0.5465
+    },
+    {
+      "pairing": "v8",
+      "modality": "visual",
+      "romaji": "marumaru",
+      "accuracy": 0.75,
+      "nCorrect": 27,
+      "n": 36,
+      "meanRating": 4.36,
+      "medianRtMs": 12067,
+      "meanRatingZ": 0.1743
+    },
+    {
+      "pairing": "v9",
+      "modality": "visual",
+      "romaji": "bosabosa",
+      "accuracy": 0.5556,
+      "nCorrect": 20,
+      "n": 36,
+      "meanRating": 4.06,
+      "medianRtMs": 20390,
+      "meanRatingZ": -0.3333
+    },
+    {
+      "pairing": "i0",
+      "modality": "interoceptive",
+      "romaji": "uNzari",
+      "accuracy": 0.6389,
+      "nCorrect": 23,
+      "n": 36,
+      "meanRating": 3.25,
+      "medianRtMs": 11517,
+      "meanRatingZ": -1.7039
+    },
+    {
+      "pairing": "i1",
+      "modality": "interoceptive",
+      "romaji": "gatugatu",
+      "accuracy": 0.5556,
+      "nCorrect": 20,
+      "n": 36,
+      "meanRating": 3.58,
+      "medianRtMs": 16728,
+      "meanRatingZ": -1.1455
+    },
+    {
+      "pairing": "i2",
+      "modality": "interoceptive",
+      "romaji": "syoboN",
+      "accuracy": 0.3611,
+      "nCorrect": 13,
+      "n": 36,
+      "meanRating": 4.03,
+      "medianRtMs": 13038,
+      "meanRatingZ": -0.3841
+    },
+    {
+      "pairing": "i3",
+      "modality": "interoceptive",
+      "romaji": "iraira",
+      "accuracy": 0.8056,
+      "nCorrect": 29,
+      "n": 36,
+      "meanRating": 4.92,
+      "medianRtMs": 12979,
+      "meanRatingZ": 1.1218
+    },
+    {
+      "pairing": "i4",
+      "modality": "interoceptive",
+      "romaji": "tyaNto",
+      "accuracy": 0.5833,
+      "nCorrect": 21,
+      "n": 36,
+      "meanRating": 4.67,
+      "medianRtMs": 15058,
+      "meanRatingZ": 0.6988
+    },
+    {
+      "pairing": "i5",
+      "modality": "interoceptive",
+      "romaji": "harahara",
+      "accuracy": 0.6944,
+      "nCorrect": 25,
+      "n": 36,
+      "meanRating": 5,
+      "medianRtMs": 11734,
+      "meanRatingZ": 1.2572
+    },
+    {
+      "pairing": "i6",
+      "modality": "interoceptive",
+      "romaji": "noNbiri",
+      "accuracy": 0.5556,
+      "nCorrect": 20,
+      "n": 36,
+      "meanRating": 3.72,
+      "medianRtMs": 13394,
+      "meanRatingZ": -0.9086
+    },
+    {
+      "pairing": "i7",
+      "modality": "interoceptive",
+      "romaji": "zokuzoku",
+      "accuracy": 0.5556,
+      "nCorrect": 20,
+      "n": 36,
+      "meanRating": 4.75,
+      "medianRtMs": 15862,
+      "meanRatingZ": 0.8342
+    },
+    {
+      "pairing": "i8",
+      "modality": "interoceptive",
+      "romaji": "hoQ",
+      "accuracy": 0.5556,
+      "nCorrect": 20,
+      "n": 36,
+      "meanRating": 4.78,
+      "medianRtMs": 12278,
+      "meanRatingZ": 0.8849
+    },
+    {
+      "pairing": "i9",
+      "modality": "interoceptive",
+      "romaji": "dokidoki",
+      "accuracy": 0.6667,
+      "nCorrect": 24,
+      "n": 36,
+      "meanRating": 5.81,
+      "medianRtMs": 13050,
+      "meanRatingZ": 2.6277
+    }
+  ]
+}

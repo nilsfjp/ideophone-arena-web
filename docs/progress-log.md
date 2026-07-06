@@ -709,3 +709,110 @@ headless run — an environment workaround, not a code issue.)
 
 Next single task:
 28A/28B Perception Ladder (per `TASKS.md` sequence; M1 `game_mode` rides 28A).
+
+## 2026-07-05 (NIL-78)
+
+Session goal:
+Build The Observatory v1.0 per `docs/specs/SPEC-stats-dashboard.md`: a separate read-only research
+surface (new `AppView "observatory"`, not a mode card) with three live panels — modality dumbbell,
+divergence scatter, word radar — vendored reference layers (thesis 30 pairs, McLean 2023 backdrop,
+Iida & Akita norms), honest coming-soon slots, and the mandatory attribution footer. Frontend only;
+the whole live API surface is the existing public `GET /api/research/divergence`.
+
+Changed:
+- `package.json` / `pnpm-lock.yaml`: the approved dep gate, exactly `d3-scale` + `d3-shape`
+  (+ `@types/*` devDeps). d3 does math only; React owns all DOM.
+- `data/observatory-sources/`: the three research CSVs (launcher-block copies) + `arena-pool.json`
+  (68 pool words, API romaji + gloss, extracted once from the backend seed SQL, provenance in
+  meta) + licensing/citation `README.md`.
+- `scripts/build-observatory-data.mjs`: deterministic pipeline — hand-rolled RFC-4180 parser (the
+  norms CSV has quoted embedded commas), strict blank-cell rejection (`Number("")` must not pass
+  as 0), atomic validate-then-write (exit 1 writing nothing on any problem), run-twice idempotent.
+  Thesis romaji canonicalized to the pool's authoritative spellings (sakutto/kiritto/hotto →
+  sakuQ/kiriQ/hoQ — the CSV predates the sokuon renames) with pool-membership validation. Emits
+  committed JSON into `src/data/observatory/`: `thesis-pairs` (per-pair z + `byModality`
+  reproducing 68.6/64.2/59.7), `mclean` (wide, published z), `norms` (strict-equality arena join +
+  build-time max-L1 default pair), `arena-pool`. Pins arena∩norms = 17 as a conscious-update
+  constant.
+- `src/data/observatory/`: vendored JSON + `types.ts` + `index.ts` (single cast boundary) +
+  `data.test.ts` (committed-data integrity guard) + `README.md`.
+- `src/observatory/chart/`: bespoke primitives — `kde.ts` (Epanechnikov, Silverman bandwidth with
+  a 4%-of-span floor, peak-normalized), `wilson.ts` (successes clamped to [0, n] — no NaN CI from
+  contract-violating input), `aggregate.ts` (null-safe weighted modality means, record totals,
+  z-standardization gated on n ≥ 3 + spread, arena scatter builder with honest exclusion counts;
+  never-played counted by romaji match, never pool − rows), `scales.ts`, `format.ts`
+  (deterministic, no locale APIs), `axis.tsx`, `SpecimenLabel.tsx` (§3.4 primitive, HTML + SVG
+  twins), `useChartSize.ts` (SSR-safe ResizeObserver), `CollapsedTable.tsx` (table twin — always
+  in the DOM behind `hidden`, plain state toggle, no Radix).
+- `src/observatory/panels/ModalityDumbbell.tsx`: thesis ink vs live vermillion dots with printed
+  values as the CVD carrier, `CHANCE · 50%` hairline, hollow dots under 30 live guesses, `N = …`
+  row labels (`N = —` when the record is unreachable — null is not zero), short row labels under
+  520 px, practice-traffic disclosure in the figcaption.
+- `src/observatory/panels/DivergenceScatter.tsx`: three layers (McLean strata by shape + neutral
+  ink-family fills; thesis ink; arena vermillion — reserved-color audit clean), Epanechnikov KDE
+  marginals per layer, y = z within study (adjudicated; arena suppressed under 3 rated words with
+  the honest note), pointer-events tooltips (hover + tap + focus; owner-scoped blur so focusing
+  mark A doesn't wipe mark B's tooltip; width-stamped and cleared on reflow), focusable
+  thesis/arena marks with full aria-labels, session crosshair with a figcaption text twin (the
+  SVG overlay is decorative — screen readers get the session values as real text), binding
+  ρ ≈ +.44/+.65 footnote.
+- `src/observatory/panels/WordRadar.tsx`: pure-trig 6-axis radar (0–5 norms), longest labels
+  top/bottom + side labels clamped into bounds for 320 px legibility, two-word overlay (ink solid
+  vs ink-muted dashed + distinct vertex shapes — no vermillion, no modality-trio colors),
+  searchable pickers (shadcn Input + native buttons; always-mounted `role="status"` live region
+  announcing result counts; focus returns to the input on select), `ARENA` badge + gloss for the
+  17 matches, default pair from the pipeline.
+- `src/observatory/Observatory.tsx`: container/presentational split (`ObservatoryView` is the
+  test target), header strip (`RECORD · ALL PLAYERS` chip, register line, live Σ counts, static
+  §10.6 wave rule), loading/error/empty states in the lab register, coming-soon slots (network /
+  confusion, §2.3 honest pattern), attribution footer (thesis + McLean, Dunn & Dingemanse 2023 +
+  Iida & Akita 2023).
+- `src/App.tsx`: `AppView` gains `"observatory"`; header ghost Button; completion-panel
+  "See where this session lands" passing session accuracy (player rating mean computed in the
+  container via `getAllMyRatings()`; crosshair y omitted without it). No other game-surface touch.
+- `src/styles/observatory.css` (all rules in `@layer app`, tokens only, zero transitions —
+  reduced-motion holds by construction) + one `@import` in `app.css`; `tsconfig.app.json` gains
+  `resolveJsonModule`; README gains an Observatory section + pnpm-form script list.
+
+Proof:
+- Static battery green at exit: `pnpm lint` · `pnpm build` · `pnpm vitest run` (153 — was 84;
+  +69 across chart math, data integrity, and panel smokes incl. the empty-divergence deploy-day
+  guard and the session text-twin assertion) · `node scripts/verify-presentation-logic.mjs` ·
+  `node scripts/verify-token-purity.mjs`.
+- Pipeline gates: run-twice idempotence (checksums identical); corrupt-CSV smoke → exit 1, all
+  problems listed, nothing written.
+- Live manual pass vs backend :8081 (divergence: 154 rows, Σ1012 guesses / Σ48 ratings — the
+  local dev DB includes browser-loop test artifacts): both entry paths, tooltips by mouse hover
+  AND touch tap (pointerdown — CDP tap synthesis never delivers `click` on SVG marks; pointer
+  events are the durable fix), keyboard focus tooltips + Escape, table twins, picker
+  search/select.
+- Responsive: 1280 / 375 / 320 screenshots; zero horizontal overflow at every width; dumbbell
+  short labels below 520 px; radar labels clamp unclipped at 320 px.
+- `node scripts/verify-browser-loop.mjs` full pass, desktop exit 0 and 375 px exit 0 (game loop
+  untouched — zero trial-surface files in the diff; the only game-surface touch is App.tsx view
+  wiring).
+- Adversarial multi-agent review over the full diff (6 lenses, 12 raw findings, 8 confirmed by
+  adversarial verify + 3 verifier-timeout claims judged by hand, 1 rejected): all accepted
+  findings fixed before exit — highest was the aria-hidden session crosshair lacking a text twin.
+
+Result:
+Complete. The Observatory ships all three v1.0 panels against live data with the vendored
+reference layers and honest low-n/empty states throughout; tree clean for review. Flagged
+spec interpretations (adjudicated or disclosed): scatter y = z within study (Nils's pick over
+normalized/native axes); radar default pair kirakira/sukkiri (max-L1 over the actual 17-word
+arena∩norms strict-equality intersection — kirakira/dokidoki ranked 2nd and was not pinned);
+per-mark `aria-label` instead of `aria-describedby`; McLean backdrop non-focusable (its data
+lives in the always-in-DOM table twin); radar axis display order re-slotted for 320 px label
+fit; dumbbell live means include practice traffic (`is_practice` is per-round, not per-word —
+disclosed in the figcaption). Optional S1 wave-rule rider not attempted (time went to the
+responsive/a11y/review passes); the plain §10.6 rule ships.
+
+Commit:
+Not committed (commits are the user's — expected).
+
+Blocker:
+None.
+
+Next single task:
+NIL-80 (Observatory v1.1: rainclouds + integrity strip + kana labels) — blocked on NIL-79's
+endpoints (`rating-distributions`, `position-bias`, `displayForm` on DivergenceResponse).
