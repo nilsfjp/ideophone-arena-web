@@ -236,7 +236,7 @@ This section + `landing-composition.html` + the NIL-64 `landing-hero.html` recor
 | # | Question | Decider | When |
 |---|---|---|---|
 | D1 | Observatory public exposure (public deep-link vs auth-with-return) | Nils | NIL-43 build session plan |
-| D2 | Word Mint §9 frozen strings + this spec's chip wordings / score-band one-liners / button label | Nils | chat, before the NIL-62 frontend session (backend unblocked regardless — ships keys only) |
+| D2 | ~~Word Mint §9 frozen strings + chip wordings / score-band one-liners / button label~~ **RESOLVED 2026-07-06 as NIL-83 — frozen strings in §8** | Nils | done |
 | D3 | XL mode name (Lingua Quest / Polyglot Challenge) | Nils | XL kickoff (standing deferral, untouched here) |
 | D4 | Thesis PDF linked from the landing provenance line | Nils | NIL-43 build session plan |
 | D5 | Which E1 export (dumbbell vs scatter) fills strip 6, and its crop | NIL-81 session output; Nils's eye | when NIL-81 lands |
@@ -254,3 +254,41 @@ This section + `landing-composition.html` + the NIL-64 `landing-hero.html` recor
 ## 7. Proof battery for the consuming builds
 
 Standard §11.4 bar (pnpm battery + browser loop at desktop and 375px) plus, per surface: **28B** — floor stack renders 3 floors from a 3-floor API payload and 4 from a 4-floor payload with zero code delta (fixture test); teaser removed-flag asserted; Dialog loop idiom green or fallback exercised; KOKE label pairing present on every haptic-colored element. **NIL-62 FE** — parse-error path leaves the attempt unconsumed (browser proof); reveal shows kana verbatim from the DTO (string-equality assert, invariant 1); chips render both states from fixture. **NIL-43** — all eight strips at both viewports; E1 fallback renders when the asset is absent; attribution list string-matches the Observatory footer's; hero CTA lands on Meaning Match instructions post-auth (loop waypoint).
+
+---
+
+## 8. AMENDMENT — NIL-83 frozen Word Mint strings (adjudicated 2026-07-06, Fable; closes deferral D2)
+
+Nils ruled every group in chat. These strings are **frozen** — NIL-62-FE lands them verbatim in `experimentText.ts` (additive; existing entries untouched). They supersede the drafts in this spec's §2.2/§2.3 and `SPEC-free-form-entry.md` §9. Overriding principle from adjudication: **player copy is language-neutral** — no string names Japanese (XL/cross-linguistic future; the kana reveal and romaji examples carry the language implicitly).
+
+### 8.1 Prompt state
+
+| Key | String |
+|---|---|
+| Instruction line | Invent a word whose sound fits the meaning below. Type it in roman letters. |
+| Meaning line | **{meaning}** (bold, no quotes — house style, unchanged) |
+| One-shot label | ONE TRY PER WORD |
+| One-shot support | Your first instinct is the data. |
+| Submit button | Mint this word |
+| Parse-error helper | That didn't read as speakable syllables — try simple roman letters, like *gorogoro* or *pika*. |
+
+### 8.2 Reveal state
+
+| Key | String |
+|---|---|
+| Reveal line | The real word is **{displayForm}**. |
+| Score label | SIMILARITY · 0–100 |
+| Band ≥85 | {score} — your instinct is almost the same word. |
+| Band 60–84 | {score} — your instinct shares most of its shape with the real word. |
+| Band 35–59 | {score} — your word and the real one share some bones. |
+| Band <35 | {score} — a different creature — which is also data. |
+| Primary action | Next meaning |
+| Ghost action | Back to modes |
+
+### 8.3 Feature chips (§2.3.5 table frozen as written)
+
+`DOUBLED SHAPE` · `SHARP CUT · Q` · `NASAL ENDING · N` · `-RI ENDING` · `HEAVY ONSET` · `VOWEL WEIGHT` · `LENGTH · {n} MORAE`. The `· Q` notation is deliberate (matches scorer normalization; §10.3 hidden-gem hook).
+
+### 8.4 Status/completion
+
+Status line `WORD {i} OF {n} · YOUR MEAN {m}` and empty/error states per §2.4 (Rating Lab patterns verbatim) — no new strings needed beyond the above.

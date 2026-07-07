@@ -16,6 +16,7 @@ import type {
 } from "./api/types";
 import AuthForm from "./components/AuthForm";
 import Instructions from "./components/Instructions";
+import Landing from "./components/Landing";
 import Leaderboard from "./components/Leaderboard";
 import ModeSelect from "./components/ModeSelect";
 import RatingLab from "./components/RatingLab";
@@ -37,7 +38,14 @@ type AuthState = {
   role?: string;
 };
 
-type AppView = "auth" | "home" | "instructions" | "game" | "rating" | "observatory";
+type AppView =
+  | "landing"
+  | "auth"
+  | "home"
+  | "instructions"
+  | "game"
+  | "rating"
+  | "observatory";
 type SoundCheckStatus = "idle" | "checking" | "ready" | "error";
 type CompletionScoreView = "leaderboard" | "attempts";
 
@@ -66,7 +74,7 @@ function readStoredAuth(): AuthState | null {
 export default function App() {
   const [auth, setAuth] = useState<AuthState | null>(() => readStoredAuth());
   const [view, setView] = useState<AppView>(() =>
-    readStoredAuth() ? "home" : "auth",
+    readStoredAuth() ? "home" : "landing",
   );
   const [session, setSession] = useState<GameSessionResponse | null>(null);
   const [round, setRound] = useState<RoundResponse | null>(null);
@@ -96,6 +104,12 @@ export default function App() {
   // UI default is ON; the backend default stays false, so the flag is always
   // sent explicitly and only this opt-in produces practice rounds.
   const [includePractice, setIncludePractice] = useState(true);
+  // Landing → auth handoff: the mode a public CTA promised (applied after auth),
+  // and which auth tab opens first (register for landing CTAs, login otherwise).
+  const [pendingMode, setPendingMode] = useState<ModeId | null>(null);
+  const [authInitialMode, setAuthInitialMode] = useState<"login" | "register">(
+    "login",
+  );
 
   function handleAuthenticated(response: AuthResponse) {
     setAuthToken(response.token);
@@ -106,7 +120,15 @@ export default function App() {
       localStorage.removeItem(ROLE_STORAGE_KEY);
     }
     setAuth({ username: response.username ?? "player", role: response.role });
-    setView("home");
+    // Keep the promise the entry CTA made: a landing mode routes straight into
+    // that mode (hero → Meaning Match instructions); otherwise land on the grid.
+    if (pendingMode) {
+      const mode = pendingMode;
+      setPendingMode(null);
+      handleModeSelect(mode);
+    } else {
+      setView("home");
+    }
     setError("");
   }
 
@@ -126,6 +148,8 @@ export default function App() {
     setCompletionScoreView("leaderboard");
     setSelectedCondition(DEFAULT_SCRIPT_LAB_CONDITION);
     setIncludePractice(true);
+    setPendingMode(null);
+    setAuthInitialMode("login");
   }, []);
 
   const resetSessionState = useCallback(() => {
@@ -145,8 +169,10 @@ export default function App() {
 
   const handleBackToHome = useCallback(() => {
     resetSessionState();
-    setView("home");
-  }, [resetSessionState]);
+    // Logged-out visitors (public Observatory, D1) return to the landing, not
+    // the auth gate.
+    setView(auth ? "home" : "landing");
+  }, [auth, resetSessionState]);
 
   const handleModeSelect = useCallback((modeId: ModeId) => {
     if (modeId === "choosing") {
@@ -155,6 +181,34 @@ export default function App() {
     if (modeId === "rating") {
       setView("rating");
     }
+  }, []);
+
+  // Landing CTAs (hero, live mode cards, "Try the Rating Lab"). Logged-in
+  // visitors enter the mode directly; logged-out visitors route through auth on
+  // the register tab (V18), and handleAuthenticated applies the pending mode.
+  const handleLandingPlay = useCallback(
+    (modeId: ModeId) => {
+      if (auth) {
+        handleModeSelect(modeId);
+        return;
+      }
+      setPendingMode(modeId);
+      setAuthInitialMode("register");
+      setView("auth");
+    },
+    [auth, handleModeSelect],
+  );
+
+  const handleVisitObservatory = useCallback(() => {
+    // D1: the Observatory is public — open it with no auth leg.
+    setObservatorySessionAccuracy(null);
+    setView("observatory");
+  }, []);
+
+  const handleLoginClick = useCallback(() => {
+    setPendingMode(null);
+    setAuthInitialMode("login");
+    setView("auth");
   }, []);
 
   const handleAuthExpired = useCallback(
@@ -286,16 +340,15 @@ export default function App() {
   }
 
   function renderMain() {
-    if (!auth || view === "auth") {
-      return <AuthForm onAuthenticated={handleAuthenticated} />;
-    }
-
-    if (isStarting && !session) {
-      return <p className="status-text">Starting new game...</p>;
-    }
-
-    if (view === "home") {
-      return <ModeSelect modes={MODES} onSelect={handleModeSelect} />;
+    // Public surfaces (no auth): the landing and — per D1 — the Observatory.
+    // They precede the auth gate so a logged-out visitor can reach them.
+    if (view === "landing") {
+      return (
+        <Landing
+          onPlayMode={handleLandingPlay}
+          onVisitObservatory={handleVisitObservatory}
+        />
+      );
     }
 
     if (view === "observatory") {
@@ -305,6 +358,23 @@ export default function App() {
           onBackToHome={handleBackToHome}
         />
       );
+    }
+
+    if (!auth || view === "auth") {
+      return (
+        <AuthForm
+          initialMode={authInitialMode}
+          onAuthenticated={handleAuthenticated}
+        />
+      );
+    }
+
+    if (isStarting && !session) {
+      return <p className="status-text">Starting new game...</p>;
+    }
+
+    if (view === "home") {
+      return <ModeSelect modes={MODES} onSelect={handleModeSelect} />;
     }
 
     if (view === "instructions") {
@@ -489,7 +559,7 @@ export default function App() {
         <button
           className="site-title"
           type="button"
-          onClick={() => setView(auth ? "home" : "auth")}
+          onClick={() => setView(auth ? "home" : "landing")}
         >
           Ideophone Arena
         </button>
@@ -512,15 +582,25 @@ export default function App() {
               Logout
             </Button>
           </div>
+        ) : view !== "auth" ? (
+          <Button variant="ghost" size="sm" type="button" onClick={handleLoginClick}>
+            Log in
+          </Button>
         ) : null}
       </header>
 
-      <main className="site-main">
-        {error && (!auth || view === "auth") ? (
-          <p className="error-text centered">{error}</p>
-        ) : null}
-        {renderMain()}
-      </main>
+      {view === "landing" ? (
+        // Full-bleed: the landing renders its own alternating strips outside the
+        // width-constrained .site-main.
+        renderMain()
+      ) : (
+        <main className="site-main">
+          {error && (!auth || view === "auth") ? (
+            <p className="error-text centered">{error}</p>
+          ) : null}
+          {renderMain()}
+        </main>
+      )}
 
       {/* Chrome-level toast layer (§5): themed and mounted, staged like the
           Dialog primitive. In-trial status lines stay reserved slots — no toast

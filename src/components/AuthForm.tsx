@@ -10,10 +10,17 @@ type AuthMode = "login" | "register";
 
 type AuthFormProps = {
   onAuthenticated: (response: AuthResponse) => void;
+  /** Which tab opens first. Landing CTAs open on "register"; the default and
+      the auth-expiry re-login stay on "login". Read once at mount — the auth
+      view mounts fresh on each entry, so the initializer re-runs. */
+  initialMode?: AuthMode;
 };
 
-export default function AuthForm({ onAuthenticated }: AuthFormProps) {
-  const [mode, setMode] = useState<AuthMode>("login");
+export default function AuthForm({
+  onAuthenticated,
+  initialMode = "login",
+}: AuthFormProps) {
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

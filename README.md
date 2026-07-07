@@ -129,9 +129,24 @@ A dev-only style guide at `http://localhost:5174/styleguide.html` renders the
 palette, font-pairing candidates, and feedback states; it is not part of the
 production build or the player flow.
 
+## Landing
+
+The logged-out entry is a public landing page (`src/components/Landing.tsx`,
+`src/styles/landing.css`) — an eight-strip, research-framed composition
+(`docs/specs/SPEC-view-designs.md` §3): hero, the thesis numbers, how it works,
+the guessing/rating dissociation, the Script Lab teaser, the Observatory, a
+six-mode grid, and provenance. Its primary CTA ("Prove it — play a round") sends
+visitors through auth (register tab) straight into the Meaning Match
+instructions; the header carries a "Log in" affordance for returning players. It
+is a new public `"landing"` AppView in the `src/App.tsx` view state machine,
+rendered full-bleed outside the width-constrained `.site-main`. Logged-in
+visitors land on the mode grid as before. The public/auth boundary: the landing
+and the Observatory are public; everything else stays behind auth.
+
 ## The Observatory
 
-A read-only research surface (header link, plus "See where this session
+A read-only research surface — publicly reachable from the landing (plus the
+in-app header link and "See where this session
 lands" from the completion panel) charting the whole arena's record: guessing
 accuracy per modality against the thesis means, the guessing/rating divergence
 scatter over a McLean 2023 backdrop, and per-word perceptual-strength radar

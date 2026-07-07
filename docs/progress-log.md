@@ -883,3 +883,80 @@ None.
 Next single task:
 Per running order v3 — N2 = NIL-82 (Observatory generative/algorithmic-art pass, `algorithmic-art`
 skill). NIL-43 can now lift the V16 fallback and drop `public/observatory-strip.png` into strip 6.
+
+## 2026-07-07 — NIL-43 (public landing page — the eight-strip composition)
+
+Session goal:
+Build the public landing (SPEC-view-designs §3 + V15–V19; mockup
+`view-adjudication-mockups/landing-composition.html`) as an in-app React view, wired into the
+hand-rolled view state machine, and open the app's first public front door. Resolve the deferred
+decisions with Nils first.
+
+Decisions (Nils, this session):
+- D1 = public deep-link — the Observatory is now a second public surface; strip-6 CTA opens it
+  logged-out (its `/api/research/divergence` is already `permitAll`).
+- D5 = scatter — E1 art = `public/observatory-strip.png` (NIL-81 export), behind an `onError`
+  fallback so the V16 wave placeholder still renders if the asset is ever absent.
+- D4 = link the thesis — "(Paulsson, SPVR01)" links to the LUP record
+  `https://lup.lub.lu.se/student-papers/record/9214474` (external; no file hosted). Nils supplied
+  the URL mid-session.
+- Perception Ladder = coming-soon (honest, §2.3/§9), not the mockup's optimistic live card — the
+  mode is unbuilt, so a live button would dead-end.
+- Attribution: Winter et al. dropped so the credit set string-matches the Observatory footer
+  (`Observatory.tsx` — V17 / §7). ρ ≈ +.44/+.65 stay in the strip-4 footnote framed as McLean 2023
+  cross-scale correlations, not thesis numbers.
+
+Changed:
+- `src/components/Landing.tsx` (NEW) — the eight strips: hero (adopted copy + L5 wave rule + L4
+  ガタン practice-kana specimen) · numbers (three raised-FILL stat cards, no shadow) · how-it-works
+  + honesty line · dissociation (binding "Ratings detect ideophone-ness; guessing doesn't") · Script
+  Lab teaser (framing rule) · Observatory (art-left/copy-right, E1 scatter + `onError` fallback,
+  ghost CTA) · six-mode grid (2 live buttons / 4 honest coming-soon articles; XL title placeholder)
+  · provenance footer (thesis LUP link, citations, CC BY line). CTAs are the shadcn `Button` only.
+- `src/styles/landing.css` (NEW) — bespoke strips scoped under `.landing` in `@layer app`, tokens
+  only (no hex), imported by `app.css`. `.landing-mode-card` is distinct from the ModeSelect
+  `mode-card` pinned hook. Renders full-bleed OUTSIDE `.site-main` (App shell), so no `100vw`
+  breakout and no scrollbar overflow.
+- `src/App.tsx` — new `"landing"` AppView; logged-out initial view = landing; `pendingMode` +
+  `authInitialMode` state; `handleAuthenticated` applies the promised mode post-auth (hero →
+  Meaning Match instructions); `handleLandingPlay` / `handleVisitObservatory` / `handleLoginClick`;
+  header "Log in" (public) + wordmark → landing; landing + (public) Observatory now precede the auth
+  gate; landing rendered full-bleed.
+- `src/components/AuthForm.tsx` — `initialMode` prop (register tab default on the hero path).
+- `scripts/verify-browser-loop.mjs` — entry rewritten to the new front door: land on landing →
+  assert strip-7 grid honesty + no horizontal overflow → hero "Prove it" → register (register tab
+  is the hero default) → Meaning Match instructions (the §7 hero waypoint) → "Back to modes" →
+  ModeSelect grid (preserved) → play. Remaining game/rating waypoints unchanged.
+
+Proof:
+- `pnpm lint` clean · `pnpm build` green (tsc + vite) · `pnpm test` 153/153 · `verify-token-purity`
+  and `verify-presentation-logic` pass.
+- `verify-browser-loop.mjs` exit 0 at BOTH desktop (1280) and 375px (headless Chromium on Linux via
+  CDP 9224 — Windows-Edge interop is disabled in this shell, so the Playwright-cached Chromium was
+  driven instead; same CDP contract). Each run: 32 answered rounds, 2 practice, completion +
+  leaderboard + recent attempts + rating reveal, `staleControlCount` 0, `mutedStimulusCount` 0,
+  `relevantConsoleErrorCount` 0; 375px `overflowProof` scrollWidth == innerWidth.
+- Full-page landing screenshots at 1280 and 375: 8 strips, single `<h1>`, no horizontal overflow
+  (1280→1265/1280; 375→375/375), E1 scatter loaded, 2 live + 4 coming-soon cards, thesis link →
+  LUP record. Mobile stacks with the motif first (order:-1).
+
+Result:
+Complete and green. The app now opens on a public landing for logged-out visitors; the Observatory
+is publicly reachable (D1). ModeSelect keeps its browser-loop coverage via the "Back to modes"
+detour. `.AGENTS.frontend.md` punch list, README, and the frontend-grading-checklist updated for the
+new public boundary.
+
+Commit:
+Not committed (commits are the user's). Stage NIL-43 paths: `src/components/Landing.tsx`,
+`src/styles/landing.css`, `src/styles/app.css`, `src/App.tsx`, `src/components/AuthForm.tsx`,
+`scripts/verify-browser-loop.mjs`, `AGENTS.md`, `README.md`, `docs/frontend-grading-checklist.md`,
+`docs/progress-log.md`. Leave the concurrent NIL-83 spec edits
+(`SPEC-free-form-entry.md`, `SPEC-view-designs.md`) for that session.
+
+Blocker:
+None. (Windows-Edge CDP is unavailable in this shell; verified with Linux headless Chromium on the
+same CDP endpoint instead — noted so the next run knows both paths work.)
+
+Next single task:
+NIL-63 per-card replay affordance is shipped; the open landing-adjacent follow-ups are the D3 XL
+mode-name pair (Lingua Quest / Polyglot Challenge) and game-loop polish. Landing is otherwise done.

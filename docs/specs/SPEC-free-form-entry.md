@@ -128,6 +128,8 @@ Files: `controller/ProductionController.java`, `service/ProductionService.java` 
 
 ## 9. Frozen-copy needs
 
+> **SUPERSEDED (2026-07-06, NIL-83):** strings below are drafts of record only. The frozen slate — including the language-neutral rewording of the prompt and parse helper — is **SPEC-view-designs.md §8**. Build from §8, not this list.
+
 New strings in `experimentText.ts` (drafts; **Nils adjudicates before build** — production is a new instrument, its prompt wording is part of the measure):
 
 - Prompt: "Invent a Japanese-sounding word for the meaning below. Type it in roman letters."

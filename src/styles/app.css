@@ -20,6 +20,7 @@
 @import "./theme.css";
 @import "./shadcn-bridge.css";
 @import "./observatory.css";
+@import "./landing.css";
 
 @layer app {
 

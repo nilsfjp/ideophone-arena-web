@@ -393,20 +393,62 @@ async function run() {
   await send(ws, "Page.reload");
   await waitFor(
     async () => (await bodyText(ws)).includes("Ideophone Arena"),
-    "auth screen",
+    "landing header",
   );
 
-  // Retry the click: right after Page.reload the auth-screen text can match
-  // the pre-reload DOM while the new document is still mounting (seen on a
-  // cold Vite + fresh browser profile).
-  // The auth mode switcher is now a shadcn (Radix) Tabs control, whose triggers
-  // activate on real focus/mousedown, not on a synthetic element.click(). Drive
-  // it with focus+Enter (Radix activates on onFocus) — immune to the mobile-
-  // emulation coordinate drift that makes pointer dispatch miss at 375px.
-  await waitFor(() => trustedPressEnterOnText(ws, "Register"), "Register tab");
+  // NIL-43: the logged-out entry is now the public landing, not the auth form.
+  // Prove the landing rendered and does not scroll horizontally (§7 proof, both
+  // viewports), then verify strip 7's honest six-mode grid before entering.
+  await waitFor(async () => (await bodyText(ws)).includes("Prove it"), "landing hero");
+  const landingText = await bodyText(ws);
+  if (!landingText.includes("get most of these right")) {
+    throw new Error("Landing hero headline is missing");
+  }
+  const landingOverflow = await evaluate(
+    ws,
+    `(() => ({
+      scrollWidth: document.documentElement.scrollWidth,
+      innerWidth: window.innerWidth,
+    }))()`,
+  );
+  if (landingOverflow.scrollWidth > landingOverflow.innerWidth) {
+    throw new Error(
+      `Landing overflows horizontally: scrollWidth ${landingOverflow.scrollWidth} > ` +
+        `innerWidth ${landingOverflow.innerWidth}`,
+    );
+  }
+  const landingComingSoon = await evaluate(
+    ws,
+    `(() => [...document.querySelectorAll('.landing-mode-card[aria-disabled="true"]')]
+      .map((card) => card.textContent))()`,
+  );
+  for (const mode of [
+    "Perception Ladder",
+    "Word Mint",
+    "Word Anatomy",
+    "Cross-Linguistic",
+  ]) {
+    if (!landingComingSoon.some((text) => text.includes(mode))) {
+      throw new Error(`${mode} is not an honest coming-soon card on the landing`);
+    }
+  }
+  const landingLive = await evaluate(
+    ws,
+    `(() => [...document.querySelectorAll("button.landing-mode-card")]
+      .map((card) => card.textContent))()`,
+  );
+  for (const mode of ["Meaning Match", "Rating Lab"]) {
+    if (!landingLive.some((text) => text.includes(mode))) {
+      throw new Error(`${mode} is not a live mode card on the landing`);
+    }
+  }
+
+  // §7 waypoint: the hero CTA promises "a round", so it must land on Meaning
+  // Match instructions post-auth — via the register tab, opened by default.
+  await waitFor(() => clickText(ws, "Prove it"), "hero play CTA");
   await waitFor(
     async () => (await bodyText(ws)).includes("Email"),
-    "register form",
+    "register form (register tab is the hero default)",
   );
   await setInputByLabel(ws, "Username", username);
   await setInputByLabel(ws, "Email", email);
@@ -414,10 +456,19 @@ async function run() {
   if (!(await submitCurrentForm(ws))) {
     throw new Error("Register submit not found");
   }
+  await waitFor(
+    async () => (await bodyText(ws)).includes("Meaning Match Instructions"),
+    "Meaning Match instructions after the hero CTA",
+  );
 
+  // ModeSelect coverage: the hero path skips the home grid, so reach it via the
+  // instructions "Back to modes" button and assert the six-mode home shell.
+  if (!(await clickText(ws, "Back to modes"))) {
+    throw new Error("'Back to modes' button not found on the instructions screen");
+  }
   await waitFor(
     async () => (await bodyText(ws)).includes("Choose a mode"),
-    "mode select after register",
+    "mode select home",
   );
   const comingSoonModes = await evaluate(
     ws,

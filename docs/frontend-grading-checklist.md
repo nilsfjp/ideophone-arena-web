@@ -63,6 +63,24 @@ npm run build
 
 2026-06-05 evidence: `npm run build` passed. `rg -n "localhost:8080|/api/rounds|/api/me/attempts|localhost:5173|http://localhost:5173" -S src docs README.md AGENTS.md .env.example vite.config.ts scripts` found only AGENTS.md prohibited old examples plus this checklist's grep command. Browser proof used backend `http://localhost:8081`, frontend `http://localhost:5174`, and `POST /api/game/sessions` through the Vite `/api` proxy.
 
+## Landing and public boundary (NIL-43)
+
+- [x] Logged-out visitors land on the public landing (`src/components/Landing.tsx`),
+      not the bare auth form — a new `"landing"` AppView, full-bleed outside `.site-main`.
+- [x] Hero "Prove it — play a round" → auth on the **register tab** → Meaning Match
+      instructions (a browser-loop waypoint); logged-in visitors skip the auth leg.
+- [x] The Observatory is a public surface (D1): strip-6 "Visit the Observatory" opens it
+      logged-out (`GET /api/research/divergence` is `permitAll`; no protected call fires
+      on the public entry). Everything else stays behind auth.
+- [x] Strip-8 attribution string-matches the Observatory footer (`Observatory.tsx`); the
+      thesis links to the LUP record. E1 art is the NIL-81 scatter with a V16 `onError`
+      fallback (the placeholder renders if the asset is absent).
+
+2026-07-07 evidence: `verify-browser-loop.mjs` (rewritten entry) exits 0 at desktop (1280)
+and 375px — landing renders, strip-7 grid honest (2 live / 4 coming-soon), no horizontal
+overflow, hero CTA lands on Meaning Match instructions post-register. Full-page landing
+screenshots confirm all eight strips at both viewports, single `<h1>`, E1 scatter loaded.
+
 ## Authentication flow
 
 - [x] Register form calls `POST /api/auth/register`.
