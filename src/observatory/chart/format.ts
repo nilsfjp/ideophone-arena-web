@@ -36,3 +36,10 @@ export function formatZ(z: number): string {
 export function formatCount(count: number): string {
   return String(count);
 }
+
+/** 1.42 → "1.42" · −0.03 → "−0.03" (SDT d′/criterion readouts, U+2212 minus). */
+export function formatFixed2(x: number): string {
+  const v = Math.round(x * 100) / 100;
+  const abs = Math.abs(v).toFixed(2);
+  return v < 0 ? `−${abs}` : abs;
+}

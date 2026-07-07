@@ -45,6 +45,8 @@ type Tooltip = {
   px: number;
   py: number;
   title: string;
+  /** Verbatim kana (displayForm), rendered lang="ja"; null when unavailable. */
+  kana: string | null;
   subtitle: string | null;
   lines: string[];
 };
@@ -54,11 +56,18 @@ type ScatterProps = {
   liveRows: DivergenceEntry[] | null;
   /** Set when arriving via the completion panel's "See where this session lands". */
   session: SessionMarker | null;
+  /** romaji → verbatim kana (displayForm) from the live record; kana appears
+   * on a word once it has entered the record, romaji until then (§3.4). */
+  kanaByRomaji?: ReadonlyMap<string, string>;
 };
 
 const POOL_ROMAJI = arenaPool.words.map((w) => w.romaji);
 
-export default function DivergenceScatter({ liveRows, session }: ScatterProps) {
+export default function DivergenceScatter({
+  liveRows,
+  session,
+  kanaByRomaji,
+}: ScatterProps) {
   const { ref, width } = useChartSize();
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
   // A pinned tooltip's pixel position is only valid for the width it was
@@ -144,6 +153,7 @@ export default function DivergenceScatter({ liveRows, session }: ScatterProps) {
     title: string,
     subtitle: string | null,
     lines: string[],
+    kana: string | null = null,
   ) => {
     setTooltip({
       owner,
@@ -151,10 +161,24 @@ export default function DivergenceScatter({ liveRows, session }: ScatterProps) {
       px: Math.min(Math.max(M_LEFT + plotX, 110), width - 110),
       py: KDE_H + GAP + plotY,
       title,
+      kana,
       subtitle,
       lines,
     });
   };
+  // Kana for a pool word (arena/thesis layers) once the live record carries it.
+  const kanaFor = (romaji: string | null | undefined): string | null =>
+    (romaji ? kanaByRomaji?.get(romaji) : null) ?? null;
+  // Table "Word" cell: verbatim kana (lang="ja") beside romaji, romaji alone
+  // until the record supplies a kana form.
+  const kanaWordCell = (romaji: string, kana: string | null) =>
+    kana ? (
+      <>
+        <span lang="ja">{kana}</span> {romaji}
+      </>
+    ) : (
+      romaji
+    );
 
   const arenaAria = (p: ArenaScatterPoint) =>
     `${p.label}${p.gloss ? `, ${p.gloss}` : ""} (arena). Guesses ${formatCount(p.guessCount)}: ` +
@@ -311,10 +335,18 @@ export default function DivergenceScatter({ liveRows, session }: ScatterProps) {
             {thesisPairs.pairs.map((pair) => {
               const owner = `thesis-${pair.pairing}`;
               const show = () =>
-                showTooltip(owner, x(pair.accuracy), y(pair.meanRatingZ), pair.romaji, `Thesis pair · ${pair.modality}`, [
-                  `Accuracy ${formatPercentPrecise(pair.accuracy)} (${pair.nCorrect}/${pair.n})`,
-                  `Rating ${formatRating7(pair.meanRating)}`,
-                ]);
+                showTooltip(
+                  owner,
+                  x(pair.accuracy),
+                  y(pair.meanRatingZ),
+                  pair.romaji,
+                  `Thesis pair · ${pair.modality}`,
+                  [
+                    `Accuracy ${formatPercentPrecise(pair.accuracy)} (${pair.nCorrect}/${pair.n})`,
+                    `Rating ${formatRating7(pair.meanRating)}`,
+                  ],
+                  kanaFor(pair.romaji),
+                );
               return (
                 <circle
                   key={pair.pairing}
@@ -336,10 +368,18 @@ export default function DivergenceScatter({ liveRows, session }: ScatterProps) {
             {arena.points.map((point) => {
               const owner = `arena-${point.ideophoneId}`;
               const show = () =>
-                showTooltip(owner, x(point.x), y(point.z), point.label, point.gloss, [
-                  `Guesses ${formatCount(point.guessCount)} · ${formatPercentPrecise(point.x)}${point.wilson ? ` · CI ${formatCI(point.wilson)}` : ""}`,
-                  `Rating ${formatRating7(point.meanRating)} · N = ${formatCount(point.ratingCount)}`,
-                ]);
+                showTooltip(
+                  owner,
+                  x(point.x),
+                  y(point.z),
+                  point.label,
+                  point.gloss,
+                  [
+                    `Guesses ${formatCount(point.guessCount)} · ${formatPercentPrecise(point.x)}${point.wilson ? ` · CI ${formatCI(point.wilson)}` : ""}`,
+                    `Rating ${formatRating7(point.meanRating)} · N = ${formatCount(point.ratingCount)}`,
+                  ],
+                  point.displayForm ?? kanaFor(point.label),
+                );
               return (
                 <circle
                   key={point.ideophoneId}
@@ -426,6 +466,11 @@ export default function DivergenceScatter({ liveRows, session }: ScatterProps) {
                   : "translate(-50%, 14px)",
             }}
           >
+            {activeTooltip.kana ? (
+              <strong className="chart-tooltip-kana" lang="ja">
+                {activeTooltip.kana}
+              </strong>
+            ) : null}
             <strong>{activeTooltip.title}</strong>
             {activeTooltip.subtitle ? <span>{activeTooltip.subtitle}</span> : null}
             {activeTooltip.lines.map((line) => (
@@ -504,7 +549,7 @@ export default function DivergenceScatter({ liveRows, session }: ScatterProps) {
           ]),
           ...thesisPairs.pairs.map((pair) => [
             "Thesis",
-            pair.romaji,
+            kanaWordCell(pair.romaji, kanaFor(pair.romaji)),
             "—",
             "ideophone",
             formatPercentPrecise(pair.accuracy),
@@ -514,7 +559,7 @@ export default function DivergenceScatter({ liveRows, session }: ScatterProps) {
           ]),
           ...arena.points.map((point) => [
             "Arena",
-            point.label,
+            kanaWordCell(point.label, point.displayForm ?? kanaFor(point.label)),
             point.gloss ?? "—",
             "ideophone",
             formatPercentPrecise(point.x),

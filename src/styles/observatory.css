@@ -202,6 +202,12 @@
     color: var(--ink-muted);
   }
 
+  /* Verbatim kana (displayForm) — rendered, never derived (invariant 1). */
+  .chart-tooltip-kana {
+    font-size: var(--text-md);
+    color: var(--ink-primary);
+  }
+
   /* --- dumbbell ----------------------------------------------------------- */
 
   .dumbbell-thesis {
@@ -423,6 +429,95 @@
   .radar-chip-gloss {
     color: var(--ink-muted);
     font-size: var(--text-sm);
+  }
+
+  /* Verbatim kana on an ARENA-badged word — rendered, never derived. */
+  .radar-chip-kana {
+    color: var(--ink-primary);
+    font-size: var(--text-md);
+  }
+
+  /* --- rainclouds (§3.4, v1.1) -------------------------------------------- */
+
+  /* Thesis reference silhouette behind each cloud — ink, faint, no stroke so
+     it never competes with the live layer. */
+  .raincloud-violin--thesis {
+    fill: var(--ink-primary);
+    fill-opacity: 0.1;
+  }
+
+  /* The arena's own live distribution — vermillion, the accent that means the
+     experiment is speaking. */
+  .raincloud-violin--arena {
+    fill: var(--vermillion);
+    fill-opacity: 0.18;
+    stroke: var(--vermillion);
+    stroke-width: 1.5;
+  }
+
+  .raincloud-box {
+    fill: var(--surface-card);
+    stroke: var(--ink-muted);
+    stroke-width: 1.5;
+  }
+
+  .raincloud-median {
+    stroke: var(--vermillion);
+    stroke-width: 2;
+  }
+
+  .raincloud-whisker {
+    stroke: var(--border-mid);
+    stroke-width: 1.5;
+  }
+
+  /* Raw judgements — the honesty of thin n made visible. */
+  .raincloud-dot {
+    fill: var(--vermillion);
+    fill-opacity: 0.7;
+  }
+
+  .raincloud-awaiting {
+    fill: var(--ink-muted);
+  }
+
+  /* --- integrity strip (§3.5, v1.1) --------------------------------------- */
+
+  .integrity-baseline {
+    stroke: var(--border-soft);
+  }
+
+  /* 95% Wilson band behind the marker — uncertainty made visible. */
+  .integrity-ci {
+    stroke: var(--vermillion);
+    stroke-width: 3;
+    stroke-opacity: 0.3;
+    stroke-linecap: round;
+  }
+
+  .integrity-marker {
+    fill: var(--vermillion);
+    stroke: var(--surface-card);
+    stroke-width: 1.5;
+  }
+
+  .integrity-readout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-5);
+    margin: var(--space-2) 0 0;
+  }
+
+  .integrity-stat {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .integrity-stat dd {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    font-weight: 700;
   }
 
   /* --- coming-soon + footnotes -------------------------------------------- */

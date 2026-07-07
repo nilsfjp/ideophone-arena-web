@@ -35,6 +35,9 @@ type RadarProps = {
   words?: NormsWord[];
   /** Initial compare pair; defaults to the pipeline's max-contrast pick. */
   defaultPair?: readonly [string, string];
+  /** romaji → verbatim kana (displayForm) from the live record; an ARENA word
+   * wears its kana once it has entered the record, romaji until then (§3.4). */
+  kanaByRomaji?: ReadonlyMap<string, string>;
 };
 
 function vertex(
@@ -63,11 +66,14 @@ function polygonPoints(
 function WordChip({
   word,
   slot,
+  kanaByRomaji,
 }: {
   word: NormsWord | undefined;
   slot: "a" | "b";
+  kanaByRomaji?: ReadonlyMap<string, string>;
 }) {
   if (!word) return null;
+  const kana = word.arena ? (kanaByRomaji?.get(word.arena.romaji) ?? null) : null;
   return (
     <span className={`radar-chip radar-chip--${slot}`}>
       <svg viewBox="0 0 20 12" width="20" height="12" aria-hidden="true">
@@ -82,6 +88,11 @@ function WordChip({
       <strong>{word.word}</strong>
       {word.arena ? (
         <>
+          {kana ? (
+            <span className="radar-chip-kana" lang="ja">
+              {kana}
+            </span>
+          ) : null}
           <SpecimenLabel pill>Arena</SpecimenLabel>
           <span className="radar-chip-gloss">{word.arena.gloss}</span>
         </>
@@ -96,12 +107,14 @@ function Picker({
   selected,
   otherSelected,
   onSelect,
+  kanaByRomaji,
 }: {
   slot: "a" | "b";
   words: NormsWord[];
   selected: string;
   otherSelected: string;
   onSelect: (word: string) => void;
+  kanaByRomaji?: ReadonlyMap<string, string>;
 }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -159,6 +172,11 @@ function Picker({
                 <strong>{w.word}</strong>
                 {w.arena ? (
                   <>
+                    {kanaByRomaji?.get(w.arena.romaji) ? (
+                      <span className="radar-chip-kana" lang="ja">
+                        {kanaByRomaji.get(w.arena.romaji)}
+                      </span>
+                    ) : null}
                     <SpecimenLabel pill>Arena</SpecimenLabel>
                     <span className="radar-chip-gloss">{w.arena.gloss}</span>
                   </>
@@ -185,6 +203,7 @@ function Picker({
 export default function WordRadar({
   words = norms.words,
   defaultPair = norms.meta.defaultPair,
+  kanaByRomaji,
 }: RadarProps) {
   const { ref, width } = useChartSize(560);
   const [wordA, setWordA] = useState(defaultPair[0]);
@@ -215,6 +234,7 @@ export default function WordRadar({
           selected={wordA}
           otherSelected={wordB}
           onSelect={setWordA}
+          kanaByRomaji={kanaByRomaji}
         />
         <Picker
           slot="b"
@@ -222,11 +242,12 @@ export default function WordRadar({
           selected={wordB}
           otherSelected={wordA}
           onSelect={setWordB}
+          kanaByRomaji={kanaByRomaji}
         />
       </div>
       <div className="radar-chips">
-        <WordChip word={a} slot="a" />
-        <WordChip word={b} slot="b" />
+        <WordChip word={a} slot="a" kanaByRomaji={kanaByRomaji} />
+        <WordChip word={b} slot="b" kanaByRomaji={kanaByRomaji} />
       </div>
       <figure className="chart-figure" ref={ref}>
         <svg

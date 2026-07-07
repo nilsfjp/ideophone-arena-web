@@ -19,6 +19,9 @@ import { join } from "node:path";
 
 const SOURCES = join(process.cwd(), "data", "observatory-sources");
 const OUT = join(process.cwd(), "src", "data", "observatory");
+// The thesis rating trials (participant-level) live here, git-tracked. Only
+// the per-modality counts they aggregate to are emitted — never the rows.
+const RESEARCH_DATA = join(process.cwd(), "docs", "research", "data");
 
 // The arena∩norms intersection is pinned. If the pool or the norms file
 // changes, this number changes CONSCIOUSLY: rerun, read the printed match
@@ -250,7 +253,7 @@ const thesisOut = {
   meta: {
     source: "data/observatory-sources/thesis-per-pair-stats.csv",
     citation:
-      "Paulsson (2026), MA thesis — per-pair 2AFC guessing and 1–7 rating stats, N = 36 participants, 30 pairs",
+      "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach — MA thesis, Cognitive Semiotics, Lund University; per-pair 2AFC guessing and 1–7 rating stats, N = 36 participants, 30 pairs",
     license: "Author's own data",
     generatedBy: "scripts/build-observatory-data.mjs",
     pairCount: thesisPairs.length,
@@ -261,6 +264,72 @@ const thesisOut = {
   byModality,
   pairs: thesisPairs,
 };
+
+// ---------------------------------------------------------------------------
+// Thesis rating trials → thesis-ratings.json (per-modality 1–7 count grid, the
+// raincloud reference layer — SPEC §3.4/§4.3). Aggregated from the
+// participant-level gorilla export; ONLY the counts are emitted (no rows, no
+// participant ids). The CSV is git-tracked at docs/research/data/; if it is
+// ever absent the step is skipped and the committed JSON is left untouched, so
+// determinism holds on a fresh clone. Deliberately mirrors the backend's
+// rating-distributions shape so the panel normalizes live + thesis alike.
+// ---------------------------------------------------------------------------
+
+const gorillaRatingCsv = await readFile(
+  join(RESEARCH_DATA, "gorilla-tidy-rating.csv"),
+  "utf8",
+).catch(() => null);
+
+let thesisRatingsOut = null;
+if (gorillaRatingCsv === null) {
+  console.log(
+    "build-observatory-data: gorilla-tidy-rating.csv absent — leaving committed thesis-ratings.json untouched",
+  );
+} else {
+  const ratingTrials = csvObjects(gorillaRatingCsv);
+  const distByModality = {};
+  for (const m of MODALITY_ORDER) distByModality[m] = [0, 0, 0, 0, 0, 0, 0];
+  let totalRatings = 0;
+  for (const row of ratingTrials) {
+    const modality = row["Spreadsheet: modality"];
+    if (!MODALITY_ORDER.includes(modality)) {
+      problem(`thesis-ratings: unexpected modality "${modality}"`);
+      continue;
+    }
+    const rating = num(row.rating, "thesis-ratings.rating");
+    if (!Number.isInteger(rating) || rating < 1 || rating > 7) {
+      problem(`thesis-ratings: rating out of 1..7: "${row.rating}"`);
+      continue;
+    }
+    distByModality[modality][rating - 1] += 1;
+    totalRatings += 1;
+  }
+  if (totalRatings !== 1080) {
+    problem(`thesis-ratings: expected 1080 ratings, got ${totalRatings}`);
+  }
+  const byModalityRatings = {};
+  for (const m of MODALITY_ORDER) {
+    const counts = distByModality[m];
+    const n = counts.reduce((a, c) => a + c, 0);
+    if (n !== 360) {
+      problem(`thesis-ratings: ${m} expected 360 ratings, got ${n}`);
+    }
+    byModalityRatings[m] = { counts, n };
+  }
+  thesisRatingsOut = {
+    meta: {
+      source: "docs/research/data/gorilla-tidy-rating.csv",
+      citation:
+        "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach — MA thesis, Cognitive Semiotics, Lund University; 1–7 iconicity rating trials, N = 36 participants × 30 words",
+      license:
+        "Author's own data — pre-aggregated per-modality counts only; participant-level trials never vendored",
+      generatedBy: "scripts/build-observatory-data.mjs",
+      ratingScale: "1-7",
+      totalRatings,
+    },
+    byModality: byModalityRatings,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // McLean 2023 long → wide → mclean.json
@@ -450,6 +519,9 @@ const outputs = [
   ["norms.json", normsOut],
   ["arena-pool.json", arenaPoolOut],
 ];
+// Only emitted when the (git-tracked) gorilla source is present; absence leaves
+// the committed artifact untouched.
+if (thesisRatingsOut) outputs.push(["thesis-ratings.json", thesisRatingsOut]);
 for (const [name, data] of outputs) {
   await writeFile(join(OUT, name), JSON.stringify(data, null, 2) + "\n");
 }

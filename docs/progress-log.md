@@ -960,3 +960,73 @@ same CDP endpoint instead — noted so the next run knows both paths work.)
 Next single task:
 NIL-63 per-card replay affordance is shipped; the open landing-adjacent follow-ups are the D3 XL
 mode-name pair (Lingua Quest / Polyglot Challenge) and game-loop polish. Landing is otherwise done.
+
+## 2026-07-07 — NIL-80 (Observatory v1.1 — rating rainclouds + integrity strip + kana labels)
+
+Session goal:
+Consume the NIL-79 endpoints to finish the Observatory: a per-modality rating-raincloud panel, an
+SDT position-bias "integrity strip", and verbatim kana on the scatter + radar from the new
+`displayForm` field. Frozen shapes = the api repo's `docs/backend-contract.md` (NIL-79).
+
+Decisions (Nils, this session):
+- Thesis rainclouds reference data: the participant-level `gorilla-tidy-rating.csv` is already
+  git-tracked at `docs/research/data/`; **read it in place** (build aggregates it to the committed
+  `thesis-ratings.json`, counts only). The privacy question (participant IDs in the repo, vs SPEC
+  §4.6) is knowingly **deferred** to a separate task.
+- Kana source: thread a `romaji→displayForm` map from live `/divergence` into both the scatter and
+  the radar; a word wears kana once it enters the record, romaji until then (invariant 1: rendered,
+  never derived).
+- Thesis citation standardized to **Paulsson (2025)**, full title *Unimodal and Cross-Modal
+  Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach* — the prior "(2026)" is retired
+  across footer, landing, and dataset meta.
+
+Changed:
+- New panels `src/observatory/panels/{RatingRainclouds,IntegrityStrip}.tsx` (+ tests); new pure
+  primitives `src/observatory/chart/{jitter,rainclouds}.ts` (+ tests); `format.ts` gained
+  `formatFixed2`.
+- `src/api/{types,client}.ts`: `displayForm?` on `DivergenceEntry`; `RatingDistributionsResponse` +
+  `PositionBiasResponse` types; `getRatingDistributions()` + `getPositionBias()` (+ client tests).
+- `Observatory.tsx`: two new independent-degrade fetches, `RatingDistributionsState` /
+  `PositionBiasState`, the `kanaByRomaji` map, and the two panels inserted after the radar
+  (arc: dumbbell → scatter → radar → rainclouds → integrity → coming-soon; both coming-soon slots
+  kept). Kana threaded into `DivergenceScatter` (arena + thesis marks, tooltip/table, `lang="ja"`)
+  and `WordRadar` (ARENA chips). `aggregate.ts` carries `displayForm` on arena points.
+- Data pipeline: `build-observatory-data.mjs` optionally reads the tracked gorilla CSV → committed
+  `src/data/observatory/thesis-ratings.json` (per-modality 1–7 counts, n=360×3=1080); `types.ts` +
+  `index.ts` + `data.test.ts` updated. `observatory.css`: raincloud + integrity + kana classes
+  (tokens only, zero transitions).
+
+Proof:
+- `pnpm lint` clean · `pnpm build` green (tsc + vite) · `pnpm vitest run` **197/197** (was 153) ·
+  `verify-token-purity` and `verify-presentation-logic` pass · `build-observatory-data.mjs` rerun
+  leaves the four prior JSONs byte-identical (deterministic).
+- Live backend (`localhost:8081`, dev DB): the three endpoints' keys match the TS types exactly
+  (incl. `@JsonProperty`-pinned `dPrime` and all nullable fields); with no play data yet,
+  `position-bias` = `{n:0, …nulls}` and `rating-distributions` = `{distributions:[], byModalityN:{}}`
+  — exactly the empty-state fixtures the panels handle.
+- Real-browser pass (Linux headless Chromium via CDP 9224 — WSL interop can't exec Windows Edge):
+  the Observatory renders all five panels (`dumbbell,scatter,radar,rainclouds,integrity`) with the
+  thesis raincloud silhouettes + "Awaiting the first rating", the integrity 50% hairline + em-dashes
+  + "Awaiting the first scored round", both coming-soon slots, and the corrected Paulsson (2025)
+  footer. No horizontal overflow at 1280 (scrollWidth 1265 ≤ 1280) or 375 (375 == 375). Screenshots
+  captured. (Populated-panel rendering is covered by the unit tests with contract-shaped fixtures;
+  live kana wasn't visible because the dev DB has no play data.)
+
+Result:
+Complete and green — five live panels + the integrity strip. Tree left uncommitted for review.
+Dev backend + Vite left running for a manual populated pass if wanted.
+
+Commit:
+Not committed (commits are the user's). Suggested message:
+"add Observatory v1.1: rating rainclouds, integrity strip, and kana labels". Stage: `src/api/*`,
+`src/observatory/**`, `src/data/observatory/{types,index,data.test}.ts` + `thesis-ratings.json`,
+`src/components/Landing.tsx` (citation), `scripts/build-observatory-data.mjs`,
+`src/styles/observatory.css`, `docs/progress-log.md`.
+
+Blocker:
+None for the build. Deferred (Nils's call): participant-level `docs/research/data/gorilla-tidy-*.csv`
+remain git-tracked — a future task should untrack + gitignore them (history rewrite for a full purge).
+
+Next single task:
+Manual populated-data pass against the live Observatory (play a few scored rounds + ratings so the
+rainclouds/integrity/kana render with real numbers), or NIL-84 essence review per running order v3.

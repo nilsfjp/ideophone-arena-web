@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { arenaPool, mclean, norms, thesisPairs } from ".";
+import { arenaPool, mclean, norms, thesisPairs, thesisRatings } from ".";
+import type { TrioModality } from ".";
 
 // Integrity guard over the COMMITTED dataset JSON (SPEC-stats-dashboard §4.3).
 // The pipeline validates before writing; this test re-validates what is
@@ -96,5 +97,30 @@ describe("arena-pool.json", () => {
     for (const w of arenaPool.words) {
       expect(w.gloss.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("thesis-ratings.json", () => {
+  const TRIO: TrioModality[] = ["auditory", "visual", "interoceptive"];
+
+  it("carries the trio, seven non-negative integer counts summing to n=360, 1080 total", () => {
+    expect(Object.keys(thesisRatings.byModality).sort()).toEqual(
+      [...TRIO].sort(),
+    );
+    let total = 0;
+    for (const m of TRIO) {
+      const tier = thesisRatings.byModality[m];
+      expect(tier.counts).toHaveLength(7);
+      for (const c of tier.counts) {
+        expect(Number.isInteger(c)).toBe(true);
+        expect(c).toBeGreaterThanOrEqual(0);
+      }
+      const sum = tier.counts.reduce((a, c) => a + c, 0);
+      expect(sum).toBe(tier.n);
+      expect(tier.n).toBe(360);
+      total += tier.n;
+    }
+    expect(total).toBe(1080);
+    expect(thesisRatings.meta.totalRatings).toBe(1080);
   });
 });

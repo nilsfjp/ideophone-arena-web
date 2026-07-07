@@ -192,12 +192,52 @@ export type RatableWordPageResponse = {
 export type DivergenceEntry = {
   ideophoneId: number;
   romaji?: string;
+  // Verbatim kana label from ideophones.display_form (backend 2026-07-06,
+  // invariant 1: rendered as stored, never derived/converted). Additive.
+  displayForm?: string;
   gloss?: string;
   modality?: Modality;
   guessAccuracy: number | null;
   guessCount: number;
   meanRating: number | null;
   ratingCount: number;
+};
+
+// GET /api/research/rating-distributions — PUBLIC, single object. Dense grid:
+// every modality with >=1 rating carries all seven cells (ratingValue 1..7,
+// zero-filled); modalities with no ratings are omitted entirely (no cells, no
+// byModalityN key). byModalityN[m] = the sum of that modality's seven cells =
+// the specimen n. Feeds the Observatory raincloud panel.
+export type RatingDistributionCell = {
+  modality: string;
+  ratingValue: number; // 1..7
+  count: number;
+};
+
+export type RatingDistributionsResponse = {
+  distributions: RatingDistributionCell[];
+  byModalityN: Record<string, number>;
+};
+
+// GET /api/research/position-bias — PUBLIC, single object. SDT fairness check
+// on the forced choice, reconstructed from the deterministic per-session
+// shuffle. leftPickRate / dPrime / criterion / target*Accuracy are null (NOT
+// 0) when a denominator / stimulus class is empty. `dPrime` casing is
+// @JsonProperty-pinned on the backend — consume that exact key. Feeds the
+// Observatory integrity strip.
+export type PositionBiasResponse = {
+  n: number;
+  leftPickCount: number;
+  rightPickCount: number;
+  leftPickRate: number | null;
+  dPrime: number | null;
+  criterion: number | null;
+  targetTopN: number;
+  targetTopCorrect: number;
+  targetTopAccuracy: number | null;
+  targetBottomN: number;
+  targetBottomCorrect: number;
+  targetBottomAccuracy: number | null;
 };
 
 export type TrialPhase =

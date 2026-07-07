@@ -1,7 +1,7 @@
 {
   "meta": {
     "source": "data/observatory-sources/thesis-per-pair-stats.csv",
-    "citation": "Paulsson (2026), MA thesis — per-pair 2AFC guessing and 1–7 rating stats, N = 36 participants, 30 pairs",
+    "citation": "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach — MA thesis, Cognitive Semiotics, Lund University; per-pair 2AFC guessing and 1–7 rating stats, N = 36 participants, 30 pairs",
     "license": "Author's own data",
     "generatedBy": "scripts/build-observatory-data.mjs",
     "pairCount": 30,

@@ -2,8 +2,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type {
   DivergenceEntry,
   LeaderboardPageResponse,
+  PositionBiasResponse,
   RatableWordPageResponse,
   RatableWordResponse,
+  RatingDistributionsResponse,
   RatingPageResponse,
   RatingResponse,
 } from "./types";
@@ -14,7 +16,9 @@ import {
   getDivergence,
   getLeaderboard,
   getMyRatings,
+  getPositionBias,
   getRatableWords,
+  getRatingDistributions,
   submitRating,
 } from "./client";
 
@@ -338,6 +342,108 @@ describe("getDivergence", () => {
     expect(requestedUrl.endsWith("/api/research/divergence")).toBe(true);
     expect(result).toEqual(rows);
     expect(result[1].guessAccuracy).toBeNull();
+  });
+
+  it("carries the verbatim displayForm kana when present", async () => {
+    const rows: DivergenceEntry[] = [
+      {
+        ideophoneId: 9,
+        romaji: "dokidoki",
+        displayForm: "どきどき",
+        gloss: "heart pounding",
+        modality: "INTEROCEPTIVE",
+        guessAccuracy: 0.62,
+        guessCount: 120,
+        meanRating: 6.1,
+        ratingCount: 18,
+      },
+    ];
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify(rows), { status: 200 }),
+    );
+
+    const result = await getDivergence();
+
+    expect(result[0].displayForm).toBe("どきどき");
+  });
+});
+
+describe("getRatingDistributions", () => {
+  it("fetches the public dense per-modality 1–7 grid", async () => {
+    const response: RatingDistributionsResponse = {
+      distributions: [
+        { modality: "AUDITORY", ratingValue: 1, count: 0 },
+        { modality: "AUDITORY", ratingValue: 2, count: 3 },
+        { modality: "VISUAL", ratingValue: 7, count: 5 },
+      ],
+      byModalityN: { AUDITORY: 42, VISUAL: 51 },
+    };
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify(response), { status: 200 }),
+    );
+
+    const result = await getRatingDistributions();
+
+    const requestedUrl = String(fetchMock.mock.calls[0][0]);
+    expect(requestedUrl.endsWith("/api/research/rating-distributions")).toBe(
+      true,
+    );
+    expect(result).toEqual(response);
+    expect(result.byModalityN.AUDITORY).toBe(42);
+  });
+});
+
+describe("getPositionBias", () => {
+  it("fetches the SDT fairness object, preserving nulls and dPrime casing", async () => {
+    const response: PositionBiasResponse = {
+      n: 612,
+      leftPickCount: 312,
+      rightPickCount: 300,
+      leftPickRate: 0.51,
+      dPrime: 1.42,
+      criterion: -0.03,
+      targetTopN: 305,
+      targetTopCorrect: 192,
+      targetTopAccuracy: 0.63,
+      targetBottomN: 307,
+      targetBottomCorrect: 187,
+      targetBottomAccuracy: 0.609,
+    };
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify(response), { status: 200 }),
+    );
+
+    const result = await getPositionBias();
+
+    const requestedUrl = String(fetchMock.mock.calls[0][0]);
+    expect(requestedUrl.endsWith("/api/research/position-bias")).toBe(true);
+    expect(result.dPrime).toBe(1.42);
+    expect(result.criterion).toBe(-0.03);
+  });
+
+  it("preserves null rates when a denominator is empty", async () => {
+    const response: PositionBiasResponse = {
+      n: 0,
+      leftPickCount: 0,
+      rightPickCount: 0,
+      leftPickRate: null,
+      dPrime: null,
+      criterion: null,
+      targetTopN: 0,
+      targetTopCorrect: 0,
+      targetTopAccuracy: null,
+      targetBottomN: 0,
+      targetBottomCorrect: 0,
+      targetBottomAccuracy: null,
+    };
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify(response), { status: 200 }),
+    );
+
+    const result = await getPositionBias();
+
+    expect(result.leftPickRate).toBeNull();
+    expect(result.dPrime).toBeNull();
   });
 });
 

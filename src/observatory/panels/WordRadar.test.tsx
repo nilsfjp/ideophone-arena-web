@@ -81,3 +81,19 @@ describe("WordRadar fixtures", () => {
     expect(markup).toContain("shimeru");
   });
 });
+
+describe("WordRadar kana labels", () => {
+  it("wears verbatim kana (lang=ja) on arena chips when the record supplies it", () => {
+    const kana = new Map([
+      ["kirakira", "きらきら"],
+      ["sukkiri", "すっきり"],
+    ]);
+    const markup = renderToStaticMarkup(<WordRadar kanaByRomaji={kana} />);
+    expect(markup).toContain('lang="ja"');
+    expect(markup).toContain("きらきら");
+  });
+
+  it("stays romaji-only on arena chips without a kana map", () => {
+    expect(renderToStaticMarkup(<WordRadar />)).not.toContain('lang="ja"');
+  });
+});

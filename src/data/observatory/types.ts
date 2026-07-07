@@ -112,3 +112,24 @@ export type ArenaPoolFile = {
   };
   words: ArenaPoolWord[];
 };
+
+/** One modality's thesis rating distribution: counts[i] = # of ratings = i+1. */
+export type ThesisModalityRatings = { counts: readonly number[]; n: number };
+
+/**
+ * Pre-aggregated thesis rating distribution — the raincloud reference layer
+ * (SPEC §3.4). Per-modality 1–7 counts only; participant-level trials are never
+ * vendored. Shape mirrors the backend's rating-distributions so live and thesis
+ * layers normalize through the same helpers.
+ */
+export type ThesisRatingsFile = {
+  meta: {
+    source: string;
+    citation: string;
+    license: string;
+    generatedBy: string;
+    ratingScale: string;
+    totalRatings: number;
+  };
+  byModality: Record<TrioModality, ThesisModalityRatings>;
+};

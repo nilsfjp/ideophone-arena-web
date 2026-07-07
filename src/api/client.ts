@@ -7,8 +7,10 @@ import type {
   LeaderboardPageResponse,
   LoginRequest,
   NextRoundResponse,
+  PositionBiasResponse,
   RatableWordPageResponse,
   RatableWordResponse,
+  RatingDistributionsResponse,
   RatingPageResponse,
   RatingRequest,
   RatingResponse,
@@ -321,4 +323,14 @@ export async function getAllRatableWords(): Promise<RatableWordResponse[]> {
 
 export function getDivergence() {
   return apiRequest<DivergenceEntry[]>("/api/research/divergence");
+}
+
+export function getRatingDistributions() {
+  return apiRequest<RatingDistributionsResponse>(
+    "/api/research/rating-distributions",
+  );
+}
+
+export function getPositionBias() {
+  return apiRequest<PositionBiasResponse>("/api/research/position-bias");
 }

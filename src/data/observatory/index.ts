@@ -8,17 +8,20 @@ import arenaPoolJson from "./arena-pool.json";
 import mcleanJson from "./mclean.json";
 import normsJson from "./norms.json";
 import thesisJson from "./thesis-pairs.json";
+import thesisRatingsJson from "./thesis-ratings.json";
 import type {
   ArenaPoolFile,
   McleanFile,
   NormsFile,
   ThesisPairsFile,
+  ThesisRatingsFile,
 } from "./types";
 
 export const thesisPairs = thesisJson as unknown as ThesisPairsFile;
 export const mclean = mcleanJson as unknown as McleanFile;
 export const norms = normsJson as unknown as NormsFile;
 export const arenaPool = arenaPoolJson as unknown as ArenaPoolFile;
+export const thesisRatings = thesisRatingsJson as unknown as ThesisRatingsFile;
 
 export type {
   ArenaPoolWord,
@@ -27,7 +30,9 @@ export type {
   NormsAxes,
   NormsWord,
   ThesisModalityAggregate,
+  ThesisModalityRatings,
   ThesisPair,
   ThesisPairsFile,
+  ThesisRatingsFile,
   TrioModality,
 } from "./types";

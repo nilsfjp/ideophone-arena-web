@@ -28,9 +28,14 @@ const THREE_ELIGIBLE = [
 function render(
   liveRows: DivergenceEntry[] | null,
   session: SessionMarker | null = null,
+  kanaByRomaji?: ReadonlyMap<string, string>,
 ) {
   return renderToStaticMarkup(
-    <DivergenceScatter liveRows={liveRows} session={session} />,
+    <DivergenceScatter
+      liveRows={liveRows}
+      session={session}
+      kanaByRomaji={kanaByRomaji}
+    />,
   );
 }
 
@@ -151,5 +156,29 @@ describe("DivergenceScatter table twin", () => {
     expect(markup).toContain("McLean 2023");
     expect(markup).toContain("Thesis");
     expect(markup).toContain("Arena");
+  });
+});
+
+describe("DivergenceScatter kana labels", () => {
+  const WITH_KANA = [
+    makeRow({ meanRating: 3, displayForm: "ごそごそ" }),
+    makeRow({ ideophoneId: 2, romaji: "katakata", meanRating: 5, displayForm: "カタカタ" }),
+    makeRow({ ideophoneId: 3, romaji: "kirakira", meanRating: 6.5, displayForm: "きらきら" }),
+  ];
+
+  it("renders verbatim kana with lang=ja on arena words carrying displayForm", () => {
+    const markup = render(WITH_KANA);
+    expect(markup).toContain('lang="ja"');
+    expect(markup).toContain("ごそごそ");
+  });
+
+  it("stays romaji-only when neither displayForm nor a kana map is present", () => {
+    expect(render(THREE_ELIGIBLE)).not.toContain('lang="ja"');
+  });
+
+  it("wears kana on thesis marks when the live record supplies it by romaji", () => {
+    const markup = render([], null, new Map([["gosogoso", "ごそごそ"]]));
+    expect(markup).toContain('lang="ja"');
+    expect(markup).toContain("ごそごそ");
   });
 });

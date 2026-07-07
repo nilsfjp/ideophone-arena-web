@@ -1,25 +1,47 @@
 // The Observatory — the arena's read-only research surface (SPEC-stats-
 // dashboard). A separate AppView, not a mode card: it records nothing and
-// renders no trial surface; the whole live API surface is the public
-// divergence endpoint. Strips follow the §1 narrative arc: header → the
-// claim (dumbbell) → the two measures (scatter) → the fingerprint (radar) →
-// honest coming-soon slots → attribution.
+// renders no trial surface; the live API surface is the public research
+// aggregates (divergence, rating-distributions, position-bias). Strips follow
+// the §1 narrative arc: header → the claim (dumbbell) → the two measures
+// (scatter) → the fingerprint (radar) → the spread (rainclouds) → the integrity
+// strip (position bias) → honest coming-soon slots → attribution.
 
-import { useEffect, useState } from "react";
-import { getAllMyRatings, getDivergence } from "../api/client";
-import type { DivergenceEntry } from "../api/types";
+import { useEffect, useMemo, useState } from "react";
+import {
+  getAllMyRatings,
+  getDivergence,
+  getPositionBias,
+  getRatingDistributions,
+} from "../api/client";
+import type {
+  DivergenceEntry,
+  PositionBiasResponse,
+  RatingDistributionsResponse,
+} from "../api/types";
 import { Button } from "../components/ui/button";
 import { playerMeanRating, recordTotals } from "./chart/aggregate";
 import { formatCount } from "./chart/format";
 import { SpecimenLabel } from "./chart/SpecimenLabel";
 import DivergenceScatter from "./panels/DivergenceScatter";
+import IntegrityStrip from "./panels/IntegrityStrip";
 import ModalityDumbbell from "./panels/ModalityDumbbell";
+import RatingRainclouds from "./panels/RatingRainclouds";
 import WordRadar from "./panels/WordRadar";
 
 export type DivergenceState =
   | { status: "loading" }
   | { status: "error" }
   | { status: "ready"; rows: DivergenceEntry[] };
+
+export type RatingDistributionsState =
+  | { status: "loading" }
+  | { status: "error" }
+  | { status: "ready"; data: RatingDistributionsResponse };
+
+export type PositionBiasState =
+  | { status: "loading" }
+  | { status: "error" }
+  | { status: "ready"; data: PositionBiasResponse };
 
 export type SessionMarker = {
   /** Session accuracy 0–1, from the completion panel. */
@@ -45,13 +67,20 @@ function WaveRule() {
 
 type ObservatoryViewProps = {
   divergence: DivergenceState;
+  ratingDistributions: RatingDistributionsState;
+  positionBias: PositionBiasState;
   session: SessionMarker | null;
+  /** romaji → verbatim kana from the live record; threaded to scatter + radar. */
+  kanaByRomaji: ReadonlyMap<string, string>;
   onBackToHome: () => void;
 };
 
 export function ObservatoryView({
   divergence,
+  ratingDistributions,
+  positionBias,
   session,
+  kanaByRomaji,
   onBackToHome,
 }: ObservatoryViewProps) {
   const liveRows = divergence.status === "ready" ? divergence.rows : null;
@@ -98,8 +127,14 @@ export function ObservatoryView({
       </header>
 
       <ModalityDumbbell liveRows={liveRows} />
-      <DivergenceScatter liveRows={liveRows} session={session} />
-      <WordRadar />
+      <DivergenceScatter
+        liveRows={liveRows}
+        session={session}
+        kanaByRomaji={kanaByRomaji}
+      />
+      <WordRadar kanaByRomaji={kanaByRomaji} />
+      <RatingRainclouds distributions={ratingDistributions} />
+      <IntegrityStrip positionBias={positionBias} />
 
       {/* Coming-soon slots, §2.3 honest pattern: full-opacity copy naming what
           will be measured and what gates it. No locks, no mystery. */}
@@ -125,11 +160,16 @@ export function ObservatoryView({
 
       <footer className="observatory-footnotes">
         <p>
-          Sources: Paulsson (2026), MA thesis — the study this arena
-          replicates (30 pairs, 36 participants). McLean, Dunn &amp;
-          Dingemanse (2023), <em>Two measures are better than one</em> — the
-          304-item backdrop, data CC BY 4.0. Iida &amp; Akita (2023),
-          perceptual strength norms for 510 Japanese words.
+          Sources: Paulsson (2025),{" "}
+          <em>
+            Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A
+            Cognitive-Semiotic Approach
+          </em>{" "}
+          — the MA thesis this arena replicates (30 pairs, 36 participants).
+          McLean, Dunn &amp; Dingemanse (2023),{" "}
+          <em>Two measures are better than one</em> — the 304-item backdrop,
+          data CC BY 4.0. Iida &amp; Akita (2023), perceptual strength norms
+          for 510 Japanese words.
         </p>
       </footer>
     </section>
@@ -149,8 +189,15 @@ export default function Observatory({
   const [divergence, setDivergence] = useState<DivergenceState>({
     status: "loading",
   });
+  const [ratingDistributions, setRatingDistributions] =
+    useState<RatingDistributionsState>({ status: "loading" });
+  const [positionBias, setPositionBias] = useState<PositionBiasState>({
+    status: "loading",
+  });
   const [ratingMean, setRatingMean] = useState<number | null>(null);
 
+  // Three independent public aggregates: each panel degrades on its own so one
+  // unreachable endpoint never blanks the others.
   useEffect(() => {
     let cancelled = false;
     getDivergence()
@@ -159,6 +206,34 @@ export default function Observatory({
       })
       .catch(() => {
         if (!cancelled) setDivergence({ status: "error" });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    getRatingDistributions()
+      .then((data) => {
+        if (!cancelled) setRatingDistributions({ status: "ready", data });
+      })
+      .catch(() => {
+        if (!cancelled) setRatingDistributions({ status: "error" });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    getPositionBias()
+      .then((data) => {
+        if (!cancelled) setPositionBias({ status: "ready", data });
+      })
+      .catch(() => {
+        if (!cancelled) setPositionBias({ status: "error" });
       });
     return () => {
       cancelled = true;
@@ -185,10 +260,26 @@ export default function Observatory({
       ? null
       : { accuracy: sessionAccuracy, meanRating: ratingMean };
 
+  // romaji → verbatim kana from whatever the live record already carries; the
+  // scatter and radar wear kana on a word once it has entered the record
+  // (invariant 1: rendered as stored, never derived).
+  const kanaByRomaji = useMemo(() => {
+    const map = new Map<string, string>();
+    if (divergence.status === "ready") {
+      for (const row of divergence.rows) {
+        if (row.romaji && row.displayForm) map.set(row.romaji, row.displayForm);
+      }
+    }
+    return map;
+  }, [divergence]);
+
   return (
     <ObservatoryView
       divergence={divergence}
+      ratingDistributions={ratingDistributions}
+      positionBias={positionBias}
       session={session}
+      kanaByRomaji={kanaByRomaji}
       onBackToHome={onBackToHome}
     />
   );

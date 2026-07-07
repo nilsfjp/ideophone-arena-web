@@ -318,7 +318,8 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
           Built on the author's MA thesis data — every number on this page is from
           the study. (
           <a href={THESIS_URL} target="_blank" rel="noopener noreferrer">
-            Paulsson, SPVR01
+            Paulsson (2025), Unimodal and Cross-Modal Iconicity in Japanese
+            Ideophones
           </a>
           )
         </p>

@@ -90,6 +90,8 @@ export type ArenaScatterPoint = {
   ideophoneId: number;
   /** API romaji, or "#<id>" when the row arrives without one. */
   label: string;
+  /** Verbatim kana (displayForm), or null when the row arrives without one. */
+  displayForm: string | null;
   gloss: string | null;
   /** Guess accuracy 0–1 (x). */
   x: number;
@@ -145,6 +147,7 @@ export function buildArenaScatter(
       ? eligible.map((r) => ({
           ideophoneId: r.ideophoneId,
           label: r.romaji || `#${r.ideophoneId}`,
+          displayForm: r.displayForm || null,
           gloss: r.gloss || null,
           x: r.guessAccuracy as number,
           z: zScore(r.meanRating as number, ctx),
