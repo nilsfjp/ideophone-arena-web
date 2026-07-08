@@ -54,18 +54,18 @@ const LIVE_MODES: { measure: string; title: string; copy: string; mode: ModeId }
       copy: "How much does this word sound like what it means? 1–7.",
       mode: "rating",
     },
+    {
+      measure: "Journey · Perception",
+      title: "Perception Ladder",
+      copy: "Climb from sound to inner states — accuracy falls as feelings deepen.",
+      mode: "ladder",
+    },
   ];
 
 // Honest coming-soon (§2.3 / §9): full-opacity copy, an "In the works" pill, no
-// dead links. Perception Ladder is unbuilt in this tree, so it lives here — not
-// as a live card the mockup optimistically drew (resolved with Nils 2026-07-07).
-// The XL card title stays the "Cross-Linguistic" placeholder (D3 open pair).
+// dead links. Perception Ladder shipped (NIL-42), so it moved up to LIVE_MODES.
+// The XL card is the resolved "Polyglot Challenge" name (D3, Nils 2026-07-07).
 const SOON_MODES: { measure: string; title: string; copy: string }[] = [
-  {
-    measure: "Journey · Perception",
-    title: "Perception Ladder",
-    copy: "Climb from sound to inner states — accuracy falls as feelings deepen.",
-  },
   {
     measure: "Measure · Production",
     title: "Word Mint",
@@ -78,7 +78,7 @@ const SOON_MODES: { measure: string; title: string; copy: string }[] = [
   },
   {
     measure: "Transfer · 5 languages",
-    title: "Cross-Linguistic",
+    title: "Polyglot Challenge",
     copy: "Does your ear generalize? Ideophones beyond Japanese.",
   },
 ];

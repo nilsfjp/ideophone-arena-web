@@ -21,6 +21,7 @@
 @import "./shadcn-bridge.css";
 @import "./observatory.css";
 @import "./landing.css";
+@import "./ladder.css";
 
 @layer app {
 

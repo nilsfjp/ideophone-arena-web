@@ -1030,3 +1030,143 @@ remain git-tracked — a future task should untrack + gitignore them (history re
 Next single task:
 Manual populated-data pass against the live Observatory (play a few scored rounds + ratings so the
 rainclouds/integrity/kana render with real numbers), or NIL-84 essence review per running order v3.
+
+## 2026-07-08 — NIL-42 / 28B (Perception Ladder UI)
+
+Session goal:
+Build the Perception Ladder AppView per SPEC-view-designs §1 + V1–V9 and the ladder-floors.html
+mockup: a vertical washi floor stack, a floor-intro dialog, an in-run chrome frame above the
+untouched trial board, floor completion, and summit — against the already-landed 28A backend
+(`GET /api/game/ladder/floors`, LADDER session mode). Plus the 28B riders (A3 difficultyLevel
+sweep, D2 font cut, §6 CSV untrack, landing Polyglot rename).
+
+Decisions (Nils, this session):
+- Ladder presentation = a condition picker in the floor-intro dialog (reuses
+  `SCRIPT_LAB_CONDITION_OPTIONS`, default audio-only), superseding the earlier "fixed audio-only".
+- A3 = full difficultyLevel sweep (removed everywhere incl. Instructions copy + test fixtures).
+- Perception Ladder promoted to a live landing card (moved out of "In the works").
+- Touch ships now as a real 4-pair floor (ADDENDUM decision a); the V8 teaser survives only as a
+  client-side graceful-degradation path (fixture-proven), removed when the API serves HAPTIC.
+
+Changed:
+- New: `src/components/PerceptionLadder.tsx` (+ `.test.tsx`), `src/ladderText.ts` (floor model +
+  draft copy + pure `deriveFloorRows`), `src/styles/ladder.css` (imported in `app.css`).
+- API: `src/api/types.ts` (Ladder DTOs, `GameMode`, `Modality += HAPTIC`, `StartSessionRequest`
+  gains `gameMode`/`floor` and drops `difficultyLevel`, response types cleaned), `src/api/client.ts`
+  (`getLadderFloors`). `src/roundValidation.ts` now owns the shared round/completion predicates
+  (extracted from `App.tsx`). `src/researchFlavor.ts` gains the HAPTIC case.
+- Wiring: `src/App.tsx` (`ladder` AppView + handleModeSelect + renderMain; difficultyLevel echo
+  removed), `src/modes.ts` (ladder → available), `src/components/Landing.tsx` (Perception Ladder →
+  LIVE_MODES; "Cross-Linguistic" → "Polyglot Challenge").
+- A3 sweep: `src/components/Instructions.tsx` (prop + "Difficulty stays fixed at 1" copy) + 5 test
+  fixtures; guard tests updated (`modes.test.ts`, `ModeSelect.test.tsx`).
+- D2: removed `@fontsource/zen-kaku-gothic-new` (package.json + `src/main.tsx` + `tokens.css`
+  `--font-body` + dev styleguide refs).
+- §6: `git rm --cached docs/research/data/gorilla-tidy-{choosing,rating}.csv` (already gitignored;
+  choosing.csv has zero consumers, the observatory build tolerates rating.csv absence).
+- Proof: `scripts/verify-browser-loop.mjs` gains `verifyPerceptionLadder` (floor stack → floor-intro
+  Dialog §16 H7 idiom → play a floor → completion). Docs: `backend-contract.md` (ladder endpoint +
+  LADDER session start + leaderboard exclusion; difficultyLevel removed), `frontend-grading-checklist.md`,
+  `README.md`.
+
+Proof:
+- `pnpm lint` clean; `pnpm build` (tsc -b + vite) green; `pnpm vitest run` 204/204 (7 new ladder
+  fixture tests: 3-floor→3+teaser, 4-floor→4 no-teaser/teaser-removal flag, ordinals from array,
+  sequential-unlock pills, thesis-mean stats, semantic-hook first-position, haptic label-pairing).
+- `node scripts/verify-presentation-logic.mjs` and `node scripts/verify-token-purity.mjs` both green
+  (trial-board invariants, forbidden-kana scan, motion gate, token purity of the new `ladder.css`).
+- `node --check scripts/verify-browser-loop.mjs` passes.
+
+Result:
+Static + unit + verify battery fully green. The ladder path is wired end to end and the browser-loop
+idiom is shipped. The LIVE browser loop and screenshots were NOT run this session — see Blocker.
+
+Commit:
+Not committed (commits are the user's). Suggested message:
+"add Perception Ladder UI (NIL-42/28B) + A3 difficultyLevel sweep + D2 font cut". Stage: `src/**`,
+`scripts/verify-browser-loop.mjs`, `package.json`, `pnpm-lock.yaml`, `docs/{backend-contract,
+frontend-grading-checklist,progress-log}.md`, `README.md`, and the `git rm --cached` of the two
+`docs/research/data/gorilla-tidy-*.csv`.
+
+Blocker:
+Live browser proof pending infrastructure: the backend (:8081), Vite dev server (:5174), and CDP
+endpoint (:9224) were all down this session, so `node scripts/verify-browser-loop.mjs` (desktop +
+375px) and the five ladder screenshots (stack, floor-intro dialog, in-run + final rung, floor
+completion, summit) could not be captured. To run: start the API, `pnpm dev`, launch Edge/Chromium
+on :9224, then `node scripts/verify-browser-loop.mjs http://127.0.0.1:5174/ http://127.0.0.1:9224/json/version`
+and again with a `375` fourth arg.
+Copy note: the live Touch-floor description + benchmark line in `ladderText.ts` are NEW draft copy
+(the spec only drew a teaser) and await Nils's veto.
+
+Next single task:
+Run the browser loop (desktop + 375px) against the live stack, capture the five ladder screenshots,
+and adjudicate the live Touch-floor copy.
+
+## 2026-07-08 — NIL-42 browser proof (the run left open at the build handoff)
+
+Session goal:
+Close the one task NIL-42 left open: a green live browser proof at both viewports plus the five
+ladder screenshots. Run-only; no feature code unless the loop surfaces a real defect.
+
+Result: PARTIAL — screenshots + static battery delivered; the automated green loop is BLOCKED by a
+cross-repo backend guard (A10) that no 2026-07-08 session caught. Needs a Nils decision (below).
+
+Changed (harness-only; the loop surfaced these as its own defects — no product/copy changes):
+- `scripts/verify-browser-loop.mjs`, landing + home assertions: NIL-42 promoted Perception Ladder to
+  a LIVE card, but the loop still asserted it "coming-soon" (4 stale assertions) and used the old
+  "Cross-Linguistic" name. Fixed: landing coming-soon now Word Mint / Word Anatomy / Polyglot
+  Challenge; landing + home live lists now include Perception Ladder; home grid asserted to have zero
+  coming-soon stubs (all three MODES are `available`). VERIFIED LIVE — the loop now clears every
+  landing + home assertion and stops only at the A10 register wall.
+- `scripts/verify-browser-loop.mjs`, ladder assertions (lines ~1854, ~1912): `bodyText` is
+  `innerText`, which reflects `ladder.css:28`'s `text-transform:uppercase` on `.ladder .specimen`, so
+  "Floor 1 · Sound" / "Up next" / "Final rung" arrive UPPERCASED and the mixed-case `.includes`
+  checks would fail. Made case-insensitive (same convention the loop already uses for other
+  uppercased labels). INSPECTION-VERIFIED only — the loop can't reach the ladder until A10 is
+  resolved, but my standalone driver hit and fixed the identical bug empirically. `clickText`
+  (`textContent`, not transform-affected) was already fine.
+
+Proof:
+- Static battery GREEN on this tree: `pnpm lint` (0), `pnpm build` (tsc -b + vite, 0),
+  `pnpm vitest run` 204/204, `node scripts/verify-presentation-logic.mjs` OK.
+- Stack booted: backend :8081 (pristine seed — `GET /api/game/ladder/floors` → 4 real floors
+  AUD/VIS/HAPTIC/INT in hierarchy order), Vite :5174, Edge CDP :9224.
+- Five ladder screenshots × 2 viewports (desktop + 375px) captured via a data-safe manual driver
+  (`scratchpad/ladder-shots.mjs`): a NORMAL non-reserved user playing ONLY the ladder — ladder
+  answers are `gameMode=LADDER`, already fenced from the frozen CHOOSING aggregates + leaderboard by
+  design, so no policy decision is needed just to screenshot. Floor 1 (Sound) was played to
+  completion through the real audio-gated trial board (foreground-activation poller kept Web-Audio
+  timers unthrottled); summit reached by clearing the remaining floors via the LADDER API.
+  Visually verified: floor stack (V2/V3/V4 tinted labels + pill states), floor-intro Dialog + V9
+  condition picker, in-run chrome over the untouched trial board (invariant 4 A/B placeholder holds,
+  no 375px overflow), floor completion (V7 benchmark "Floor mean in the thesis: 6.9/10. You: 3/10."),
+  summit (per-floor benchmark grammar + cleared pills; Touch shows the "norming study" line).
+  Paths (scratchpad, ephemeral): `shots/{1-floor-stack,2-floor-intro,3-in-run,4-floor-complete,
+  5-summit}-{desktop,375px}.png`.
+
+Blocker (needs a Nils decision — cross-repo, do not guess):
+The sanctioned `verify-browser-loop.mjs` cannot go green. It registers a throwaway `browser_loop_<ts>`
+user (so its 47 real CHOOSING rounds are fenced out of the frozen research aggregates by the
+`browser_loop_%` read-side LIKE fences). Backend rider **A10** (uncommitted, shipped same day —
+`ReservedUsernamePrefixValidator`, proof note "Registration of thesis_p37 → 400") now REJECTS
+`browser_loop_*` and `thesis_p*` registration with 400. So the loop can no longer create its account,
+and there is NO frontend-only fix: any non-reserved username the loop uses lands its CHOOSING
+playthrough INSIDE the frozen aggregates — the exact pollution the `browser_loop_` scheme exists to
+prevent. Resolution is the backend's (A10 exempts automation / an out-of-band seed path for reserved
+prefixes / an alternate fence). Backend contract wins — surfaced, not guessed.
+
+Copy note (unchanged, still Nils's veto): the live Touch-floor `description` + benchmark line in
+`ladderText.ts` are NEW draft copy (spec only drew a teaser). Verbatim for adjudication:
+  name: "Touch"
+  description: "Texture and contact — prickly vs fluffy, sticky vs dry-smooth. No lab has baseline
+    numbers for these, so you're the norming study."
+  benchmark (thesisMean null): "No thesis baseline — you're the norming study. You: {n}/{total}."
+
+Commit:
+Not committed (commits are the user's). The only tree change vs the build handoff is the two
+harness-correctness edits to `scripts/verify-browser-loop.mjs`.
+
+Next single task:
+Nils decides the A10 × browser-loop resolution (backend); then re-run
+`node scripts/verify-browser-loop.mjs …` (desktop + 375px) for the sanctioned green loop, which will
+also exercise the now-corrected ladder assertions.

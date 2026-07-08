@@ -133,14 +133,10 @@ body {
   --font-display: "LINE Seed JP", "Hiragino Sans", "Yu Gothic", sans-serif;
 }
 
-.sg-fonts-zenkaku-body {
-  --font-body: "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
-}
-
 .sg-fonts-ls-all,
 .sg-fonts-ls-all .sg-pairing {
   --font-display: "LINE Seed JP", "Hiragino Sans", "Yu Gothic", sans-serif;
-  --font-body: "LINE Seed JP", "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-body: "LINE Seed JP", "Hiragino Sans", "Yu Gothic", sans-serif;
 }
 
 .sg-variant-bar {

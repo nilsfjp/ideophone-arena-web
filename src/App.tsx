@@ -19,6 +19,7 @@ import Instructions from "./components/Instructions";
 import Landing from "./components/Landing";
 import Leaderboard from "./components/Leaderboard";
 import ModeSelect from "./components/ModeSelect";
+import PerceptionLadder from "./components/PerceptionLadder";
 import RatingLab from "./components/RatingLab";
 import TrialPlayer from "./components/TrialPlayer";
 import { Button } from "./components/ui/button";
@@ -26,10 +27,14 @@ import { Tabs, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Toaster } from "./components/ui/sonner";
 import { MODES, type ModeId } from "./modes";
 import Observatory from "./observatory/Observatory";
+import {
+  isCompletionError,
+  isCompletionPayload,
+  isPlayableRound,
+} from "./roundValidation";
 
 const USERNAME_STORAGE_KEY = "ideophone-arena-username";
 const ROLE_STORAGE_KEY = "ideophone-arena-role";
-const DEMO_DIFFICULTY_LEVEL = 1;
 const DEFAULT_SCRIPT_LAB_CONDITION: ConditionName = "CONDITION_1_SOKUON";
 const DEMO_TOTAL_ROUNDS = 30;
 
@@ -45,6 +50,7 @@ type AppView =
   | "instructions"
   | "game"
   | "rating"
+  | "ladder"
   | "observatory";
 type SoundCheckStatus = "idle" | "checking" | "ready" | "error";
 type CompletionScoreView = "leaderboard" | "attempts";
@@ -181,6 +187,9 @@ export default function App() {
     if (modeId === "rating") {
       setView("rating");
     }
+    if (modeId === "ladder") {
+      setView("ladder");
+    }
   }, []);
 
   // Landing CTAs (hero, live mode cards, "Try the Rating Lab"). Logged-in
@@ -285,7 +294,6 @@ export default function App() {
 
     try {
       const sessionRequest: StartSessionRequest = {
-        difficultyLevel: DEMO_DIFFICULTY_LEVEL,
         conditionName: selectedCondition,
         includePractice,
       };
@@ -380,7 +388,6 @@ export default function App() {
     if (view === "instructions") {
       return (
         <Instructions
-          difficultyLevel={DEMO_DIFFICULTY_LEVEL}
           error={error}
           includePractice={includePractice}
           isStarting={isStarting}
@@ -402,6 +409,16 @@ export default function App() {
           onAuthExpired={handleAuthExpired}
           onBackToHome={handleBackToHome}
           onGoToChoosing={() => setView("instructions")}
+        />
+      );
+    }
+
+    if (view === "ladder") {
+      return (
+        <PerceptionLadder
+          onAuthExpired={handleAuthExpired}
+          onExit={handleBackToHome}
+          onVisitObservatory={handleVisitObservatory}
         />
       );
     }
@@ -649,90 +666,3 @@ async function playSoundCheckTone() {
   }
 }
 
-function isPlayableRound(round: unknown): round is RoundResponse {
-  if (typeof round !== "object" || round === null) {
-    return false;
-  }
-
-  const candidate = round as Partial<RoundResponse>;
-  if (!candidate.roundId) {
-    return false;
-  }
-
-  const targetTranslation =
-    candidate.targetTranslation ??
-    candidate.prompt ??
-    candidate.translations?.target ??
-    "";
-  if (!targetTranslation.trim()) {
-    return false;
-  }
-
-  if (!candidate.left?.ideophoneId || !candidate.right?.ideophoneId) {
-    return false;
-  }
-
-  const hasPlayableStimulus = (option: RoundResponse["left"]) =>
-    Boolean(option?.stimulusUrl || option?.stimulusFile);
-
-  return hasPlayableStimulus(candidate.left) && hasPlayableStimulus(candidate.right);
-}
-
-function isCompletionPayload(payload: unknown) {
-  if (payload === null || payload === undefined) {
-    return true;
-  }
-
-  if (typeof payload !== "object") {
-    return false;
-  }
-
-  const completion = payload as {
-    complete?: unknown;
-    completed?: unknown;
-    sessionComplete?: unknown;
-    message?: unknown;
-    status?: unknown;
-  };
-
-  if (
-    completion.complete === true ||
-    completion.completed === true ||
-    completion.sessionComplete === true
-  ) {
-    return true;
-  }
-
-  const message = [completion.message, completion.status]
-    .filter((value): value is string => typeof value === "string")
-    .join(" ");
-
-  return /complete|completed|finished|no\s+more|no\s+next|no\s+unanswered/i.test(
-    message,
-  );
-}
-
-function isCompletionError(caught: unknown) {
-  if (!(caught instanceof ApiError) || caught.status !== 404) {
-    return false;
-  }
-
-  const body = caught.body;
-  const bodyMessage =
-    typeof body === "string"
-      ? body
-      : isErrorMessageBody(body)
-        ? [body.message, body.error].filter(Boolean).join(" ")
-        : "";
-  const message = `${caught.message} ${bodyMessage}`;
-
-  return /complete|completed|finished|no\s+more|no\s+next|no\s+unanswered/i.test(
-    message,
-  );
-}
-
-function isErrorMessageBody(
-  body: unknown,
-): body is { message?: string; error?: string } {
-  return typeof body === "object" && body !== null;
-}

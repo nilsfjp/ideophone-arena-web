@@ -7,7 +7,6 @@ function renderInstructions(
 ) {
   return renderToStaticMarkup(
     <Instructions
-      difficultyLevel={1}
       includePractice={true}
       isStarting={false}
       selectedCondition="CONDITION_1_SOKUON"

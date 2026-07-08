@@ -16,11 +16,16 @@ export type AuthResponse = {
 };
 
 export type StartSessionRequest = {
-  difficultyLevel: number;
   conditionName: ConditionName;
   // Optional, backend default false; when true the session serves 2 practice
   // rounds (practice: true) before scored round 1 (contract 2026-06-11).
+  // LADDER sessions reject includePractice (backend), so it is omitted there.
   includePractice?: boolean;
+  // NIL-42: absent means CHOOSING (the core Meaning Match loop). LADDER selects
+  // a Perception Ladder floor through `floor` (a Modality) — the backend takes
+  // explicit floor selection and never an overloaded difficultyLevel (A3).
+  gameMode?: GameMode;
+  floor?: Modality;
 };
 
 export type ConditionName =
@@ -28,14 +33,33 @@ export type ConditionName =
   | "CONDITION_2_SOKUON"
   | "CONDITION_3_SOKUON";
 
-export type Modality = "AUDITORY" | "VISUAL" | "INTEROCEPTIVE" | "PRACTICE" | string;
+// Referent modality of an ideophone / ladder floor. Mirrors the backend enum
+// (HAPTIC added for the Touch floor, NIL-42); `| string` tolerates any future
+// value the API introduces without a type break.
+export type Modality =
+  | "AUDITORY"
+  | "VISUAL"
+  | "HAPTIC"
+  | "INTEROCEPTIVE"
+  | "PRACTICE"
+  | string;
+
+// The session's play mode (backend GameMode enum). Absent/CHOOSING is the core
+// Meaning Match loop; LADDER is floor-scoped Perception Ladder serving.
+export type GameMode =
+  | "CHOOSING"
+  | "LADDER"
+  | "TEMPLATE_READING"
+  | "CROSS_LINGUISTIC";
 
 export type GameSessionResponse = {
   sessionUuid: string;
-  difficultyLevel: number;
   conditionName: ConditionName;
   startedAt: string;
   includePractice?: boolean;
+  // Present on LADDER sessions (NIL-42): the play mode and the served floor.
+  gameMode?: GameMode;
+  floor?: Modality;
 };
 
 export type IdeophoneOption = {
@@ -56,7 +80,6 @@ export type RoundResponse = {
   targetTranslation: string;
   prompt?: string;
   conditionName: ConditionName;
-  difficultyLevel: number;
   translations?: {
     target?: string;
     other?: string;
@@ -83,6 +106,33 @@ export type CompletionResponse = {
 };
 
 export type NextRoundResponse = RoundResponse | CompletionResponse | null | undefined;
+
+// Perception Ladder overview (GET /api/game/ladder/floors, NIL-42). Floors
+// arrive in climb/hierarchy order (Sound → Sight → Touch → Inner states); the
+// array index is the floor ordinal — 28B derives "Floor n" from it and never
+// persists an ordinal (V3). Floors carry no name/description/thesis-mean; the
+// client supplies those per modality (see ladderText.ts). Progress fields are
+// the caller's own: `cleared` iff a completed LADDER session for the floor
+// exists, with that best session's score; bestCorrect/bestAnswered are null
+// while uncleared.
+export type LadderPairResponse = {
+  pairCode: string;
+  finalRung: boolean;
+};
+
+export type LadderFloorResponse = {
+  modality: Modality;
+  pairCount: number;
+  finalRungPairCode: string;
+  cleared: boolean;
+  bestCorrect: number | null;
+  bestAnswered: number | null;
+  pairs: LadderPairResponse[];
+};
+
+export type LadderFloorsResponse = {
+  floors: LadderFloorResponse[];
+};
 
 export type SubmitAnswerRequest = {
   roundId: number;

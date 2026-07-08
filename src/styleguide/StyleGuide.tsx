@@ -82,7 +82,7 @@ const SAMPLE_TARGET = "rustling";
 const SAMPLE_OTHER = "clattering";
 
 type AccentVariant = "vermillion" | "rose" | "rose-soft" | "hybrid";
-type FontVariant = "production" | "zenkaku-body" | "ls-headings" | "ls-all";
+type FontVariant = "production" | "ls-headings" | "ls-all";
 
 export default function StyleGuide() {
   const [accent, setAccent] = useState<AccentVariant>("vermillion");
@@ -92,7 +92,6 @@ export default function StyleGuide() {
     accent === "rose" ? "sg-accent-rose" : "",
     accent === "rose-soft" ? "sg-accent-rose-soft" : "",
     accent === "hybrid" ? "sg-accent-hybrid" : "",
-    fonts === "zenkaku-body" ? "sg-fonts-zenkaku-body" : "",
     fonts === "ls-headings" ? "sg-fonts-ls-headings" : "",
     fonts === "ls-all" ? "sg-fonts-ls-all" : "",
   ]
@@ -149,12 +148,6 @@ export default function StyleGuide() {
             label="Production (Zen Maru headings + LINE Seed body)"
             name="sg-fonts"
             onSelect={() => setFonts("production")}
-          />
-          <VariantRadio
-            checked={fonts === "zenkaku-body"}
-            label="Zen Kaku body (previous)"
-            name="sg-fonts"
-            onSelect={() => setFonts("zenkaku-body")}
           />
           <VariantRadio
             checked={fonts === "ls-headings"}

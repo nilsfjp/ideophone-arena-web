@@ -422,12 +422,10 @@ async function run() {
     `(() => [...document.querySelectorAll('.landing-mode-card[aria-disabled="true"]')]
       .map((card) => card.textContent))()`,
   );
-  for (const mode of [
-    "Perception Ladder",
-    "Word Mint",
-    "Word Anatomy",
-    "Cross-Linguistic",
-  ]) {
+  // NIL-42 promoted Perception Ladder to a live LIVE_MODES card; the remaining
+  // "In the works" cards are Word Mint / Word Anatomy / Polyglot Challenge (D3
+  // renamed Cross-Linguistic → Polyglot Challenge).
+  for (const mode of ["Word Mint", "Word Anatomy", "Polyglot Challenge"]) {
     if (!landingComingSoon.some((text) => text.includes(mode))) {
       throw new Error(`${mode} is not an honest coming-soon card on the landing`);
     }
@@ -437,7 +435,7 @@ async function run() {
     `(() => [...document.querySelectorAll("button.landing-mode-card")]
       .map((card) => card.textContent))()`,
   );
-  for (const mode of ["Meaning Match", "Rating Lab"]) {
+  for (const mode of ["Meaning Match", "Rating Lab", "Perception Ladder"]) {
     if (!landingLive.some((text) => text.includes(mode))) {
       throw new Error(`${mode} is not a live mode card on the landing`);
     }
@@ -475,19 +473,19 @@ async function run() {
     `(() => [...document.querySelectorAll("button.mode-card:disabled")]
       .map((button) => button.textContent))()`,
   );
-  // Adopted mode-name slate (NIL-64 §10.2): Meaning Match / Rating Lab
-  // available, Perception Ladder coming-soon.
-  for (const mode of ["Perception Ladder"]) {
-    if (!comingSoonModes.some((text) => text.includes(mode))) {
-      throw new Error(`${mode} is not shown as a disabled coming-soon mode`);
-    }
+  // NIL-42 promoted Perception Ladder to available, so the home grid (MODES) is
+  // now three live cards with no coming-soon stubs — assert none are disabled.
+  if (comingSoonModes.length > 0) {
+    throw new Error(
+      `Home grid should have no coming-soon modes, saw: ${comingSoonModes.join(", ")}`,
+    );
   }
   const enabledModes = await evaluate(
     ws,
     `(() => [...document.querySelectorAll("button.mode-card:not(:disabled)")]
       .map((button) => button.textContent))()`,
   );
-  for (const mode of ["Meaning Match", "Rating Lab"]) {
+  for (const mode of ["Meaning Match", "Rating Lab", "Perception Ladder"]) {
     if (!enabledModes.some((text) => text.includes(mode))) {
       throw new Error(`${mode} is not shown as an enabled mode card`);
     }
@@ -828,6 +826,10 @@ async function run() {
   // the identical pool, minus the first pool word the waypoint just rated.
   const poolParityProof = await verifyPoolParity(browserPoolIds);
 
+  // Perception Ladder (NIL-42): mode grid → floor stack → floor-intro Dialog →
+  // play a floor to completion, in the same authenticated session.
+  const ladderProof = await verifyPerceptionLadder(ws);
+
   if (stimulusRequests.length === 0) {
     throw new Error("No /stimuli/ media requests were observed");
   }
@@ -926,6 +928,7 @@ async function run() {
         screenshots,
         recentAttemptsVisible: attemptsText.includes("Recent Attempts"),
         ratingProof,
+        ladderProof,
         meaningOrderProof: {
           assertedRoundCount: meaningOrderRounds.length,
           targetFirstCount,
@@ -1818,5 +1821,123 @@ async function answerCurrentRound(ws, expectFixation) {
     feedback: wasIncorrect ? "Incorrect" : "Correct",
     presentation: presentationProof,
     meaningOrder,
+  };
+}
+
+// Perception Ladder (NIL-42). The trial board is the Meaning Match board,
+// byte-identical (invariant 5), so this drives only the ladder FRAME: the floor
+// stack, the floor-intro Dialog, and floor completion. The floor runs in the
+// default audio-only condition, so the board matches the audio-only
+// presentation answerCurrentRound already asserts. Audio is unlocked page-wide
+// by the Meaning Match sound check earlier in this same session.
+//
+// §16 H7 rider (V9): the floor-intro Dialog is new Radix on a browser-loop
+// path, so its activation/dismiss idiom ships here — open it from the native
+// floor-card button (a controlled Dialog), read its PORTALED content from
+// document.body, activate the primary (coordinate-free focus+Enter, click
+// fallback), and confirm it dismisses into the running floor.
+async function verifyPerceptionLadder(ws) {
+  // Back to the mode grid via the header title, then open the ladder.
+  if (!(await clickText(ws, "Ideophone Arena"))) {
+    throw new Error("Site title (back to modes) not found");
+  }
+  await waitFor(
+    async () => (await bodyText(ws)).includes("Choose a mode"),
+    "mode select after returning home",
+  );
+  if (!(await clickText(ws, "Perception Ladder"))) {
+    throw new Error("Perception Ladder mode card not found");
+  }
+  await waitFor(
+    async () => {
+      // Floor-stack labels/pills are `.specimen`, CSS-uppercased in innerText —
+      // match case-insensitively (as the loop does for other uppercased labels).
+      const text = (await bodyText(ws)).toLowerCase();
+      return text.includes("floor 1 · sound") && text.includes("up next");
+    },
+    "ladder floor stack",
+  );
+  await captureScreenshot(ws, "ladder-stack");
+
+  // Open the floor-1 intro Dialog (native card button → controlled Radix
+  // Dialog; content portals to <body>, so bodyText still sees it).
+  if (!(await clickText(ws, "Floor 1 · Sound"))) {
+    throw new Error("Floor 1 (Sound) card not found");
+  }
+  await waitFor(
+    async () => {
+      const text = await bodyText(ws);
+      return text.includes("Start floor 1") && text.includes("Presentation");
+    },
+    "floor-intro dialog",
+  );
+  const dialogText = await bodyText(ws);
+  for (const option of ["Audio only", "Script match", "Script mismatch"]) {
+    if (!dialogText.includes(option)) {
+      throw new Error(`Floor-intro condition picker is missing "${option}"`);
+    }
+  }
+  await captureScreenshot(ws, "ladder-floor-intro");
+
+  // Activate the primary — coordinate-free (works at 375px), click fallback.
+  if (
+    !(await trustedPressEnterOnText(ws, "Start floor 1")) &&
+    !(await clickText(ws, "Start floor 1"))
+  ) {
+    throw new Error("Start floor 1 button not found");
+  }
+  // The Dialog must dismiss (its content leaves the document) once the floor
+  // starts — the run view replaces it with the trial board.
+  await waitFor(
+    async () => !(await bodyText(ws)).includes("Start floor 1"),
+    "floor-intro dialog to dismiss on start",
+  );
+
+  // Play the floor to completion, proving the final-rung marker appears on the
+  // last pair. answerCurrentRound is reused unchanged (same board).
+  let sawFinalRung = false;
+  let played = 0;
+  while (played < 15) {
+    const state = await waitFor(
+      async () => {
+        const text = await bodyText(ws);
+        if (text.includes("Floor cleared:")) return "done";
+        if (text.includes("Which one do you think means")) return "choice";
+        return "";
+      },
+      "ladder choice or floor completion",
+      45000,
+    );
+    if (state === "done") {
+      break;
+    }
+    // The "Final rung" marker is a `.specimen`, CSS-uppercased in innerText.
+    if ((await bodyText(ws)).toLowerCase().includes("final rung")) {
+      sawFinalRung = true;
+    }
+    await answerCurrentRound(ws, false);
+    played += 1;
+  }
+  if (played >= 15) {
+    throw new Error("Ladder floor did not complete within 15 pairs");
+  }
+  if (!sawFinalRung) {
+    throw new Error("Ladder final-rung marker never appeared during the floor");
+  }
+
+  const completeText = await bodyText(ws);
+  if (!completeText.includes("Floor cleared:")) {
+    throw new Error("Floor completion panel did not appear");
+  }
+  // Benchmark grammar (V7): thesis floor mean vs the player's score.
+  if (!completeText.includes("thesis") || !completeText.includes("You:")) {
+    throw new Error("Floor completion is missing the benchmark grammar");
+  }
+  await captureScreenshot(ws, "ladder-floor-complete");
+
+  return {
+    pairsPlayed: played,
+    finalRungSeen: sawFinalRung,
+    completionVisible: completeText.includes("Floor cleared:"),
   };
 }

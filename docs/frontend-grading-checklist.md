@@ -111,7 +111,8 @@ Browser proof:
 - [x] Request body sends backend enum names, not numeric labels.
 - [x] Default demo sends `conditionName: "CONDITION_1_SOKUON"`.
 - [x] Script Lab selector maps exactly Audio only, Script match, and Script mismatch to the three backend-supported sokuon enum names.
-- [x] Session start always sends `difficultyLevel: 1`.
+- [x] Session start no longer sends `difficultyLevel` (removed backend-side,
+      NIL-42/A3); the Perception Ladder selects a floor via an explicit `floor`.
 - [x] Unsupported arbitrary difficulty input is not exposed.
 - [x] TEXT_ONLY and unsupported condition values are not exposed.
 - [x] Session UUID from backend is stored in local component/application state.
@@ -121,8 +122,7 @@ Default expected request:
 
 ```json
 {
-  "conditionName": "CONDITION_1_SOKUON",
-  "difficultyLevel": 1
+  "conditionName": "CONDITION_1_SOKUON"
 }
 ```
 
@@ -323,7 +323,7 @@ Browser proof:
 
 ## Rating Lab (27D)
 
-- [ ] Mode card enabled on home; Modality Ladder stays "Coming soon".
+- [ ] Mode card enabled on home (the Perception Ladder is now live too, NIL-42).
 - [ ] All participant-facing rating copy imported from `src/experimentText.ts`
       (Gorilla-verbatim, adjudicated 2026-07-02); no inline trial strings.
 - [ ] Word pool fetched from `GET /api/game/me/ratable-words` (27E): the
@@ -349,6 +349,27 @@ Browser proof:
       `aria-live="polite"`; framing stays descriptive (invariant 9).
 - [ ] Lab record table scrolls inside its own wrapper at 360–390px; the page
       never scrolls horizontally.
+
+## Perception Ladder (NIL-42)
+
+- [x] `ladder` AppView reachable from the mode grid and the public landing
+      (promoted to a live card); floor stack renders from
+      `GET /api/game/ladder/floors`.
+- [x] Floor ordinals derive from the API array position, never persisted (V3);
+      pill states (Cleared / Up next / After floor n) derived client-side, never
+      padlocks (V4).
+- [x] Touch teaser is client-side only and removed the moment the API serves a
+      HAPTIC floor (fixture-tested: 3-floor payload → teaser, 4-floor → none).
+- [x] Floor-intro shadcn Dialog (V9) with the condition picker; its browser-loop
+      activation/dismiss idiom ships in `verify-browser-loop.mjs` (§16 H7).
+- [x] In-run chrome adds only a frame (tinted floor label, "Pair i of n", "Final
+      rung" on the last pair) above the byte-identical trial board (invariant 5).
+- [x] Floor completion + summit use the benchmark grammar (you vs thesis floor
+      mean 6.86 / 6.42 / 5.97; Touch = norming-study line), text-only (V7).
+- [x] LADDER session start sends `gameMode: "LADDER"` + `floor`, omits
+      `includePractice`; a completed LADDER session does not enter the Meaning
+      Match leaderboard.
+- [x] Every haptic-colored element carries its text label (§4.4).
 
 ## Error handling and loading states
 

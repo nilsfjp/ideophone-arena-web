@@ -4,6 +4,7 @@ import type {
   AuthResponse,
   DivergenceEntry,
   GameSessionResponse,
+  LadderFloorsResponse,
   LeaderboardPageResponse,
   LoginRequest,
   NextRoundResponse,
@@ -236,6 +237,12 @@ export function startSession(request: StartSessionRequest) {
     method: "POST",
     body: request,
   });
+}
+
+// Perception Ladder overview (NIL-42): floors in climb order with the caller's
+// per-floor progress. Reuses the shared apiRequest (JWT + error handling).
+export function getLadderFloors() {
+  return apiRequest<LadderFloorsResponse>("/api/game/ladder/floors");
 }
 
 export function getNextRound(sessionUuid: string) {

@@ -22,12 +22,11 @@ the frontend calls the backend directly.
 
 ## Supported session-start settings
 
-The default game path uses:
+The default (Meaning Match) game path uses:
 
 ```json
 {
-  "conditionName": "CONDITION_1_SOKUON",
-  "difficultyLevel": 1
+  "conditionName": "CONDITION_1_SOKUON"
 }
 ```
 
@@ -39,8 +38,10 @@ CONDITION_2_SOKUON
 CONDITION_3_SOKUON
 ```
 
-Do not expose `TEXT_ONLY`, numeric condition values, or arbitrary difficulty
-selection. `difficultyLevel` remains fixed to `1`.
+Do not expose `TEXT_ONLY` or numeric condition values. `difficultyLevel` is no
+longer a request field (removed backend-side, NIL-42/A3): the Perception Ladder
+selects a floor through an explicit `floor` parameter (see "Perception Ladder"),
+never an overloaded difficulty.
 
 Round responses expose, for both `left` and `right`: `kana`, `displayForm`,
 `canonicalForm`, `romaji`, `canonicalScript`, `stimulusFile`, and `stimulusUrl`.
@@ -85,12 +86,12 @@ frontend always sends it explicitly and defaults the toggle to `true`):
 ```json
 {
   "conditionName": "CONDITION_1_SOKUON",
-  "difficultyLevel": 1,
   "includePractice": true
 }
 ```
 
-The session response echoes `includePractice`.
+The session response echoes `includePractice`. LADDER sessions additionally
+carry `gameMode` and `floor` (see "Perception Ladder").
 
 Get next round:
 
@@ -124,6 +125,62 @@ Request body:
 
 The answer response includes a `practice` boolean mirroring the round's flag
 (always `false` for scored rounds).
+
+## Perception Ladder (NIL-42)
+
+A play mode that serves the Choosing Task one modality "floor" at a time, in the
+implicational-hierarchy climb order Sound → Sight → Touch → Inner states.
+
+Floor overview:
+
+```text
+GET /api/game/ladder/floors
+```
+
+Response — floors in climb order; the **array index is the floor ordinal** (the
+frontend derives "Floor n" from array position and never persists it):
+
+```json
+{
+  "floors": [
+    {
+      "modality": "AUDITORY",
+      "pairCount": 10,
+      "finalRungPairCode": "a5",
+      "cleared": false,
+      "bestCorrect": null,
+      "bestAnswered": null,
+      "pairs": [{ "pairCode": "a9", "finalRung": false }]
+    }
+  ]
+}
+```
+
+- Floors carry no name/description/thesis-mean; the frontend supplies those per
+  modality (`src/ladderText.ts`).
+- `cleared` is true once the caller has a completed LADDER session for the floor;
+  `bestCorrect` / `bestAnswered` are that best session's score (both `null` while
+  uncleared).
+- `finalRungPairCode` marks the floor's last (hardest) pair; the frontend shows a
+  "Final rung" specimen label on it.
+
+Start a floor session (same `POST /api/game/sessions` endpoint):
+
+```json
+{
+  "conditionName": "CONDITION_1_SOKUON",
+  "gameMode": "LADDER",
+  "floor": "AUDITORY"
+}
+```
+
+- `floor` is a `Modality`, required iff `gameMode == "LADDER"` and forbidden
+  otherwise.
+- LADDER sessions **reject `includePractice`** — omit it.
+- The session response carries `gameMode` and `floor`.
+- Round serving (`.../rounds/next`) and answers (`.../answers`) are the ordinary
+  Choosing endpoints, unchanged; each round option carries the floor's `modality`.
+- A completed LADDER session does **not** enter the Meaning Match leaderboard.
 
 ## Practice rounds (2026-06-11)
 

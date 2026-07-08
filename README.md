@@ -47,9 +47,18 @@ proxy configuration. Leave `VITE_API_BASE_URL` empty to use the Vite proxy for
 directly.
 
 **Mode select.** After sign-in the app lands on a home screen listing game
-modes. The Choosing Task and the Rating Lab are playable; Modality Ladder
-appears as a disabled "Coming soon" card. Mode switching is plain view state
-in `src/App.tsx` (no router); the registry lives in `src/modes.ts`.
+modes. Meaning Match, the Rating Lab, and the Perception Ladder are playable.
+Mode switching is plain view state in `src/App.tsx` (no router); the registry
+lives in `src/modes.ts`.
+
+**Perception Ladder.** The Choosing Task served one modality "floor" at a time,
+in hierarchy order (Sound → Sight → Touch → Inner states). A vertical floor
+stack (`src/components/PerceptionLadder.tsx`) shows each floor's progress; a
+floor-intro dialog picks the presentation condition, then the ordinary trial
+board plays the floor (reused unchanged — the ladder only adds a frame). Floor
+ordinals come from the API array position (`GET /api/game/ladder/floors`), never
+persisted; completion shows a "you vs thesis floor mean" benchmark. Copy lives
+in `src/ladderText.ts`.
 
 **Rating Lab.** The thesis Rating Task as a mode: listen to a word you have
 met, read its meaning, and rate the resemblance on a 1–7 scale (frozen

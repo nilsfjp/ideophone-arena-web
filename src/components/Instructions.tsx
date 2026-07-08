@@ -3,7 +3,6 @@ import { SCRIPT_LAB_CONDITION_OPTIONS } from "../conditionPresentation";
 import { Button } from "./ui/button";
 
 type InstructionsProps = {
-  difficultyLevel: 1;
   isStarting: boolean;
   error?: string;
   includePractice: boolean;
@@ -18,7 +17,6 @@ type InstructionsProps = {
 };
 
 export default function Instructions({
-  difficultyLevel,
   isStarting,
   error,
   includePractice,
@@ -76,7 +74,6 @@ export default function Instructions({
           <h2 id="script-lab-title">Script Lab</h2>
           <p>
             Compare three presentation setups for the same backend-driven task.
-            Difficulty stays fixed at {difficultyLevel}.
           </p>
         </div>
 

@@ -8,7 +8,6 @@ const round: RoundResponse = {
   roundId: 7,
   targetTranslation: "clattering, rattling",
   conditionName: "CONDITION_1_SOKUON",
-  difficultyLevel: 1,
   targetMeaningListedFirst: true,
   translations: {
     target: "clattering, rattling",

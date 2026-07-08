@@ -20,7 +20,7 @@ describe("ModeSelect", () => {
   });
 
   it("keeps the playable mode cards enabled", () => {
-    for (const title of ["Meaning Match", "Rating Lab"]) {
+    for (const title of ["Meaning Match", "Rating Lab", "Perception Ladder"]) {
       const card = markup
         .split("<button")
         .find((chunk) => chunk.includes(title));
@@ -30,15 +30,29 @@ describe("ModeSelect", () => {
     }
   });
 
-  it("marks coming-soon modes as disabled with an honest badge", () => {
-    for (const title of ["Perception Ladder"]) {
-      const card = markup
-        .split("<button")
-        .find((chunk) => chunk.includes(title));
-      expect(card).toBeDefined();
-      expect(card).toContain("disabled");
-      expect(card).toContain('aria-disabled="true"');
-      expect(card).toContain("Coming soon");
-    }
+  // Every registered mode is now available, so exercise the coming-soon path
+  // with a synthetic entry to keep the disabled-card rendering covered.
+  it("marks a coming-soon mode as disabled with an honest badge", () => {
+    const soonMarkup = renderToStaticMarkup(
+      <ModeSelect
+        modes={[
+          {
+            id: "ladder",
+            title: "Future Mode",
+            measure: "Journey · Perception",
+            status: "coming-soon",
+            description: "Not yet available.",
+          },
+        ]}
+        onSelect={() => undefined}
+      />,
+    );
+    const card = soonMarkup
+      .split("<button")
+      .find((chunk) => chunk.includes("Future Mode"));
+    expect(card).toBeDefined();
+    expect(card).toContain("disabled");
+    expect(card).toContain('aria-disabled="true"');
+    expect(card).toContain("Coming soon");
   });
 });

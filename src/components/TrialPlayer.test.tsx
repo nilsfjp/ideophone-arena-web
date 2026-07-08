@@ -15,7 +15,6 @@ const roundMissingDisplayForm: RoundResponse = {
   roundId: 1,
   targetTranslation: "clattering, rattling",
   conditionName: "CONDITION_3_SOKUON",
-  difficultyLevel: 1,
   targetMeaningListedFirst: true,
   left: {
     ideophoneId: 121,
@@ -37,7 +36,6 @@ const validRound: RoundResponse = {
   roundId: 7,
   targetTranslation: "clattering, rattling",
   conditionName: "CONDITION_1_SOKUON",
-  difficultyLevel: 1,
   targetMeaningListedFirst: true,
   translations: {
     target: "clattering, rattling",

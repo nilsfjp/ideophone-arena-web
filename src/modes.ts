@@ -38,7 +38,7 @@ export const MODES: ModeDefinition[] = [
     id: "ladder",
     title: "Perception Ladder",
     measure: "Journey · Perception",
-    status: "coming-soon",
+    status: "available",
     description:
       "Climb from sounds to sights to inner states to touch, one floor at a time.",
   },

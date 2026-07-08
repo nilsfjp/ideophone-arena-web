@@ -45,7 +45,6 @@ const ROUND: RoundResponse = {
   roundId: 7,
   targetTranslation: "clattering, rattling",
   conditionName: "CONDITION_1_SOKUON",
-  difficultyLevel: 1,
   targetMeaningListedFirst: true,
   translations: { target: "clattering, rattling", other: "noisily gushing" },
   left: OPTION_A,
@@ -115,7 +114,6 @@ function combinedMarkup(): string {
     renderToStaticMarkup(<ModeSelect modes={MODES} onSelect={() => {}} />),
     renderToStaticMarkup(
       <Instructions
-        difficultyLevel={1}
         includePractice
         isStarting={false}
         selectedCondition="CONDITION_1_SOKUON"

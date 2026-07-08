@@ -7,9 +7,13 @@ describe("mode registry", () => {
     expect(new Set(MODES.map((mode) => mode.id)).size).toBe(3);
   });
 
-  it("the Choosing Task and Rating Lab are available", () => {
+  it("Meaning Match, Rating Lab, and the Perception Ladder are available", () => {
     const available = MODES.filter((mode) => mode.status === "available");
-    expect(available.map((mode) => mode.id)).toEqual(["choosing", "rating"]);
+    expect(available.map((mode) => mode.id)).toEqual([
+      "choosing",
+      "rating",
+      "ladder",
+    ]);
   });
 
   // Player-facing copy must not leak backend enums or difficulty dev-speak.

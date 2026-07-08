@@ -12,10 +12,6 @@ import "@fontsource/zen-maru-gothic/latin-400.css";
 import "@fontsource/zen-maru-gothic/latin-700.css";
 import "@fontsource/zen-maru-gothic/japanese-400.css";
 import "@fontsource/zen-maru-gothic/japanese-700.css";
-import "@fontsource/zen-kaku-gothic-new/latin-400.css";
-import "@fontsource/zen-kaku-gothic-new/latin-700.css";
-import "@fontsource/zen-kaku-gothic-new/japanese-400.css";
-import "@fontsource/zen-kaku-gothic-new/japanese-700.css";
 
 import "../styles/tokens.css";
 import "../styles/styleguide.css";

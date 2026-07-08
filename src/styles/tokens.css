@@ -72,7 +72,7 @@
      arrive. */
   --font-display: "Zen Maru Gothic", "Hiragino Sans", "Yu Gothic", sans-serif;
   --font-stimuli: "LINE Seed JP", "Zen Maru Gothic", "Hiragino Sans", "Yu Gothic", sans-serif;
-  --font-body: "LINE Seed JP", "Zen Kaku Gothic New", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --font-body: "LINE Seed JP", "Hiragino Sans", "Yu Gothic", sans-serif;
   /* IPA-capable fallback stack for XL non-kana word forms (spec §3.3,
      reserved). The self-hosted Noto Sans @fontsource install rides the XL
      build's own dependency gate, not NIL-65 — this is fallback-only for now. */

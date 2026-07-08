@@ -55,6 +55,7 @@ function normalizeModality(modality?: Modality) {
   if (
     normalized === "AUDITORY" ||
     normalized === "VISUAL" ||
+    normalized === "HAPTIC" ||
     normalized === "INTEROCEPTIVE"
   ) {
     return normalized;
@@ -81,6 +82,8 @@ function modalityText(modality: ReturnType<typeof normalizeModality>) {
       return "Visual ideophones ask you to map sound onto shape, motion, or appearance.";
     case "INTEROCEPTIVE":
       return "Interoceptive ideophones point toward internal states, so their expressiveness can be harder to pin down quickly.";
+    case "HAPTIC":
+      return "Haptic ideophones map sound onto texture and touch — a newer floor with no thesis baseline yet.";
     default:
       return "This round still tests a form-meaning guess; a correct choice is not the same thing as proving stronger iconicity.";
   }
