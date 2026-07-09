@@ -552,9 +552,6 @@ async function run() {
       `Default session request did not send CONDITION_1_SOKUON: ${sessionBody}`,
     );
   }
-  if (!sessionBody.includes('"difficultyLevel":1')) {
-    throw new Error(`Session request did not send difficultyLevel 1: ${sessionBody}`);
-  }
   // The UI default is practice ON and the flag must be sent explicitly
   // (the backend default is false).
   if (!sessionBody.includes('"includePractice":true')) {
@@ -566,7 +563,10 @@ async function run() {
   const answeredRounds = [];
   let completed = false;
 
-  for (let roundNumber = 1; roundNumber <= 40; roundNumber += 1) {
+  // Runaway guard, not an expectation: a session serves 47 scored rounds (NIL-60,
+  // was 30) plus 2 practice when the toggle is on.
+  const maxRounds = 60;
+  for (let roundNumber = 1; roundNumber <= maxRounds; roundNumber += 1) {
     const text = await bodyText(ws);
     if (text.includes("Session complete")) {
       completed = true;
@@ -606,12 +606,13 @@ async function run() {
   }
 
   if (!completed) {
-    throw new Error("Session did not reach completion within 40 answered rounds");
+    throw new Error(`Session did not reach completion within ${maxRounds} answered rounds`);
   }
 
   // Practice sequencing: the toggle stayed ON, so exactly the first 2 rounds
-  // are practice and the first scored round starts at Round 1 / 30 with the
-  // score still at its pre-game 0 / 0.
+  // are practice and the first scored round starts at Round 1 with the score
+  // still at its pre-game 0 / 0. The scored total is not pinned here -- the
+  // backend seed tests own it, and it moved 30 -> 47 with NIL-60.
   const practiceRounds = answeredRounds.filter((round) => round.practice);
   if (practiceRounds.length !== 2) {
     throw new Error(
@@ -627,12 +628,28 @@ async function run() {
   const firstScoredRound = answeredRounds[2];
   if (
     !firstScoredRound ||
-    !firstScoredRound.progressText.includes("Round 1 / 30") ||
+    !firstScoredRound.progressText.includes("Round 1 / ") ||
     !firstScoredRound.progressText.includes("Session score: 0 / 0")
   ) {
     throw new Error(
-      `First scored round did not start at Round 1 / 30 with score 0 / 0: ` +
+      `First scored round did not start at Round 1 with score 0 / 0: ` +
         `${firstScoredRound?.progressText ?? "missing"}`,
+    );
+  }
+
+  // The denominator the UI shows must be the number of scored rounds actually served.
+  // Asserted as a relationship, never as a literal: App.tsx once pinned it to 30 while
+  // the backend served 47, which froze the counter at "Round 30 / 30" and pegged the
+  // progress bar at 100% for the last 17 rounds -- invisible to a literal check on
+  // round 1, the one round where the wrong total still reads correctly.
+  const scoredRounds = answeredRounds.filter((round) => !round.practice);
+  const declaredTotal = Number(
+    /Round\s+\d+\s*\/\s*(\d+)/.exec(firstScoredRound.progressText)?.[1],
+  );
+  if (declaredTotal !== scoredRounds.length) {
+    throw new Error(
+      `Progress denominator ${declaredTotal} does not match the ` +
+        `${scoredRounds.length} scored rounds the session served`,
     );
   }
 

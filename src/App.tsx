@@ -36,7 +36,6 @@ import {
 const USERNAME_STORAGE_KEY = "ideophone-arena-username";
 const ROLE_STORAGE_KEY = "ideophone-arena-role";
 const DEFAULT_SCRIPT_LAB_CONDITION: ConditionName = "CONDITION_1_SOKUON";
-const DEMO_TOTAL_ROUNDS = 30;
 
 type AuthState = {
   username: string;
@@ -542,7 +541,7 @@ export default function App() {
           round={round}
           sessionStats={sessionStats}
           sessionUuid={session.sessionUuid}
-          totalRounds={DEMO_TOTAL_ROUNDS}
+          totalRounds={session.totalRounds}
           onAnswered={handleAnswered}
           onAuthExpired={handleAuthExpired}
           onNeedNextRound={() => void loadNextRound(session.sessionUuid)}

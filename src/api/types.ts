@@ -60,6 +60,10 @@ export type GameSessionResponse = {
   // Present on LADDER sessions (NIL-42): the play mode and the served floor.
   gameMode?: GameMode;
   floor?: Modality;
+  // Scored rounds this session will serve — the denominator of "Round n / total".
+  // The client cannot derive it (CHOOSING serves the whole scored pool, LADDER only
+  // its floor's pairs), so the backend states it. Practice rounds are excluded.
+  totalRounds: number;
 };
 
 export type IdeophoneOption = {

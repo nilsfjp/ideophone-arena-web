@@ -215,6 +215,31 @@ describe("TrialPlayer practice rounds", () => {
     expect(countOccurrences(markup, "Next round")).toBe(1);
     expect(markup).toContain("progress-track");
   });
+
+  // The total used to be a hardcoded 30 while the backend served 47 scored rounds, so
+  // `Math.min(totalRounds, ...)` froze the counter at "Round 30 / 30" with the bar at
+  // 100% for the last 17 rounds. The session now states its own total.
+  it("counts past the old hardcoded 30 when the session serves more rounds", () => {
+    const markup = renderToStaticMarkup(
+      <TrialPlayer
+        round={validRound}
+        sessionStats={{ answered: 30, correct: 20 }}
+        sessionUuid="session-1"
+        totalRounds={47}
+        onAnswered={() => {}}
+        onAuthExpired={() => {}}
+        onBackToStart={() => {}}
+        onNeedNextRound={() => {}}
+      />,
+    );
+
+    expect(markup).toContain("Round 31 / 47");
+    expect(markup).not.toContain("Round 30 / 30");
+    expect(markup).toContain('aria-valuemax="47"');
+    expect(markup).toContain('aria-valuenow="30"');
+    // 30/47 = 64%, not the 100% the frozen denominator produced.
+    expect(markup).toContain("width:64%");
+  });
 });
 
 describe("TrialPlayer round validation wiring", () => {
