@@ -11,14 +11,18 @@ import type {
 } from "./types";
 import {
   ApiError,
+  getAllMyProductions,
   getAllMyRatings,
   getAllRatableWords,
   getDivergence,
   getLeaderboard,
   getMyRatings,
+  getNextProductionPrompt,
   getPositionBias,
   getRatableWords,
   getRatingDistributions,
+  isUnparseableInput,
+  submitProduction,
   submitRating,
 } from "./client";
 
@@ -463,5 +467,169 @@ describe("getLeaderboard", () => {
 
     const requestedUrl = String(fetchMock.mock.calls[0][0]);
     expect(requestedUrl.endsWith("/api/leaderboard?page=2&size=25")).toBe(true);
+  });
+});
+
+describe("getNextProductionPrompt", () => {
+  it("returns the prompt with the producible total", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          completed: false,
+          ideophoneId: 1,
+          gloss: "with a rustling sound",
+          modality: "AUDITORY",
+          totalProducible: 94,
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const prompt = await getNextProductionPrompt();
+
+    expect(String(fetchMock.mock.calls[0][0]).endsWith("/api/productions/next")).toBe(
+      true,
+    );
+    expect(prompt.totalProducible).toBe(94);
+    expect(prompt.completed).toBe(false);
+  });
+
+  it("passes the completion sentinel through", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          completed: true,
+          ideophoneId: null,
+          gloss: null,
+          modality: null,
+          totalProducible: 94,
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const prompt = await getNextProductionPrompt();
+
+    expect(prompt.completed).toBe(true);
+    expect(prompt.ideophoneId).toBeNull();
+    expect(prompt.totalProducible).toBe(94);
+  });
+});
+
+describe("submitProduction", () => {
+  it("POSTs the minted word and returns the scored reveal", async () => {
+    const reveal = {
+      id: 40,
+      ideophoneId: 60,
+      input: "pikapika",
+      similarityScore: 78,
+      features: [{ feature: "redup", yours: true, target: true, matched: true }],
+      target: {
+        displayForm: "どきどき",
+        romaji: "dokidoki",
+        gloss: "with a rapid heartbeat",
+        stimulusUrl: "/stimuli/audio/i9h-dokidoki.m4a",
+      },
+    };
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify(reveal), { status: 201 }),
+    );
+
+    const result = await submitProduction({
+      ideophoneId: 60,
+      input: "pikapika",
+      responseTimeMs: 5200,
+    });
+
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(String(url).endsWith("/api/productions")).toBe(true);
+    expect(init.method).toBe("POST");
+    expect(JSON.parse(String(init.body))).toEqual({
+      ideophoneId: 60,
+      input: "pikapika",
+      responseTimeMs: 5200,
+    });
+    expect(result.similarityScore).toBe(78);
+    expect(result.target.displayForm).toBe("どきどき");
+  });
+
+  it("throws a 409 ApiError when the word was already minted", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({ message: "This ideophone has already been produced by this user" }),
+        { status: 409 },
+      ),
+    );
+
+    await expect(
+      submitProduction({ ideophoneId: 60, input: "pikapika", responseTimeMs: 10 }),
+    ).rejects.toMatchObject({ status: 409 });
+  });
+});
+
+describe("isUnparseableInput", () => {
+  it("recognises the 400 that leaves the attempt unconsumed", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({ validationErrors: { input: "must segment into morae" } }),
+        { status: 400 },
+      ),
+    );
+
+    const caught = await submitProduction({
+      ideophoneId: 60,
+      input: "ngrk",
+      responseTimeMs: 10,
+    }).catch((error: unknown) => error);
+
+    expect(caught).toBeInstanceOf(ApiError);
+    expect(isUnparseableInput(caught)).toBe(true);
+    // The player never sees this text — the frozen §8.1 helper is rendered
+    // instead — but the flattened message proves why .message is unusable.
+    expect((caught as ApiError).message).toContain("input:");
+  });
+
+  it("rejects a 400 without a field error, a 409, and non-ApiErrors", () => {
+    expect(isUnparseableInput(new ApiError(400, "bad request", { message: "bad" }))).toBe(
+      false,
+    );
+    expect(isUnparseableInput(new ApiError(409, "conflict", {}))).toBe(false);
+    expect(isUnparseableInput(new Error("boom"))).toBe(false);
+    expect(isUnparseableInput(null)).toBe(false);
+  });
+});
+
+describe("getAllMyProductions", () => {
+  it("walks every page of the caller's own productions", async () => {
+    const page = (pageNumber: number, totalPages: number) =>
+      new Response(
+        JSON.stringify({
+          entries: [
+            {
+              id: pageNumber,
+              ideophoneId: pageNumber,
+              input: "pika",
+              similarityScore: 50 + pageNumber,
+              createdAt: "2026-07-09T12:00:00Z",
+            },
+          ],
+          page: pageNumber,
+          size: 50,
+          totalElements: totalPages,
+          totalPages,
+        }),
+        { status: 200 },
+      );
+    fetchMock
+      .mockResolvedValueOnce(page(0, 2))
+      .mockResolvedValueOnce(page(1, 2));
+
+    const entries = await getAllMyProductions();
+
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(String(fetchMock.mock.calls[0][0])).toContain(
+      "/api/game/me/productions?page=0&size=50",
+    );
+    expect(entries.map((entry) => entry.similarityScore)).toEqual([50, 51]);
   });
 });

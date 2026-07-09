@@ -13,14 +13,20 @@ describe("ModeSelect", () => {
   );
 
   it("renders one card per registered mode", () => {
-    expect(countOccurrences(markup, "<button")).toBe(3);
+    expect(countOccurrences(markup, "<button")).toBe(MODES.length);
     expect(markup).toContain("Meaning Match");
     expect(markup).toContain("Rating Lab");
     expect(markup).toContain("Perception Ladder");
+    expect(markup).toContain("Word Mint");
   });
 
   it("keeps the playable mode cards enabled", () => {
-    for (const title of ["Meaning Match", "Rating Lab", "Perception Ladder"]) {
+    for (const title of [
+      "Meaning Match",
+      "Rating Lab",
+      "Perception Ladder",
+      "Word Mint",
+    ]) {
       const card = markup
         .split("<button")
         .find((chunk) => chunk.includes(title));

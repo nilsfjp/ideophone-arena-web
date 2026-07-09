@@ -1170,3 +1170,128 @@ Next single task:
 Nils decides the A10 × browser-loop resolution (backend); then re-run
 `node scripts/verify-browser-loop.mjs …` (desktop + 375px) for the sanctioned green loop, which will
 also exercise the now-corrected ladder assertions.
+
+## 2026-07-09 — NIL-62 (Word Mint frontend: ProductionLab)
+
+Session goal:
+Build `ProductionLab` — Word Mint's player surface — behind the mode shell: meaning prompt →
+romaji input → one-shot submit → reveal (kana, similarity chips, score band) with the §7
+motion-reveal choreography. Closes NIL-62 (the backend half landed at api `f22f663`).
+
+Decisions (Nils, this session):
+- **`{n}` gap → a small backend rider.** The frozen §8.4 status line is `WORD {i} OF {n} · YOUR
+  MEAN {m}` and V14 forbids the client deriving or hardcoding the counts — but nothing served
+  `{n}`. `/api/productions/next` returns one word; `/api/game/me/productions.totalElements` counts
+  only the caller's own rows (that is `{i}` and `{m}`); `/api/research/triangulation` unions only
+  words that already carry data. Ruled: serve `totalProducible` from the prompt endpoint.
+- **`yours-line` ships trimmed:** `You minted <code>{input}</code>.` — the mockup's generated
+  clause dropped. This is NEW player copy outside frozen §8 and needs a §8 amendment.
+- **Reveal audio autoplays once** on reveal mount; the Replay pill re-triggers.
+
+Changed (api, `-Dspring-boot.run.profiles=local,automation`):
+- `ProductionRepository.countProducible(Collection<Modality>)`, wired through
+  `ProductionService.getNextPrompt` → `ProductionMapper` → `ProductionPromptResponse`
+  (`totalProducible` on BOTH the live prompt and the completed sentinel; caller-invariant, computed
+  once per request). **Two things are load-bearing.** The *modality fence*: `Modality` has six
+  values but `PROMPT_CYCLE` walks four, so `TACTILE`/`MOTION` words are not producible — an
+  unfenced count would leave `{i}` forever one short of `{n}` the day one is trialed. `PROMPT_CYCLE`
+  itself is passed in as the fence, so the two cannot drift. And keeping trial membership an
+  `exists` subquery rather than a join: a word sits in many non-practice trials, and a join would
+  count it once per trial. Tests + `docs/backend-contract.md` updated.
+
+Changed (web):
+- `src/components/ProductionLab.tsx` (new) + `src/styles/production.css` (new, scoped, tokens only)
+  — **the first consumer of `--motion-reveal`** (essence-review D1; the token had zero consumers).
+- `src/productionScore.ts` + `src/productionSubmit.ts` (new, pure) — score bands, chip-row
+  membership, mirror-validation, and the submit-error classifier, so the one-shot promise and the
+  chip rule are provable without a DOM (vitest runs in `node`).
+- `src/experimentText.ts` — the frozen §8 slate, additive, split PREFIX/SUFFIX per the existing
+  convention (no markdown renderer exists; none added). Authored **sentence case**, uppercased by
+  CSS — §8 prints them uppercase because that is their *rendered* form (`.specimen`/`.mint-chip`
+  are `text-transform: uppercase`, and the mockup DOM reads `Word 12 of 60 · your mean 58`).
+- `src/api/{types,client}.ts` — production DTOs, `getNextProductionPrompt` / `submitProduction` /
+  `getMyProductions` / `getAllMyProductions`, and `isUnparseableInput`. A 400 renders the frozen
+  §8.1 helper — **never** the backend's `validationErrors.input` text, which is developer-facing.
+- Mode wiring: `modes.ts` (`production`), `App.tsx` (AppView + branch), `Landing.tsx` (Word Mint
+  `SOON_MODES` → `LIVE_MODES`), plus the loop's now-stale landing/home assertions in the same change.
+- Proof battery: `ProductionLab` added to `verify-presentation-logic.mjs`'s compile list, client
+  stub and a `productionStrings` verbatim block; `semanticHooks.test.tsx` pins the four `.mint-*`
+  hooks; new `verifyWordMint` leg in `verify-browser-loop.mjs`.
+
+Proof:
+- `pnpm lint` clean · `pnpm build` green · `pnpm vitest run` **255/255** (was 219) ·
+  `verify-presentation-logic` and `verify-token-purity` pass.
+- api `./mvnw test` **168/168** (was 163 — the "163 tests" in the kickoff was right; the 155 in the
+  NIL-62 changelog entry was the count at `f22f663`, before NIL-88/NIL-90 added tests).
+- **`verify-browser-loop.mjs` exit 0 at BOTH desktop and 375px**, `assertionFailureCount: 0`,
+  `relevantConsoleErrorCount: 0`, 375px `overflowProof` 393 == 393. Headless Chromium on Linux via
+  CDP 9224 (Windows-Edge interop unavailable in this shell); backend booted `local,automation`, so
+  `browser_loop_*` registration succeeded — **the A10 wall that blocked NIL-42's loop is gone**
+  (NIL-88's exemption, live-verified).
+- `wordMintProof`: `{statusLine: "Word 1 of 94", parseErrorSurvived: true, displayForm: "ごそごそ",
+  similarityScore: 70, chipCount: 4, matchedChips: 2, unmatchedChips: 2, tableRows: 7}`.
+  - The **one-shot promise is proven the only way that cannot lie**: type `ngrk` (passes the client
+    mirror, so it reaches the server, which cannot segment it into morae → 400), see the frozen
+    helper, then successfully mint **the same word**. Had the first attempt been recorded, the
+    second would return 409 and no reveal would ever render.
+  - The mint word is `pikapika`, not `gorogoro`: the scorer does not distinguish `s` from `r`, so
+    `gorogoro` matches all seven features of `gosogoso` and scores 100 with an all-matched chip row.
+    `pikapika` scores 70 and splits the row 2/2, exercising **both** chip states in-browser.
+  - Motion gate checked by negative control: ungating the reveal animation makes
+    `verify-token-purity` fail (`production.css:140`), so the `prefers-reduced-motion` claim is
+    verified, not vacuous.
+
+Self-review (3 lenses, each finding adversarially verified; 2 of 3 candidates survived, both fixed):
+- **The fence guard was a comment, not a test.** `ProductionServiceTests` mocks the repository, so
+  the JPQL never ran, and `ProductionHttpTests` could not detect the fence's removal because the
+  seed has zero TACTILE/MOTION rows. New `CountProducibleTests` (`@SpringBootTest @Transactional`,
+  rolled back) inserts the rows the seed lacks. Both "load-bearing" clauses are now real regression
+  guards, each checked by negative control: **removing the modality fence fails 2 tests**, and
+  **swapping the `exists` subquery for a join fails the duplication test**. A third case pins
+  practice-only words as non-producible (ADR-3). Fixture note: a pairing's *foil* is also a word in
+  a non-practice trial, so foils are minted TACTILE — outside the cycle — which is itself one more
+  demonstration that the fence bites.
+- **Stale status message.** A playback error on the reveal (`StimulusPlayback onError` →
+  `setStatusMessage`) survived "Next meaning" and rendered under the next, unrelated meaning.
+  `applyPrompt` now clears it, so every fresh prompt starts clean.
+- Refuted: the `!prompt?.ideophoneId` falsy guard cannot soft-lock on `ideophoneId === 0` — ids are
+  IDENTITY from 1, and the only null case (the completion sentinel) is routed to `done` by
+  `applyPrompt` before the guard is reached.
+- The invariants lens (frozen strings, kana verbatim, V12 neutral rule, chip membership, a11y)
+  found nothing.
+- Both loop viewports re-run green after the two fixes.
+- Screenshots both viewports: `/tmp/word-mint-{prompt,parse-error,reveal}-{desktop,375px}.png`.
+  Composition matches `word-mint.html`: neutral top rule (never score-colored), tinted
+  `MEANING · AUDITORY` chip, kana at `--text-kana-feedback` with `lang="ja"`, 2 matched + 2
+  unmatched chips, collapsible 7-row table twin, full-width CTAs at 375px.
+
+Result:
+Word Mint is playable end-to-end behind the mode shell; entries persist; NIL-62 closes.
+
+Deferred (stated, not silently dropped):
+- **`getTriangulation` + the §2.4 completion benchmark** ("Arena mean producibility for these
+  words: 54") and the per-modality breakdown: `ProductionEntry` carries no `modality`, and the
+  benchmark line is unfrozen copy (§8.4: "no new strings needed beyond the above"). The completion
+  panel ships on Rating Lab patterns with the overall mean only. §2.4 also says *three* tinted
+  modality labels; the shipped cycle has **four** — spec drift to raise.
+- **Table-twin parentheticals.** The mockup shows `Heavy onset · no (p) / yes (d)`, but the API
+  returns booleans only; rendering `(p)`/`(d)` would mean deriving phonology client-side. Ships as
+  `no` / `yes`.
+- The battery cannot detect an uppercase regression (no leg inspects `text-transform`).
+
+Copy note (needs Nils's ruling to become canon):
+1. `MINT_YOURS_PREFIX`/`MINT_YOURS_SUFFIX` ("You minted `{input}`.") are outside frozen §8 —
+   ruled in this session, pending a §8 amendment.
+2. The score caption renders `{score} — {band}` verbatim, so the numeral appears twice (once as the
+   large `.score-figure`, once inside the band sentence). §8.2 freezes the `{score} — ` prefix and
+   §2.3.4 drafts exactly that rendering; the mockup's number-less caption is marked DRAFT and loses
+   to §8. If the duplication is unwanted, §8.2 is what changes.
+3. `LENGTH · {n} MORAE` interpolates *your* mora count (the chip row is your word's shape story;
+   the table proves the arithmetic).
+
+Commit:
+Not committed (commits are the user's). Two repos are dirty: `ideophone-arena-api` (the
+`totalProducible` rider) and `ideophone-arena-web` (everything else).
+
+Next single task:
+NIL-85.

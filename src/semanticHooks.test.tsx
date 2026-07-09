@@ -12,6 +12,7 @@ import IdeophoneCard from "./components/IdeophoneCard";
 import Instructions from "./components/Instructions";
 import { LeaderboardPanel } from "./components/Leaderboard";
 import ModeSelect from "./components/ModeSelect";
+import { MintPromptPanel, MintRevealPanel } from "./components/ProductionLab";
 import { RatingTrialPanel } from "./components/RatingLab";
 import TrialPlayer from "./components/TrialPlayer";
 import { MODES } from "./modes";
@@ -111,6 +112,48 @@ function combinedMarkup(): string {
         onSubmit={() => {}}
       />,
     ),
+    renderToStaticMarkup(
+      <MintPromptPanel
+        prompt={{
+          completed: false,
+          ideophoneId: 60,
+          gloss: "with a rapid heartbeat",
+          modality: "INTEROCEPTIVE",
+          totalProducible: 94,
+        }}
+        value=""
+        parseError={false}
+        submitting={false}
+        onChange={() => {}}
+        onSubmit={() => {}}
+      />,
+    ),
+    renderToStaticMarkup(
+      <MintRevealPanel
+        result={{
+          id: 40,
+          ideophoneId: 60,
+          input: "pikapika",
+          similarityScore: 78,
+          features: [
+            { feature: "redup", yours: true, target: true, matched: true },
+            { feature: "voicedOnset", yours: false, target: true, matched: false },
+            { feature: "heavyVowelRatio", yours: 0, target: 0.5, matched: false },
+            { feature: "moraCount", yours: 4, target: 4, matched: true },
+          ],
+          target: {
+            displayForm: "どきどき",
+            romaji: "dokidoki",
+            gloss: "with a rapid heartbeat",
+            stimulusUrl: "/stimuli/audio/i9h-dokidoki.m4a",
+          },
+        }}
+        replayToken={1}
+        onReplay={() => {}}
+        onNext={() => {}}
+        onBackToHome={() => {}}
+      />,
+    ),
     renderToStaticMarkup(<ModeSelect modes={MODES} onSelect={() => {}} />),
     renderToStaticMarkup(
       <Instructions
@@ -174,6 +217,12 @@ const PINNED_HOOKS = [
   "feedback-choice-card",
   "slot-hidden",
   "auth-tabs",
+  "mint-prompt",
+  "mint-input",
+  "mint-error",
+  "mint-reveal",
+  "reveal-kana",
+  "mint-chip",
 ];
 
 // Hooks the verify scripts / repaired tests match by CLASS PREFIX (`class="hook`
@@ -190,6 +239,11 @@ const FIRST_TOKEN_HOOKS = [
   "meaning-display-text",
   "feedback-choice-card",
   "rating-reveal",
+  // Word Mint: the loop matches `class="mint-error"` (and its slot-hidden
+  // adjacency) and counts chips by the `class="mint-chip` prefix.
+  "mint-error",
+  "mint-chip",
+  "reveal-kana",
 ];
 
 function classAttrsContaining(markup: string, hook: string): string[] {

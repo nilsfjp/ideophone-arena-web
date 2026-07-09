@@ -20,6 +20,7 @@ import Landing from "./components/Landing";
 import Leaderboard from "./components/Leaderboard";
 import ModeSelect from "./components/ModeSelect";
 import PerceptionLadder from "./components/PerceptionLadder";
+import ProductionLab from "./components/ProductionLab";
 import RatingLab from "./components/RatingLab";
 import TrialPlayer from "./components/TrialPlayer";
 import { Button } from "./components/ui/button";
@@ -50,6 +51,7 @@ type AppView =
   | "game"
   | "rating"
   | "ladder"
+  | "production"
   | "observatory";
 type SoundCheckStatus = "idle" | "checking" | "ready" | "error";
 type CompletionScoreView = "leaderboard" | "attempts";
@@ -188,6 +190,9 @@ export default function App() {
     }
     if (modeId === "ladder") {
       setView("ladder");
+    }
+    if (modeId === "production") {
+      setView("production");
     }
   }, []);
 
@@ -418,6 +423,15 @@ export default function App() {
           onAuthExpired={handleAuthExpired}
           onExit={handleBackToHome}
           onVisitObservatory={handleVisitObservatory}
+        />
+      );
+    }
+
+    if (view === "production") {
+      return (
+        <ProductionLab
+          onAuthExpired={handleAuthExpired}
+          onBackToHome={handleBackToHome}
         />
       );
     }

@@ -467,21 +467,25 @@ async function run() {
     `(() => [...document.querySelectorAll('.landing-mode-card[aria-disabled="true"]')]
       .map((card) => card.textContent))()`,
   );
-  // NIL-42 promoted Perception Ladder to a live LIVE_MODES card; the remaining
-  // "In the works" cards are Word Mint / Word Anatomy / Polyglot Challenge (D3
-  // renamed Cross-Linguistic → Polyglot Challenge).
-  for (const mode of ["Word Mint", "Word Anatomy", "Polyglot Challenge"]) {
+  // NIL-42 promoted Perception Ladder and NIL-62 promoted Word Mint to live
+  // LIVE_MODES cards; the remaining "In the works" cards are Word Anatomy /
+  // Polyglot Challenge (D3 renamed Cross-Linguistic → Polyglot Challenge).
+  for (const mode of ["Word Anatomy", "Polyglot Challenge"]) {
     check(
       landingComingSoon.some((text) => text.includes(mode)),
       `${mode} is not an honest coming-soon card on the landing`,
     );
   }
+  check(
+    !landingComingSoon.some((text) => text.includes("Word Mint")),
+    "Word Mint shipped (NIL-62) but is still an In-the-works card on the landing",
+  );
   const landingLive = await evaluate(
     ws,
     `(() => [...document.querySelectorAll("button.landing-mode-card")]
       .map((card) => card.textContent))()`,
   );
-  for (const mode of ["Meaning Match", "Rating Lab", "Perception Ladder"]) {
+  for (const mode of ["Meaning Match", "Rating Lab", "Perception Ladder", "Word Mint"]) {
     check(
       landingLive.some((text) => text.includes(mode)),
       `${mode} is not a live mode card on the landing`,
@@ -520,8 +524,9 @@ async function run() {
     `(() => [...document.querySelectorAll("button.mode-card:disabled")]
       .map((button) => button.textContent))()`,
   );
-  // NIL-42 promoted Perception Ladder to available, so the home grid (MODES) is
-  // now three live cards with no coming-soon stubs — assert none are disabled.
+  // NIL-42 promoted Perception Ladder and NIL-62 Word Mint, so the home grid
+  // (MODES) is now four live cards with no coming-soon stubs — assert none are
+  // disabled. New modes are not listed here until their own build ships.
   check(
     comingSoonModes.length === 0,
     `Home grid should have no coming-soon modes, saw: ${comingSoonModes.join(", ")}`,
@@ -531,7 +536,7 @@ async function run() {
     `(() => [...document.querySelectorAll("button.mode-card:not(:disabled)")]
       .map((button) => button.textContent))()`,
   );
-  for (const mode of ["Meaning Match", "Rating Lab", "Perception Ladder"]) {
+  for (const mode of ["Meaning Match", "Rating Lab", "Perception Ladder", "Word Mint"]) {
     check(
       enabledModes.some((text) => text.includes(mode)),
       `${mode} is not shown as an enabled mode card`,
@@ -883,13 +888,19 @@ async function run() {
   );
 
   // Perception Ladder (NIL-42): mode grid → floor stack → floor-intro Dialog →
-  // play a floor to completion, in the same authenticated session. The last stage that
-  // drives the UI, so the live-DOM checks below are conditional on it having finished.
+  // play a floor to completion, in the same authenticated session.
   const ladderProof = await runStage(
     "perception ladder",
     () => verifyPerceptionLadder(ws),
     { navigates: true },
   );
+
+  // Word Mint (NIL-62): mode grid → prompt → server parse error → mint the SAME
+  // word → reveal. The last stage that drives the UI, so the live-DOM checks
+  // below are conditional on it having finished.
+  const wordMintProof = await runStage("word mint", () => verifyWordMint(ws), {
+    navigates: true,
+  });
 
   check(
     stimulusRequests.length > 0,
@@ -1000,6 +1011,7 @@ async function run() {
         recentAttemptsVisible: attemptsText.includes("Recent Attempts"),
         ratingProof,
         ladderProof,
+        wordMintProof,
         meaningOrderProof: {
           assertedRoundCount: meaningOrderRounds.length,
           targetFirstCount,
@@ -2024,5 +2036,257 @@ async function verifyPerceptionLadder(ws) {
     pairsPlayed: played,
     finalRungSeen: sawFinalRung,
     completionVisible: completeText.includes("Floor cleared:"),
+  };
+}
+
+// The mint input is labelled by its instruction line (aria-labelledby), not by a
+// wrapping <label>, so setInputByLabel cannot reach it. React tracks the value
+// on the DOM node, so assign through the native setter and fire `input` --
+// otherwise React re-renders the field back to its old state.
+async function setMintInput(ws, value) {
+  return evaluate(
+    ws,
+    `(() => {
+      const input = document.querySelector(".mint-input");
+      if (!input) return false;
+      const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set;
+      setter.call(input, ${JSON.stringify(value)});
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      return true;
+    })()`,
+  );
+}
+
+// textContent, not innerText: the specimen labels and chips are CSS-uppercased,
+// and the frozen strings are authored sentence case.
+async function textOf(ws, selector) {
+  return evaluate(
+    ws,
+    `document.querySelector(${JSON.stringify(selector)})?.textContent ?? ""`,
+  );
+}
+
+// Word Mint (NIL-62). The load-bearing proof is the one-shot promise: a form that
+// the SERVER rejects as unparseable must not consume the try. We prove it the only
+// way that cannot lie -- fail on a word, then successfully mint THE SAME word. Had
+// the first attempt been recorded, the second would come back 409 and no reveal
+// would ever render.
+//
+// Everything on this path is native (V11: native input, native buttons, native
+// <details> table twin), so no new Radix idiom is owed here (§16 H7).
+async function verifyWordMint(ws) {
+  // Back to the mode grid via the header title, then open Word Mint.
+  if (!(await clickText(ws, "Ideophone Arena"))) {
+    throw new Error("Site title (back to modes) not found");
+  }
+  await waitFor(
+    async () => (await bodyText(ws)).includes("Choose a mode"),
+    "mode select home",
+  );
+  if (!(await clickText(ws, "Word Mint"))) {
+    throw new Error("Word Mint mode card not found");
+  }
+  await waitFor(
+    () => evaluate(ws, "!!document.querySelector('.mint-prompt')"),
+    "word mint prompt card",
+  );
+
+  const promptText = await textOf(ws, ".mint-prompt");
+  check(
+    promptText.includes(
+      "Invent a word whose sound fits the meaning below. Type it in roman letters.",
+    ),
+    "Word Mint prompt is missing the frozen §8.1 instruction",
+  );
+  check(
+    promptText.includes("One try per word"),
+    "Word Mint prompt is missing the one-shot notice",
+  );
+  // The meaning is the whole prompt: nothing about the form leaks pre-submit.
+  check(
+    !(await evaluate(ws, "!!document.querySelector('.mint-prompt audio')")),
+    "Word Mint prompt leaked audio before the word was minted",
+  );
+  // The parse helper occupies its slot from first paint (invariant 5).
+  check(
+    await evaluate(ws, "!!document.querySelector('.mint-error.slot-hidden')"),
+    "Word Mint parse-helper slot is not reserved at first paint",
+  );
+
+  const statusText = await textOf(ws, ".mint-status");
+  check(
+    /^Word \d+ of \d+/.test(statusText.trim()),
+    `Word Mint status line should read "Word {i} of {n}", saw: ${statusText}`,
+  );
+  const meaning = await textOf(ws, ".mint-meaning");
+  await captureScreenshot(ws, "word-mint-prompt");
+
+  // ---- the attempt that must NOT be consumed ----
+  // "ngrk" passes the client's ^[a-z]{2,24}$ mirror, so it reaches the server,
+  // which cannot segment it into morae and answers 400 + validationErrors.input.
+  if (!(await setMintInput(ws, "ngrk"))) {
+    throw new Error("Mint input not found");
+  }
+  if (!(await clickText(ws, "Mint this word"))) {
+    throw new Error("'Mint this word' button not found");
+  }
+  await waitFor(
+    () =>
+      evaluate(
+        ws,
+        "!!document.querySelector('.mint-error') && !document.querySelector('.mint-error.slot-hidden')",
+      ),
+    "word mint parse-error helper",
+  );
+  const helperText = await textOf(ws, ".mint-error");
+  check(
+    helperText.includes("That didn't read as speakable syllables"),
+    "Parse error did not render the frozen §8.1 helper",
+  );
+  check(
+    !helperText.includes("morae") && !helperText.includes("input:"),
+    `Parse error leaked the backend's developer-facing message: ${helperText}`,
+  );
+  check(
+    await evaluate(ws, "!!document.querySelector('.mint-prompt')"),
+    "A parse error navigated away from the prompt card",
+  );
+  check(
+    !(await evaluate(ws, "!!document.querySelector('.mint-reveal')")),
+    "A parse error revealed the real word",
+  );
+  check(
+    (await evaluate(ws, "document.querySelector('.mint-input')?.value")) === "ngrk",
+    "A parse error discarded the player's typed word",
+  );
+  check(
+    (await textOf(ws, ".mint-meaning")) === meaning,
+    "A parse error advanced past the meaning, consuming the attempt",
+  );
+  // The submit stays live: an attempted submit is how the rule is learned.
+  check(
+    !(await evaluate(
+      ws,
+      `(() => [...document.querySelectorAll("button")]
+        .some((b) => b.textContent.includes("Mint this word") && b.disabled))()`,
+    )),
+    "The Mint button was disabled after a parse error",
+  );
+  await captureScreenshot(ws, "word-mint-parse-error");
+
+  // ---- mint THE SAME word: only possible if the try was never consumed ----
+  // "pikapika" against the first AUDITORY word scores in the middle band and
+  // splits the feature set, so the reveal exercises BOTH chip states. (A word
+  // like "gorogoro" matches all seven features of "gosogoso" -- the scorer does
+  // not distinguish s from r -- and would render an all-matched row.)
+  if (!(await setMintInput(ws, "pikapika"))) {
+    throw new Error("Mint input vanished after the parse error");
+  }
+  if (!(await clickText(ws, "Mint this word"))) {
+    throw new Error("'Mint this word' button vanished after the parse error");
+  }
+  await waitFor(
+    () => evaluate(ws, "!!document.querySelector('.mint-reveal')"),
+    "word mint reveal card",
+  );
+
+  const revealText = await textOf(ws, ".mint-reveal");
+  check(
+    revealText.includes("The real word is "),
+    "Reveal card is missing the frozen §8.2 reveal line",
+  );
+  const kana = await evaluate(
+    ws,
+    `(() => {
+      const el = document.querySelector(".reveal-kana");
+      return el ? { text: el.textContent, lang: el.getAttribute("lang") } : null;
+    })()`,
+  );
+  check(Boolean(kana?.text), "Reveal card rendered no display form");
+  check(kana?.lang === "ja", "Reveal kana is missing lang=\"ja\"");
+  check(
+    /[ぁ-ヿ]/u.test(kana?.text ?? ""),
+    `Reveal display form is not kana: ${kana?.text}`,
+  );
+  check(
+    revealText.includes("Similarity · 0–100"),
+    "Reveal card is missing the frozen similarity specimen label",
+  );
+  check(
+    revealText.includes("You minted "),
+    "Reveal card does not show the player's own word",
+  );
+  check(
+    (await textOf(ws, ".yours-line")).includes("pikapika"),
+    "Reveal card did not echo the typed romaji exactly as typed",
+  );
+  const score = await textOf(ws, ".score-figure");
+  check(
+    /^\d{1,3}$/.test(score.trim()),
+    `Reveal score figure should be an integer 0-100, saw: ${score}`,
+  );
+  const chipCount = await evaluate(
+    ws,
+    "document.querySelectorAll('.mint-chip').length",
+  );
+  check(chipCount > 0, "Reveal card rendered no feature chips");
+  // §11.4: chips render BOTH states. Unmatched is muted, never negative.
+  const matchedChips = await evaluate(
+    ws,
+    "document.querySelectorAll('.mint-chip.matched').length",
+  );
+  const unmatchedChips = await evaluate(
+    ws,
+    "document.querySelectorAll('.mint-chip.unmatched').length",
+  );
+  check(matchedChips > 0, "Reveal card rendered no matched chips");
+  check(unmatchedChips > 0, "Reveal card rendered no unmatched chips");
+  check(
+    matchedChips + unmatchedChips === chipCount,
+    "Some feature chip carries neither the matched nor the unmatched state",
+  );
+  // Shared absences are suppressed from the row, so it is shorter than the table.
+  check(
+    chipCount < 7,
+    `Chip row should suppress shared absences, saw all ${chipCount} features`,
+  );
+  // No kana glyphs in chrome chips (§2.3.5).
+  check(
+    !(await evaluate(
+      ws,
+      `(() => [...document.querySelectorAll(".mint-chip")]
+        .some((chip) => /[\\u3041-\\u30ff]/.test(chip.textContent)))()`,
+    )),
+    "A feature chip carried kana glyphs",
+  );
+  // One try per word: the submit is gone once the word is minted.
+  check(
+    !(await evaluate(
+      ws,
+      `(() => [...document.querySelectorAll("button")]
+        .some((b) => b.textContent.includes("Mint this word")))()`,
+    )),
+    "The Mint button survived a successful mint (one try per word)",
+  );
+  // The table twin proves the arithmetic the chips summarize: all seven features.
+  const tableRows = await evaluate(
+    ws,
+    "document.querySelectorAll('.mint-table tbody tr').length",
+  );
+  check(
+    tableRows === 7,
+    `The comparison table should carry all seven features, saw ${tableRows}`,
+  );
+  await captureScreenshot(ws, "word-mint-reveal");
+
+  return {
+    statusLine: statusText.trim(),
+    parseErrorSurvived: true,
+    displayForm: kana?.text ?? null,
+    similarityScore: Number(score.trim()),
+    chipCount,
+    matchedChips,
+    unmatchedChips,
+    tableRows,
   };
 }

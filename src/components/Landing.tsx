@@ -60,17 +60,19 @@ const LIVE_MODES: { measure: string; title: string; copy: string; mode: ModeId }
       copy: "Climb from sound to inner states — accuracy falls as feelings deepen.",
       mode: "ladder",
     },
+    {
+      measure: "Measure · Production",
+      title: "Word Mint",
+      copy: "See a meaning, invent the word — scored feature by feature against the real one.",
+      mode: "production",
+    },
   ];
 
 // Honest coming-soon (§2.3 / §9): full-opacity copy, an "In the works" pill, no
-// dead links. Perception Ladder shipped (NIL-42), so it moved up to LIVE_MODES.
+// dead links. Perception Ladder shipped (NIL-42) and Word Mint shipped (NIL-62),
+// so both moved up to LIVE_MODES.
 // The XL card is the resolved "Polyglot Challenge" name (D3, Nils 2026-07-07).
 const SOON_MODES: { measure: string; title: string; copy: string }[] = [
-  {
-    measure: "Measure · Production",
-    title: "Word Mint",
-    copy: "See a meaning, invent the word — scored feature by feature against the real one.",
-  },
   {
     measure: "Structure · Patterns",
     title: "Word Anatomy",

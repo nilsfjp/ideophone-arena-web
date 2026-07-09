@@ -4,6 +4,30 @@ import {
   LISTEN_INSTRUCTION,
   MEANING_OTHER_PREFIX,
   MEANING_TARGET_PREFIX,
+  MINT_BACK_BUTTON,
+  MINT_BAND_ALMOST,
+  MINT_BAND_DIFFERENT,
+  MINT_BAND_MOST,
+  MINT_BAND_SOME,
+  MINT_CHIP_LENGTH_PREFIX,
+  MINT_CHIP_LENGTH_SUFFIX,
+  MINT_CHIP_SOKUON,
+  MINT_INSTRUCTION,
+  MINT_NEXT_BUTTON,
+  MINT_ONE_SHOT_LABEL,
+  MINT_ONE_SHOT_SUPPORT,
+  MINT_PARSE_ERROR_BETWEEN,
+  MINT_PARSE_ERROR_EXAMPLE_ONE,
+  MINT_PARSE_ERROR_EXAMPLE_TWO,
+  MINT_PARSE_ERROR_PREFIX,
+  MINT_PARSE_ERROR_SUFFIX,
+  MINT_REVEAL_PREFIX,
+  MINT_REVEAL_SUFFIX,
+  MINT_SCORE_LABEL,
+  MINT_STATUS_MEAN_PREFIX,
+  MINT_STATUS_OF,
+  MINT_STATUS_WORD_PREFIX,
+  MINT_SUBMIT_BUTTON,
   RATING_ANCHOR_HIGH_INLINE,
   RATING_ANCHOR_LOW_INLINE,
   RATING_HOW_TO,
@@ -41,6 +65,15 @@ const FROZEN_PHRASES = [
   RATING_QUESTION,
   RATING_SCALE_LOW_LABEL,
   RATING_SCALE_HIGH_LABEL,
+  // Word Mint (NIL-83). Same rule: distinctive phrases only.
+  MINT_INSTRUCTION,
+  MINT_ONE_SHOT_SUPPORT,
+  MINT_PARSE_ERROR_PREFIX,
+  MINT_REVEAL_PREFIX,
+  MINT_BAND_ALMOST,
+  MINT_BAND_MOST,
+  MINT_BAND_SOME,
+  MINT_BAND_DIFFERENT,
 ];
 
 const sourceFiles = import.meta.glob("./**/*.{ts,tsx}", {
@@ -97,5 +130,75 @@ describe("rating task strings are frozen verbatim (27D, adjudicated 2026-07-02)"
     expect(RATING_SCALE_HIGH_LABEL).toBe("Strong resemblance");
     expect(RATING_REPLAY_BUTTON).toBe("Replay");
     expect(RATING_NEXT_BUTTON).toBe("Next");
+  });
+});
+
+describe("Word Mint strings are frozen verbatim (NIL-83, adjudicated 2026-07-06)", () => {
+  // SPEC-view-designs.md §8. Authored sentence case and uppercased by CSS
+  // (.specimen / .mint-chip): §8 prints them uppercase because that is their
+  // rendered form. Player copy is language-neutral — no string names Japanese.
+  it("keeps the prompt-state wording exactly", () => {
+    expect(MINT_INSTRUCTION).toBe(
+      "Invent a word whose sound fits the meaning below. Type it in roman letters.",
+    );
+    expect(MINT_ONE_SHOT_LABEL).toBe("One try per word");
+    expect(MINT_ONE_SHOT_SUPPORT).toBe("Your first instinct is the data.");
+    expect(MINT_SUBMIT_BUTTON).toBe("Mint this word");
+  });
+
+  it("reassembles the parse helper exactly as adjudicated", () => {
+    const helper =
+      MINT_PARSE_ERROR_PREFIX +
+      `*${MINT_PARSE_ERROR_EXAMPLE_ONE}*` +
+      MINT_PARSE_ERROR_BETWEEN +
+      `*${MINT_PARSE_ERROR_EXAMPLE_TWO}*` +
+      MINT_PARSE_ERROR_SUFFIX;
+    expect(helper).toBe(
+      "That didn't read as speakable syllables — try simple roman letters, like *gorogoro* or *pika*.",
+    );
+  });
+
+  it("keeps the reveal-state wording exactly", () => {
+    expect(MINT_REVEAL_PREFIX + "**{displayForm}**" + MINT_REVEAL_SUFFIX).toBe(
+      "The real word is **{displayForm}**.",
+    );
+    expect(MINT_SCORE_LABEL.toUpperCase()).toBe("SIMILARITY · 0–100");
+    expect(MINT_NEXT_BUTTON).toBe("Next meaning");
+    expect(MINT_BACK_BUTTON).toBe("Back to modes");
+  });
+
+  it("keeps each score band exactly, score included", () => {
+    // §8.2 freezes the bands as "{score} — <tail>": the numeral is part of the
+    // sentence, and interpolates before the tail.
+    expect("{score}" + MINT_BAND_ALMOST).toBe(
+      "{score} — your instinct is almost the same word.",
+    );
+    expect("{score}" + MINT_BAND_MOST).toBe(
+      "{score} — your instinct shares most of its shape with the real word.",
+    );
+    expect("{score}" + MINT_BAND_SOME).toBe(
+      "{score} — your word and the real one share some bones.",
+    );
+    expect("{score}" + MINT_BAND_DIFFERENT).toBe(
+      "{score} — a different creature — which is also data.",
+    );
+  });
+
+  it("keeps the chip and status vocabularies exactly", () => {
+    // The "· Q" notation matches the scorer's normalization and is deliberate.
+    expect(MINT_CHIP_SOKUON.toUpperCase()).toBe("SHARP CUT · Q");
+    expect(
+      (MINT_CHIP_LENGTH_PREFIX + "{n}" + MINT_CHIP_LENGTH_SUFFIX).toUpperCase(),
+    ).toBe("LENGTH · {N} MORAE");
+    expect(
+      (
+        MINT_STATUS_WORD_PREFIX +
+        "{i}" +
+        MINT_STATUS_OF +
+        "{n}" +
+        MINT_STATUS_MEAN_PREFIX +
+        "{m}"
+      ).toUpperCase(),
+    ).toBe("WORD {I} OF {N} · YOUR MEAN {M}");
   });
 });

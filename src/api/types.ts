@@ -305,3 +305,75 @@ export type TrialPhase =
   | "feedback"
   | "complete"
   | "error";
+
+// Production — Word Mint (backend NIL-62). The meaning is the whole prompt: no
+// romaji, no kana, no audio until the word is minted.
+export type ProductionPrompt = {
+  completed: boolean;
+  ideophoneId: number | null;
+  gloss: string | null;
+  modality: Modality | null;
+  // The {n} of the frozen "word {i} of {n}" status line. Caller-invariant, and
+  // carried on the completion sentinel too. Never derive or hardcode it (V14) —
+  // the same rule as GameSessionResponse.totalRounds. Optional on the type only
+  // because apiRequest does no runtime validation: an older backend omits it.
+  totalProducible?: number;
+};
+
+export type ProductionRequest = {
+  ideophoneId: number;
+  input: string;
+  responseTimeMs: number;
+};
+
+// The seven scorer features, in the frozen chip order of SPEC-view-designs 8.3.
+export type FeatureKey =
+  | "redup"
+  | "sokuon"
+  | "finalN"
+  | "riSuffix"
+  | "voicedOnset"
+  | "heavyVowelRatio"
+  | "moraCount";
+
+// `yours`/`target` are heterogeneous by contract: five booleans, moraCount an
+// integer, heavyVowelRatio a 2-dp decimal. `matched` means the feature paid its
+// full weight — a shared absence still matches.
+export type FeatureMatch = {
+  feature: FeatureKey;
+  yours: boolean | number;
+  target: boolean | number;
+  matched: boolean;
+};
+
+export type ProductionTarget = {
+  displayForm: string;
+  romaji: string;
+  gloss: string;
+  stimulusUrl: string;
+};
+
+export type ProductionResponse = {
+  id: number;
+  ideophoneId: number;
+  input: string;
+  similarityScore: number;
+  features: FeatureMatch[];
+  target: ProductionTarget;
+};
+
+export type ProductionEntry = {
+  id: number;
+  ideophoneId: number;
+  input: string;
+  similarityScore: number;
+  createdAt: string;
+};
+
+export type ProductionPageResponse = {
+  entries: ProductionEntry[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};

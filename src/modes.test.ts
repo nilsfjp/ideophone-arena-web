@@ -2,17 +2,19 @@ import { describe, expect, it } from "vitest";
 import { MODES } from "./modes";
 
 describe("mode registry", () => {
-  it("has three modes with unique ids", () => {
-    expect(MODES).toHaveLength(3);
-    expect(new Set(MODES.map((mode) => mode.id)).size).toBe(3);
+  it("gives every registered mode a unique id", () => {
+    expect(new Set(MODES.map((mode) => mode.id)).size).toBe(MODES.length);
   });
 
-  it("Meaning Match, Rating Lab, and the Perception Ladder are available", () => {
+  // The registry lists shipped modes only — the six-mode shell scales from this
+  // data, not from stubs, so a new entry here means a new build landed.
+  it("Meaning Match, Rating Lab, Perception Ladder and Word Mint are available", () => {
     const available = MODES.filter((mode) => mode.status === "available");
     expect(available.map((mode) => mode.id)).toEqual([
       "choosing",
       "rating",
       "ladder",
+      "production",
     ]);
   });
 

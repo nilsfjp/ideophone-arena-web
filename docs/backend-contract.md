@@ -1,6 +1,6 @@
 # Ideophone Arena frontend/backend contract
 
-Date: 2026-06-07
+Date: 2026-07-09
 
 ## Purpose
 
@@ -348,6 +348,98 @@ first-encounter order, deduplicated. `src/ratingPool.ts` is now a thin client
 (`fetchRatingPool()` walks the pages); the former `ideophone-arena-rating-pool`
 localStorage pool is retired without migration — it broke for any multi-device
 user, which the server pool fixes by construction.
+
+## Production — Word Mint (2026-07-09, backend NIL-62)
+
+```text
+GET  /api/productions/next
+POST /api/productions
+GET  /api/game/me/productions?page=0&size=10
+GET  /api/research/triangulation           (no auth)
+```
+
+The production measure: the player reads a meaning and invents a word for it.
+Persistence is `UNIQUE(user_id, word_id)` — **one try per word, for life** — so
+"your first instinct is the datum" is enforced by the database, not the UI.
+
+**`GET /api/productions/next`** →
+`{ completed, ideophoneId, gloss, modality, totalProducible }`. The meaning is
+the whole prompt: no romaji, no kana, no audio pre-submit. Once every word is
+produced, the completion sentinel is `{ completed: true, ideophoneId: null,
+gloss: null, modality: null, totalProducible }` (the `RoundResponse`
+precedent). Selection is deterministic and stateless — the caller's production
+count is the cycle cursor, cycling `AUDITORY → VISUAL → HAPTIC →
+INTEROCEPTIVE`, lowest word id within a modality, skipping exhausted ones.
+
+`totalProducible` is the `{n}` of the frozen `WORD {i} OF {n} · YOUR MEAN {m}`
+status line (`SPEC-view-designs.md` §8.4). It is **caller-invariant** — minting
+advances `{i}`, never shrinks `{n}` — and is carried on the sentinel too, so
+the status line survives the last round. It counts words in ≥1 non-practice
+trial *within the four cycle modalities* (`Modality` also has `TACTILE` and
+`MOTION`, which the cycle never serves). Currently 94. **Never derive or
+hardcode it** (V14) — the same rule as `session.totalRounds`.
+
+**`POST /api/productions`** body
+`{ ideophoneId, input, responseTimeMs, sessionUuid }` → `201`:
+
+```json
+{
+  "id": 40, "ideophoneId": 60, "input": "pikapika", "similarityScore": 78,
+  "features": [
+    { "feature": "redup",           "yours": true,  "target": true,  "matched": true  },
+    { "feature": "sokuon",          "yours": false, "target": false, "matched": true  },
+    { "feature": "finalN",          "yours": false, "target": false, "matched": true  },
+    { "feature": "riSuffix",        "yours": false, "target": false, "matched": true  },
+    { "feature": "voicedOnset",     "yours": false, "target": true,  "matched": false },
+    { "feature": "heavyVowelRatio", "yours": 0.00,  "target": 0.50,  "matched": false },
+    { "feature": "moraCount",       "yours": 4,     "target": 4,     "matched": true  }
+  ],
+  "target": { "displayForm": "どきどき", "romaji": "dokidoki",
+              "gloss": "with a rapid heartbeat",
+              "stimulusUrl": "/stimuli/audio/i9h-dokidoki.m4a" }
+}
+```
+
+`features` always carries all **seven** entries in the frozen chip order of
+`SPEC-view-designs.md` §8.3. `yours`/`target` are heterogeneous by design: five
+booleans, `moraCount` an integer, `heavyVowelRatio` a 2-dp decimal. `matched`
+means the feature contributed its full weight — **a shared absence still
+matches**. The client decides which features become chips (§2.3.5: those
+present in either form, plus the two continuous features always); the full
+seven drive the comparison-table twin. `similarityScore` is
+`round_half_even(100 × similarity)` under `scorer_version = 1`; an exact form
+match is `100`. The client never recomputes the score or the features.
+
+Status codes: `input` is trimmed + lowercased, must match `^[a-z]{2,24}$` **and**
+segment into morae — either failure is **`400` with `validationErrors.input`,
+and the attempt is not consumed** (nothing is written; the player's one try
+survives a typo). Unknown `ideophoneId` → `404`. Duplicate → `409` (including
+the concurrent case, via `saveAndFlush`). `sessionUuid` is optional and
+gameMode-agnostic (provenance only); unknown → `404`, another user's → `403`.
+`responseTimeMs`, if present, must be `0..600000`.
+
+The frontend renders the frozen §8.1 parse helper on a `400` — **never the
+backend's `validationErrors.input` text**, which is developer-facing and would
+ship unfrozen copy. Read presence from `ApiError.body.validationErrors?.input`;
+never from `ApiError.message`, which is prefixed with the field name.
+
+Kana discipline: the only kana shown is `target.displayForm`, rendered verbatim
+with `lang="ja"` after submit. The player's romaji is displayed exactly as typed
+and is never converted (invariant 1/3).
+
+**`GET /api/game/me/productions`** → the standard paginated wrapper; entries are
+`{ id, ideophoneId, input, similarityScore, createdAt }`, most recent first
+(descending id breaks same-second ties). `page` clamped `≥ 0`, `size` clamped
+`1..50`. Word Mint page-walks this once on mount to seed `{i}` (`totalElements`)
+and `{m}` (the mean of `similarityScore`), then updates both locally from each
+`201`. Entries carry **no** `modality`, so a per-modality breakdown is not
+currently derivable client-side.
+
+**`GET /api/research/triangulation`** (public) extends the divergence pattern
+with `meanProductionScore` / `productionCount`, one row per word with *any*
+data. Its key set is a superset of `/api/research/divergence`, which is
+unchanged. **Not consumed by the frontend yet** — the §2.4 completion benchmark
+that would use it needs unfrozen copy, so it is deferred.
 
 ## Research divergence (public)
 

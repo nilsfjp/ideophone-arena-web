@@ -9,6 +9,11 @@ import type {
   LoginRequest,
   NextRoundResponse,
   PositionBiasResponse,
+  ProductionEntry,
+  ProductionPageResponse,
+  ProductionPrompt,
+  ProductionRequest,
+  ProductionResponse,
   RatableWordPageResponse,
   RatableWordResponse,
   RatingDistributionsResponse,
@@ -326,6 +331,53 @@ export async function getAllRatableWords(): Promise<RatableWordResponse[]> {
   }
 
   return entries;
+}
+
+export function getNextProductionPrompt() {
+  return apiRequest<ProductionPrompt>("/api/productions/next");
+}
+
+// 400 = unparseable (the attempt is NOT consumed), 404 = unknown word,
+// 409 = already produced. Callers discriminate on ApiError.status.
+export function submitProduction(request: ProductionRequest) {
+  return apiRequest<ProductionResponse>("/api/productions", {
+    method: "POST",
+    body: request,
+  });
+}
+
+export function getMyProductions(page = 0, size = 50) {
+  return apiRequest<ProductionPageResponse>(
+    `/api/game/me/productions?page=${page}&size=${size}`,
+  );
+}
+
+export async function getAllMyProductions(): Promise<ProductionEntry[]> {
+  const entries: ProductionEntry[] = [];
+  let page = 0;
+  let totalPages = 1;
+
+  while (page < totalPages && page < PAGE_WALK_MAX_PAGES) {
+    const response = await getMyProductions(page);
+    entries.push(...(response.entries ?? []));
+    totalPages = response.totalPages ?? 0;
+    page += 1;
+  }
+
+  return entries;
+}
+
+// A 400 from POST /api/productions carries validationErrors.input. This reports
+// only its PRESENCE: the backend's message is developer-facing, and rendering it
+// would ship unfrozen player copy. The view shows the frozen 8.1 helper instead.
+// ApiError.message is unusable here too — errorMessage() prefixes it with the
+// field name.
+export function isUnparseableInput(error: unknown): boolean {
+  if (!(error instanceof ApiError) || error.status !== 400) {
+    return false;
+  }
+  const body = error.body as ApiErrorBody | null;
+  return typeof body?.validationErrors?.input === "string";
 }
 
 export function getDivergence() {

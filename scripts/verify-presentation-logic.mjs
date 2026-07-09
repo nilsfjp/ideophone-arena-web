@@ -35,6 +35,7 @@ try {
       "src/components/StimulusDisplay.tsx",
       "src/components/TrialPlayer.tsx",
       "src/components/RatingLab.tsx",
+      "src/components/ProductionLab.tsx",
       "--ignoreConfig",
       "--jsx",
       "react-jsx",
@@ -81,6 +82,11 @@ try {
       "export const getRatableWords = async () => ({ entries: [], page: 0, size: 50, totalElements: 0, totalPages: 0 });",
       "export const getAllRatableWords = async () => [];",
       "export const getDivergence = async () => [];",
+      "export const getNextProductionPrompt = async () => ({ completed: true, ideophoneId: null, gloss: null, modality: null, totalProducible: 0 });",
+      "export const submitProduction = async () => { throw new Error('stub'); };",
+      "export const getMyProductions = async () => ({ entries: [], page: 0, size: 50, totalElements: 0, totalPages: 0 });",
+      "export const getAllMyProductions = async () => [];",
+      "export const isUnparseableInput = () => false;",
       "",
     ].join("\n"),
   );
@@ -426,6 +432,143 @@ try {
       `the initial rating render should mount the reserved "${slot}" slot`,
     );
   }
+
+  // ---- Word Mint (NIL-62): frozen §8 strings + the kana-verbatim reveal ----
+  const mint = await import(`file://${join(tempDir, "components/ProductionLab.js")}`);
+
+  const mintStrings = {
+    MINT_INSTRUCTION:
+      "Invent a word whose sound fits the meaning below. Type it in roman letters.",
+    MINT_ONE_SHOT_LABEL: "One try per word",
+    MINT_ONE_SHOT_SUPPORT: "Your first instinct is the data.",
+    MINT_SUBMIT_BUTTON: "Mint this word",
+    MINT_PARSE_ERROR_PREFIX:
+      "That didn't read as speakable syllables — try simple roman letters, like ",
+    MINT_PARSE_ERROR_EXAMPLE_ONE: "gorogoro",
+    MINT_PARSE_ERROR_BETWEEN: " or ",
+    MINT_PARSE_ERROR_EXAMPLE_TWO: "pika",
+    MINT_REVEAL_PREFIX: "The real word is ",
+    MINT_SCORE_LABEL: "Similarity · 0–100",
+    MINT_BAND_ALMOST: " — your instinct is almost the same word.",
+    MINT_BAND_MOST: " — your instinct shares most of its shape with the real word.",
+    MINT_BAND_SOME: " — your word and the real one share some bones.",
+    MINT_BAND_DIFFERENT: " — a different creature — which is also data.",
+    MINT_NEXT_BUTTON: "Next meaning",
+    MINT_BACK_BUTTON: "Back to modes",
+    MINT_STATUS_WORD_PREFIX: "Word ",
+    MINT_STATUS_OF: " of ",
+    MINT_STATUS_MEAN_PREFIX: " · your mean ",
+  };
+  for (const [key, expected] of Object.entries(mintStrings)) {
+    assertEqual(text[key], expected, `${key} must keep the NIL-83 adjudicated wording`);
+  }
+
+  // The prompt: the meaning is the whole prompt. No kana, no romaji, no audio.
+  const mintPrompt = {
+    completed: false,
+    ideophoneId: 60,
+    gloss: "with a rapid heartbeat",
+    modality: "INTEROCEPTIVE",
+    totalProducible: 94,
+  };
+  const mintPromptMarkup = renderToStaticMarkup(
+    jsx(mint.MintPromptPanel, {
+      prompt: mintPrompt,
+      value: "",
+      parseError: false,
+      submitting: false,
+      onChange: () => {},
+      onSubmit: () => {},
+    }),
+  );
+  assertEqual(
+    countOccurrences(mintPromptMarkup, `<p class="mint-instruction" id="mint-label">${text.MINT_INSTRUCTION}</p>`),
+    1,
+    "the mint prompt should render the frozen instruction exactly once, as the input's label",
+  );
+  assertEqual(
+    countOccurrences(mintPromptMarkup, `<strong>${mintPrompt.gloss}</strong>`),
+    1,
+    "the mint prompt should render the meaning bold, exactly once",
+  );
+  // Invariant 5: the parse helper is mounted from first paint, so revealing it
+  // never pushes the input or the submit button down.
+  assertEqual(
+    mintPromptMarkup.includes("mint-error slot-hidden"),
+    true,
+    'the initial mint render should mount the reserved "mint-error" slot',
+  );
+
+  const mintTarget = {
+    displayForm: "どきどき",
+    romaji: "dokidoki",
+    gloss: "with a rapid heartbeat",
+    stimulusUrl: "/stimuli/audio/i9h-dokidoki.m4a",
+  };
+  const mintRevealMarkup = renderToStaticMarkup(
+    jsx(mint.MintRevealPanel, {
+      result: {
+        id: 40,
+        ideophoneId: 60,
+        input: "pikapika",
+        similarityScore: 78,
+        features: [
+          { feature: "redup", yours: true, target: true, matched: true },
+          { feature: "sokuon", yours: false, target: false, matched: true },
+          { feature: "finalN", yours: false, target: false, matched: true },
+          { feature: "riSuffix", yours: false, target: false, matched: true },
+          { feature: "voicedOnset", yours: false, target: true, matched: false },
+          { feature: "heavyVowelRatio", yours: 0, target: 0.5, matched: false },
+          { feature: "moraCount", yours: 4, target: 4, matched: true },
+        ],
+        target: mintTarget,
+      },
+      replayToken: 1,
+      onReplay: () => {},
+      onNext: () => {},
+      onBackToHome: () => {},
+    }),
+  );
+  // Invariant 1/3: the reveal form is the backend's displayForm, rendered
+  // verbatim — never converted, and never a per-character kana derivation.
+  assertEqual(
+    countOccurrences(
+      mintRevealMarkup,
+      `${text.MINT_REVEAL_PREFIX}<strong class="reveal-kana" lang="ja">${mintTarget.displayForm}</strong>`,
+    ),
+    1,
+    "the mint reveal should render the backend displayForm verbatim, exactly once",
+  );
+  assertEqual(
+    mintRevealMarkup.includes(naiveKatakana(mintTarget.displayForm)),
+    false,
+    "the mint reveal must never render a client-side kana conversion of the display form",
+  );
+  // The player's romaji is displayed exactly as typed, never converted.
+  assertEqual(
+    countOccurrences(mintRevealMarkup, "<code>pikapika</code>"),
+    1,
+    "the mint reveal should render the player's romaji exactly as typed",
+  );
+  // §8.2: the band string carries the score, and the numeral also stands alone.
+  assertEqual(
+    countOccurrences(mintRevealMarkup, `78${text.MINT_BAND_MOST}`),
+    1,
+    "the mint reveal should assemble the banded one-liner from the frozen string",
+  );
+  // §2.3.5: present-in-either features only — shared absences live in the table.
+  assertEqual(
+    (mintRevealMarkup.match(/class="mint-chip[ "]/g) ?? []).length,
+    4,
+    "the worked example should render exactly four chips (shared absences suppressed)",
+  );
+  // No kana glyphs in chrome chips (§2.3.5).
+  const chipRow = mintRevealMarkup.split('<ul class="mint-chips">')[1]?.split("</ul>")[0] ?? "";
+  assertEqual(
+    /[ぁ-ヿ]/u.test(chipRow),
+    false,
+    "the mint chips must never carry kana glyphs",
+  );
 
   console.log("Presentation logic verified.");
 } finally {

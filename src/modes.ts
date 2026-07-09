@@ -4,7 +4,7 @@
 // facing names are the adopted slate (NIL-64 §10.2); internal ids and API
 // values are unchanged. New modes are NOT added here until their own build
 // ships — the six-mode shell (§2.3) scales from this data, not from stubs.
-export type ModeId = "choosing" | "rating" | "ladder";
+export type ModeId = "choosing" | "rating" | "ladder" | "production";
 export type ModeStatus = "available" | "coming-soon";
 
 export type ModeDefinition = {
@@ -41,5 +41,13 @@ export const MODES: ModeDefinition[] = [
     status: "available",
     description:
       "Climb from sounds to sights to inner states to touch, one floor at a time.",
+  },
+  {
+    id: "production",
+    title: "Word Mint",
+    measure: "Measure · Production",
+    status: "available",
+    description:
+      "See a meaning, invent the word — scored feature by feature against the real one.",
   },
 ];

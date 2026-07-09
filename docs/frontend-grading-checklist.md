@@ -371,6 +371,55 @@ Browser proof:
       Match leaderboard.
 - [x] Every haptic-colored element carries its text label (§4.4).
 
+## Word Mint (NIL-62)
+
+- [x] `production` AppView reachable from the mode grid and the public landing
+      (promoted to a live card); prompt served by `GET /api/productions/next`.
+- [x] The meaning is the whole prompt: no kana, no romaji, no audio pre-submit.
+      Modality shows as a tinted `MEANING · {MODALITY}` specimen chip — it is
+      prompt-side meaning, not a hint about the form to invent (V10).
+- [x] All player copy comes from the frozen §8 slate in `experimentText.ts`
+      (NIL-83), authored sentence case and uppercased by CSS. No string names
+      Japanese (the language-neutral ruling).
+- [x] Native input per V11: `maxLength=24`, `autoCapitalize/autoCorrect/
+      spellCheck/autoComplete` off, labelled by the instruction line, Enter
+      submits, no live character counter.
+- [x] Mirror-validation tests `input.trim().toLowerCase()` against
+      `^[a-z]{2,24}$` and sends the lowercased value — rejecting the raw value
+      would invent a parse error on auto-capitalising mobile keyboards that the
+      server would never raise.
+- [x] **One try per word.** A `400` renders the frozen §8.1 helper — never the
+      backend's `validationErrors.input` text — keeps the typed value and the
+      focus, and does not consume the attempt. Proven in-browser by failing on a
+      word and then successfully minting *the same word* (a consumed attempt
+      would answer `409`). The submit button is never disabled on bad input.
+- [x] `409` advances (the first instinct is the datum, never overwritten);
+      `completed: true` shows the done panel on Rating Lab patterns.
+- [x] The reveal renders `target.displayForm` verbatim with `lang="ja"`
+      (invariant 1/3); the player's romaji is shown exactly as typed, never
+      converted. The reveal's top rule is neutral `--border-strong` — **never
+      score- or verdict-colored** (V12).
+- [x] Feature chips show present-in-either features plus the two continuous ones,
+      matched first (§2.3.5). Unmatched is muted, never negative. No kana glyphs
+      in chips. The collapsible table twin carries all seven features, shared
+      absences included.
+- [x] The reveal card is the first consumer of `--motion-reveal`: opacity +
+      `translateY` over 220ms, gated by `prefers-reduced-motion: no-preference`
+      (enforced by `verify-token-purity.mjs` — an ungated animation fails it).
+      Reduced motion gets a non-animated equivalent.
+- [x] The status line `WORD {i} OF {n} · YOUR MEAN {m}` takes every count from
+      the API. `{n}` is `totalProducible` from the prompt endpoint (NIL-62 FE
+      rider) — never derived, never hardcoded (V14). The mean segment is omitted
+      until the player has minted a word, since a mean of zero samples has no
+      frozen form.
+- [x] `responseTimeMs` is anchored at prompt paint, submitted as an integer, and
+      double submission is prevented.
+- [ ] Known gap: the proof battery cannot detect an uppercase regression, since
+      no leg inspects `text-transform`.
+- [ ] Deferred: `getTriangulation` and the §2.4 completion benchmark
+      ("Arena mean producibility…") + per-modality breakdown — `ProductionEntry`
+      carries no `modality`, and the benchmark line is unfrozen copy.
+
 ## Error handling and loading states
 
 - [x] Every async API request has loading, success, and error behavior.
