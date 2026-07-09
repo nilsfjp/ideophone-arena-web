@@ -37,6 +37,51 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+// Verdict assertions are collected, not thrown: a run reports every mismatch it can see,
+// rather than stopping at the first. Three stale assertions once rotted behind the A10
+// register wall for two releases and surfaced one per run as each was cleared.
+//
+// `check` is for verdicts on data already in hand -- their failure does not invalidate
+// what comes after. Navigation prerequisites (element missing, timed out, session never
+// completed) still throw: nothing downstream of them is meaningful.
+const assertionFailures = [];
+
+function check(condition, message) {
+  if (!condition) {
+    assertionFailures.push(message);
+  }
+  return Boolean(condition);
+}
+
+function reportAssertionFailures() {
+  if (assertionFailures.length === 0) {
+    return;
+  }
+  console.error(`\n${assertionFailures.length} assertion failure(s):`);
+  assertionFailures.forEach((failure, index) => {
+    console.error(`  ${index + 1}. ${failure}`);
+  });
+}
+
+// A self-contained proof stage. Its failure is recorded and the run continues, so one
+// broken walkthrough cannot hide findings from the checks after it. A stage that drives
+// the UI leaves the DOM somewhere unknown when it throws, so live-DOM checks downstream
+// are skipped rather than reported against whatever view happened to be mounted --
+// passive evidence (console errors, captured requests, sampled geometry) stays valid.
+let domStateTrusted = true;
+
+async function runStage(label, fn, { navigates = false } = {}) {
+  try {
+    return await fn();
+  } catch (error) {
+    assertionFailures.push(`${label} stage failed: ${error.message}`);
+    if (navigates) {
+      domStateTrusted = false;
+    }
+    return null;
+  }
+}
+
 async function waitFor(condition, label, timeoutMs = 30000) {
   const started = Date.now();
   while (Date.now() - started < timeoutMs) {
@@ -401,9 +446,10 @@ async function run() {
   // viewports), then verify strip 7's honest six-mode grid before entering.
   await waitFor(async () => (await bodyText(ws)).includes("Prove it"), "landing hero");
   const landingText = await bodyText(ws);
-  if (!landingText.includes("get most of these right")) {
-    throw new Error("Landing hero headline is missing");
-  }
+  check(
+    landingText.includes("get most of these right"),
+    "Landing hero headline is missing",
+  );
   const landingOverflow = await evaluate(
     ws,
     `(() => ({
@@ -411,12 +457,11 @@ async function run() {
       innerWidth: window.innerWidth,
     }))()`,
   );
-  if (landingOverflow.scrollWidth > landingOverflow.innerWidth) {
-    throw new Error(
-      `Landing overflows horizontally: scrollWidth ${landingOverflow.scrollWidth} > ` +
-        `innerWidth ${landingOverflow.innerWidth}`,
-    );
-  }
+  check(
+    landingOverflow.scrollWidth <= landingOverflow.innerWidth,
+    `Landing overflows horizontally: scrollWidth ${landingOverflow.scrollWidth} > ` +
+      `innerWidth ${landingOverflow.innerWidth}`,
+  );
   const landingComingSoon = await evaluate(
     ws,
     `(() => [...document.querySelectorAll('.landing-mode-card[aria-disabled="true"]')]
@@ -426,9 +471,10 @@ async function run() {
   // "In the works" cards are Word Mint / Word Anatomy / Polyglot Challenge (D3
   // renamed Cross-Linguistic → Polyglot Challenge).
   for (const mode of ["Word Mint", "Word Anatomy", "Polyglot Challenge"]) {
-    if (!landingComingSoon.some((text) => text.includes(mode))) {
-      throw new Error(`${mode} is not an honest coming-soon card on the landing`);
-    }
+    check(
+      landingComingSoon.some((text) => text.includes(mode)),
+      `${mode} is not an honest coming-soon card on the landing`,
+    );
   }
   const landingLive = await evaluate(
     ws,
@@ -436,9 +482,10 @@ async function run() {
       .map((card) => card.textContent))()`,
   );
   for (const mode of ["Meaning Match", "Rating Lab", "Perception Ladder"]) {
-    if (!landingLive.some((text) => text.includes(mode))) {
-      throw new Error(`${mode} is not a live mode card on the landing`);
-    }
+    check(
+      landingLive.some((text) => text.includes(mode)),
+      `${mode} is not a live mode card on the landing`,
+    );
   }
 
   // §7 waypoint: the hero CTA promises "a round", so it must land on Meaning
@@ -475,20 +522,20 @@ async function run() {
   );
   // NIL-42 promoted Perception Ladder to available, so the home grid (MODES) is
   // now three live cards with no coming-soon stubs — assert none are disabled.
-  if (comingSoonModes.length > 0) {
-    throw new Error(
-      `Home grid should have no coming-soon modes, saw: ${comingSoonModes.join(", ")}`,
-    );
-  }
+  check(
+    comingSoonModes.length === 0,
+    `Home grid should have no coming-soon modes, saw: ${comingSoonModes.join(", ")}`,
+  );
   const enabledModes = await evaluate(
     ws,
     `(() => [...document.querySelectorAll("button.mode-card:not(:disabled)")]
       .map((button) => button.textContent))()`,
   );
   for (const mode of ["Meaning Match", "Rating Lab", "Perception Ladder"]) {
-    if (!enabledModes.some((text) => text.includes(mode))) {
-      throw new Error(`${mode} is not shown as an enabled mode card`);
-    }
+    check(
+      enabledModes.some((text) => text.includes(mode)),
+      `${mode} is not shown as an enabled mode card`,
+    );
   }
   if (!(await clickText(ws, "Meaning Match"))) {
     throw new Error("Meaning Match mode card not found");
@@ -547,18 +594,16 @@ async function run() {
   await waitForSessionRequest();
 
   const sessionBody = sessionRequests[0]?.postData ?? "";
-  if (!sessionBody.includes('"conditionName":"CONDITION_1_SOKUON"')) {
-    throw new Error(
-      `Default session request did not send CONDITION_1_SOKUON: ${sessionBody}`,
-    );
-  }
+  check(
+    sessionBody.includes('"conditionName":"CONDITION_1_SOKUON"'),
+    `Default session request did not send CONDITION_1_SOKUON: ${sessionBody}`,
+  );
   // The UI default is practice ON and the flag must be sent explicitly
   // (the backend default is false).
-  if (!sessionBody.includes('"includePractice":true')) {
-    throw new Error(
-      `Session request did not send includePractice true: ${sessionBody}`,
-    );
-  }
+  check(
+    sessionBody.includes('"includePractice":true'),
+    `Session request did not send includePractice true: ${sessionBody}`,
+  );
 
   const answeredRounds = [];
   let completed = false;
@@ -614,28 +659,25 @@ async function run() {
   // still at its pre-game 0 / 0. The scored total is not pinned here -- the
   // backend seed tests own it, and it moved 30 -> 47 with NIL-60.
   const practiceRounds = answeredRounds.filter((round) => round.practice);
-  if (practiceRounds.length !== 2) {
-    throw new Error(
-      `Expected exactly 2 practice rounds, observed ${practiceRounds.length}`,
-    );
-  }
-  if (!answeredRounds[0]?.practice || !answeredRounds[1]?.practice) {
-    throw new Error("Practice rounds were not served first");
-  }
-  if (answeredRounds.slice(2).some((round) => round.practice)) {
-    throw new Error("A practice round appeared after the scored rounds began");
-  }
+  check(
+    practiceRounds.length === 2,
+    `Expected exactly 2 practice rounds, observed ${practiceRounds.length}`,
+  );
+  check(
+    answeredRounds[0]?.practice && answeredRounds[1]?.practice,
+    "Practice rounds were not served first",
+  );
+  check(
+    !answeredRounds.slice(2).some((round) => round.practice),
+    "A practice round appeared after the scored rounds began",
+  );
   const firstScoredRound = answeredRounds[2];
-  if (
-    !firstScoredRound ||
-    !firstScoredRound.progressText.includes("Round 1 / ") ||
-    !firstScoredRound.progressText.includes("Session score: 0 / 0")
-  ) {
-    throw new Error(
-      `First scored round did not start at Round 1 with score 0 / 0: ` +
-        `${firstScoredRound?.progressText ?? "missing"}`,
-    );
-  }
+  check(
+    firstScoredRound?.progressText?.includes("Round 1 / ") &&
+      firstScoredRound.progressText.includes("Session score: 0 / 0"),
+    `First scored round did not start at Round 1 with score 0 / 0: ` +
+      `${firstScoredRound?.progressText ?? "missing"}`,
+  );
 
   // The denominator the UI shows must be the number of scored rounds actually served.
   // Asserted as a relationship, never as a literal: App.tsx once pinned it to 30 while
@@ -644,14 +686,13 @@ async function run() {
   // round 1, the one round where the wrong total still reads correctly.
   const scoredRounds = answeredRounds.filter((round) => !round.practice);
   const declaredTotal = Number(
-    /Round\s+\d+\s*\/\s*(\d+)/.exec(firstScoredRound.progressText)?.[1],
+    /Round\s+\d+\s*\/\s*(\d+)/.exec(firstScoredRound?.progressText ?? "")?.[1],
   );
-  if (declaredTotal !== scoredRounds.length) {
-    throw new Error(
-      `Progress denominator ${declaredTotal} does not match the ` +
-        `${scoredRounds.length} scored rounds the session served`,
-    );
-  }
+  check(
+    declaredTotal === scoredRounds.length,
+    `Progress denominator ${declaredTotal} does not match the ` +
+      `${scoredRounds.length} scored rounds the session served`,
+  );
 
   // Every answered round passed the per-round flag assertion above; across
   // ~32 seed draws both orders must also appear (a one-sided run has chance
@@ -660,15 +701,15 @@ async function run() {
     (round) => round.targetMeaningListedFirst,
   ).length;
   const otherFirstCount = meaningOrderRounds.length - targetFirstCount;
-  if (targetFirstCount === 0 || otherFirstCount === 0) {
-    throw new Error(
-      `Both meaning-line orders should appear across ${meaningOrderRounds.length} ` +
-        `seed draws; saw targetFirst=${targetFirstCount}, otherFirst=${otherFirstCount}`,
-    );
-  }
-  if (!roundRefetchProof?.stable) {
-    throw new Error("The round-refetch determinism probe never ran");
-  }
+  check(
+    targetFirstCount > 0 && otherFirstCount > 0,
+    `Both meaning-line orders should appear across ${meaningOrderRounds.length} ` +
+      `seed draws; saw targetFirst=${targetFirstCount}, otherFirst=${otherFirstCount}`,
+  );
+  check(
+    roundRefetchProof?.stable,
+    "The round-refetch determinism probe never ran",
+  );
 
   await waitFor(
     async () => (await bodyText(ws)).includes("Session complete"),
@@ -706,36 +747,32 @@ async function run() {
   // 27E: the pool must be sourced from the backend, never from the retired
   // localStorage pool — assert the network call happened and the legacy key
   // was never written.
-  if (ratableWordsRequests.length === 0) {
-    throw new Error(
-      "Rating Lab opened without requesting GET /api/game/me/ratable-words",
-    );
-  }
+  check(
+    ratableWordsRequests.length > 0,
+    "Rating Lab opened without requesting GET /api/game/me/ratable-words",
+  );
   const ratableWordsFailures = ratableWordsRequests.filter(
     (request) => !request.status || request.status >= 400,
   );
-  if (ratableWordsFailures.length > 0) {
-    throw new Error(
-      `ratable-words requests failed: ${JSON.stringify(ratableWordsFailures)}`,
-    );
-  }
+  check(
+    ratableWordsFailures.length === 0,
+    `ratable-words requests failed: ${JSON.stringify(ratableWordsFailures)}`,
+  );
   const legacyPoolValue = await evaluate(
     ws,
     `localStorage.getItem("ideophone-arena-rating-pool")`,
   );
-  if (legacyPoolValue !== null) {
-    throw new Error(
-      "The retired ideophone-arena-rating-pool localStorage key was written",
-    );
-  }
+  check(
+    legacyPoolValue === null,
+    "The retired ideophone-arena-rating-pool localStorage key was written",
+  );
   const instructionsText = await bodyText(ws);
   const wordCountMatch = instructionsText.match(/you will rate (\d+) words/);
-  if (!wordCountMatch) {
-    throw new Error(
-      `Rating instructions did not state a word count: ${instructionsText.slice(0, 200)}`,
-    );
-  }
-  const instructionsWordCount = Number(wordCountMatch[1]);
+  check(
+    wordCountMatch !== null,
+    `Rating instructions did not state a word count: ${instructionsText.slice(0, 200)}`,
+  );
+  const instructionsWordCount = wordCountMatch ? Number(wordCountMatch[1]) : NaN;
   // Rebuild the pool the browser received from the captured response bodies,
   // deduplicating by page number (a dev-mode double effect refetches the
   // same pages with identical bodies).
@@ -756,12 +793,11 @@ async function run() {
       (poolPageBodies.get(page).entries ?? []).map((entry) => entry.ideophoneId),
     );
   // A fresh user has rated nothing, so the queue equals the served pool.
-  if (browserPoolIds.length !== instructionsWordCount) {
-    throw new Error(
-      `Instructions count ${instructionsWordCount} does not match the served ` +
-        `pool size ${browserPoolIds.length}`,
-    );
-  }
+  check(
+    browserPoolIds.length === instructionsWordCount,
+    `Instructions count ${instructionsWordCount} does not match the served ` +
+      `pool size ${browserPoolIds.length}`,
+  );
 
   if (!(await clickText(ws, "Start rating"))) {
     throw new Error("Start rating button not found");
@@ -841,44 +877,61 @@ async function run() {
   // 27E pool parity: a completely fresh client (this Node process — no
   // browser state, no localStorage) logs into the same account and must see
   // the identical pool, minus the first pool word the waypoint just rated.
-  const poolParityProof = await verifyPoolParity(browserPoolIds);
+  // Pure Node HTTP, no DOM: a failure here cannot disturb the checks that follow.
+  const poolParityProof = await runStage("pool parity", () =>
+    verifyPoolParity(browserPoolIds),
+  );
 
   // Perception Ladder (NIL-42): mode grid → floor stack → floor-intro Dialog →
-  // play a floor to completion, in the same authenticated session.
-  const ladderProof = await verifyPerceptionLadder(ws);
+  // play a floor to completion, in the same authenticated session. The last stage that
+  // drives the UI, so the live-DOM checks below are conditional on it having finished.
+  const ladderProof = await runStage(
+    "perception ladder",
+    () => verifyPerceptionLadder(ws),
+    { navigates: true },
+  );
 
-  if (stimulusRequests.length === 0) {
-    throw new Error("No /stimuli/ media requests were observed");
-  }
+  check(
+    stimulusRequests.length > 0,
+    "No /stimuli/ media requests were observed",
+  );
   const stimulusSuccessCount = stimulusRequests.filter(
     (request) => request.status && request.status < 400,
   ).length;
-  if (stimulusSuccessCount === 0) {
-    throw new Error("No successful /stimuli/ media responses were observed");
-  }
-  const mutedStimulusCount = await evaluate(
-    ws,
-    `(() => [...document.querySelectorAll(".stimulus-media")]
-      .filter((media) => media.muted || media.defaultMuted || media.volume === 0)
-      .length)()`,
+  check(
+    stimulusSuccessCount > 0,
+    "No successful /stimuli/ media responses were observed",
   );
-  if (mutedStimulusCount > 0) {
-    throw new Error(`Muted stimulus media elements are present: ${mutedStimulusCount}`);
-  }
+  // Live-DOM checks: meaningful only if the stages above left the app where they should.
+  let mutedStimulusCount = null;
+  let staleControls = null;
+  if (domStateTrusted) {
+    mutedStimulusCount = await evaluate(
+      ws,
+      `(() => [...document.querySelectorAll(".stimulus-media")]
+        .filter((media) => media.muted || media.defaultMuted || media.volume === 0)
+        .length)()`,
+    );
+    check(
+      mutedStimulusCount === 0,
+      `Muted stimulus media elements are present: ${mutedStimulusCount}`,
+    );
 
-  const staleControls = await evaluate(
-    ws,
-    `(() => [...document.querySelectorAll("input, select, textarea")]
-      .map((control) => [
-        control.getAttribute("aria-label"),
-        control.getAttribute("name"),
-        control.getAttribute("id"),
-        control.closest("label")?.textContent
-      ].filter(Boolean).join(" "))
-      .filter((text) => /difficulty|condition/i.test(text)))()`,
-  );
-  if (Array.isArray(staleControls) && staleControls.length > 0) {
-    throw new Error(`Stale condition/difficulty controls are visible: ${staleControls.join(", ")}`);
+    staleControls = await evaluate(
+      ws,
+      `(() => [...document.querySelectorAll("input, select, textarea")]
+        .map((control) => [
+          control.getAttribute("aria-label"),
+          control.getAttribute("name"),
+          control.getAttribute("id"),
+          control.closest("label")?.textContent
+        ].filter(Boolean).join(" "))
+        .filter((text) => /difficulty|condition/i.test(text)))()`,
+    );
+    check(
+      !Array.isArray(staleControls) || staleControls.length === 0,
+      `Stale condition/difficulty controls are visible: ${(staleControls ?? []).join(", ")}`,
+    );
   }
 
   const hasBearerRequest = protectedRequests.some((request) =>
@@ -888,33 +941,34 @@ async function run() {
     const isProtectedPath = request.url.includes("/api/game/");
     return isProtectedPath && request.status && request.status < 400;
   }).length;
-  if (!hasBearerRequest && protectedSuccessCount === 0) {
-    throw new Error(
-      "No protected API request showed a bearer token or successful protected response",
-    );
-  }
+  check(
+    hasBearerRequest || protectedSuccessCount > 0,
+    "No protected API request showed a bearer token or successful protected response",
+  );
   const relevantConsoleErrors = consoleErrors.filter(
     (message) => !message.includes("Download the React DevTools"),
   );
-  if (relevantConsoleErrors.length > 0) {
-    throw new Error(
-      `Browser console errors were observed: ${relevantConsoleErrors.join(" | ")}`,
-    );
-  }
+  check(
+    relevantConsoleErrors.length === 0,
+    `Browser console errors were observed: ${relevantConsoleErrors.join(" | ")}`,
+  );
 
   const phaseGeometry = await evaluate(ws, "window.__phaseGeometry ?? null");
   assertGeometryStable(phaseGeometry);
 
-  // Narrow-viewport audit: the document must not overflow horizontally.
-  const overflowProof = await evaluate(
-    ws,
-    `(() => ({
-      scrollWidth: document.documentElement.scrollWidth,
-      innerWidth: window.innerWidth,
-    }))()`,
-  );
-  if (overflowProof.scrollWidth > overflowProof.innerWidth) {
-    throw new Error(
+  // Narrow-viewport audit: the document must not overflow horizontally. Measured on the
+  // view the run was meant to end on, so it is skipped when a stage left that in doubt.
+  let overflowProof = null;
+  if (domStateTrusted) {
+    overflowProof = await evaluate(
+      ws,
+      `(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        innerWidth: window.innerWidth,
+      }))()`,
+    );
+    check(
+      overflowProof.scrollWidth <= overflowProof.innerWidth,
       `Horizontal overflow: scrollWidth ${overflowProof.scrollWidth} > ` +
         `innerWidth ${overflowProof.innerWidth}`,
     );
@@ -958,9 +1012,10 @@ async function run() {
           instructionsWordCount,
           parity: poolParityProof,
         },
+        domStateTrusted,
         staleControlCount: Array.isArray(staleControls)
           ? staleControls.length
-          : 0,
+          : null,
         mutedStimulusCount,
         stimulusRequestCount: stimulusRequests.length,
         stimulusSuccessCount,
@@ -972,6 +1027,8 @@ async function run() {
         relevantFailedRequestCount: relevantFailures.length,
         relevantFailures,
         relevantConsoleErrorCount: relevantConsoleErrors.length,
+        assertionFailureCount: assertionFailures.length,
+        assertionFailures,
         consoleMessages: consoleMessages.slice(0, 5),
       },
       null,
@@ -981,10 +1038,21 @@ async function run() {
   ws.close();
 }
 
-run().catch(async (error) => {
-  console.error(error);
-  process.exit(1);
-});
+run()
+  .then(() => {
+    // Verdict failures do not abort the run, so the exit code is decided here.
+    if (assertionFailures.length > 0) {
+      reportAssertionFailures();
+      process.exit(1);
+    }
+  })
+  .catch(async (error) => {
+    // A hard failure (navigation, timeout, prerequisite) stops the run, but whatever
+    // verdicts were already collected still get reported -- they are real findings.
+    console.error(error);
+    reportAssertionFailures();
+    process.exit(1);
+  });
 
 // Records each phase's first bounding boxes (document coordinates) for the
 // trial stage, the reserved board, and both card slots. Phases are detected
@@ -1055,8 +1123,10 @@ const GEOMETRY_TOLERANCE_PX = 2;
 function assertGeometryStable(geometry) {
   const phases = ["fixation", "left-playing", "right-playing", "choice", "feedback"];
   const missing = phases.filter((phase) => !geometry?.[phase]);
-  if (missing.length > 0) {
-    throw new Error(`Geometry sampler missed phases: ${missing.join(", ")}`);
+  // Without every phase sampled there is nothing to compare against, so this one
+  // gates the rest of the function rather than merely being recorded.
+  if (!check(missing.length === 0, `Geometry sampler missed phases: ${missing.join(", ")}`)) {
+    return;
   }
 
   const reference = geometry.fixation;
@@ -1064,31 +1134,31 @@ function assertGeometryStable(geometry) {
     for (const slot of ["board", "cardA", "cardB", "questionSlot"]) {
       for (const prop of ["x", "y", "width", "height"]) {
         const delta = Math.abs(geometry[phase][slot][prop] - reference[slot][prop]);
-        if (delta > GEOMETRY_TOLERANCE_PX) {
-          throw new Error(
-            `Layout shift: ${slot}.${prop} moved ${delta}px between fixation and ${phase} ` +
-              `(${reference[slot][prop]} -> ${geometry[phase][slot][prop]})`,
-          );
-        }
+        check(
+          delta <= GEOMETRY_TOLERANCE_PX,
+          `Layout shift: ${slot}.${prop} moved ${delta}px between fixation and ${phase} ` +
+            `(${reference[slot][prop]} -> ${geometry[phase][slot][prop]})`,
+        );
       }
     }
 
     for (const prop of ["x", "y", "width"]) {
       const delta = Math.abs(geometry[phase].stage[prop] - reference.stage[prop]);
-      if (delta > GEOMETRY_TOLERANCE_PX) {
-        throw new Error(
-          `Layout shift: stage.${prop} moved ${delta}px between fixation and ${phase}`,
-        );
-      }
+      check(
+        delta <= GEOMETRY_TOLERANCE_PX,
+        `Layout shift: stage.${prop} moved ${delta}px between fixation and ${phase}`,
+      );
     }
     const heightDelta = geometry[phase].stage.height - reference.stage.height;
-    if (phase !== "feedback" && Math.abs(heightDelta) > GEOMETRY_TOLERANCE_PX) {
-      throw new Error(
+    if (phase !== "feedback") {
+      check(
+        Math.abs(heightDelta) <= GEOMETRY_TOLERANCE_PX,
         `Layout shift: stage.height changed ${heightDelta}px between fixation and ${phase}`,
       );
     }
-    if (phase === "feedback" && heightDelta < -GEOMETRY_TOLERANCE_PX) {
-      throw new Error(
+    if (phase === "feedback") {
+      check(
+        heightDelta >= -GEOMETRY_TOLERANCE_PX,
         `Layout shift: stage shrank ${heightDelta}px at feedback`,
       );
     }
@@ -1096,12 +1166,11 @@ function assertGeometryStable(geometry) {
     // The Next round button lives inside the reserved question slot: visible
     // only at feedback, and its box must sit within the slot's box so its
     // appearance cannot move anything.
-    if (geometry[phase].nextButtonVisible !== (phase === "feedback")) {
-      throw new Error(
-        `Next round button visibility is wrong at ${phase}: ` +
-          `${geometry[phase].nextButtonVisible}`,
-      );
-    }
+    check(
+      geometry[phase].nextButtonVisible === (phase === "feedback"),
+      `Next round button visibility is wrong at ${phase}: ` +
+        `${geometry[phase].nextButtonVisible}`,
+    );
     if (phase === "feedback") {
       const slot = geometry[phase].questionSlot;
       const button = geometry[phase].nextButton;
@@ -1110,12 +1179,11 @@ function assertGeometryStable(geometry) {
         button.y >= slot.y - GEOMETRY_TOLERANCE_PX &&
         button.x + button.width <= slot.x + slot.width + GEOMETRY_TOLERANCE_PX &&
         button.y + button.height <= slot.y + slot.height + GEOMETRY_TOLERANCE_PX;
-      if (!fitsSlot) {
-        throw new Error(
-          `Next round button is not inside the reserved question slot at feedback: ` +
-            `button ${JSON.stringify(button)} vs slot ${JSON.stringify(slot)}`,
-        );
-      }
+      check(
+        fitsSlot,
+        `Next round button is not inside the reserved question slot at feedback: ` +
+          `button ${JSON.stringify(button)} vs slot ${JSON.stringify(slot)}`,
+      );
     }
   }
 }
