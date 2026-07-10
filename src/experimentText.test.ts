@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import * as experimentText from "./experimentText";
 import {
   CHOICE_QUESTION_PREFIX,
   LISTEN_INSTRUCTION,
@@ -82,6 +83,22 @@ const sourceFiles = import.meta.glob("./**/*.{ts,tsx}", {
   import: "default",
 }) as Record<string, string>;
 
+describe("player-facing copy is language-neutral (NIL-85, adjudicated 2026-07-10)", () => {
+  // The neutrality principle, first adjudicated for Word Mint and now extended to
+  // the whole module (both frozen blocks amended). No participant-facing string
+  // names the language: the kana and the romaji examples carry it implicitly, which
+  // is what keeps the cross-linguistic mode possible. Guarding every export rather
+  // than a hand-listed set, so a newly added string cannot reintroduce the name.
+  it("no exported string names a language", () => {
+    const offenders = Object.entries(experimentText)
+      .filter(
+        ([, value]) => typeof value === "string" && /japan/i.test(value),
+      )
+      .map(([name]) => name);
+    expect(offenders).toEqual([]);
+  });
+});
+
 describe("frozen trial text lives only in experimentText.ts", () => {
   // Invariant 1: src/experimentText.ts is the single home of participant-facing
   // trial strings. Components must import them, never inline them.
@@ -107,7 +124,7 @@ describe("rating task strings are frozen verbatim (27D, adjudicated 2026-07-02)"
   it("keeps the adjudicated wording exactly", () => {
     expect(RATING_INTRO_PREFIX).toBe("In this task, you will rate ");
     expect(RATING_INTRO_AFTER_COUNT).toBe(
-      " words from the previous task. In each trial, you will be shown a Japanese word together with its English meaning. Your task is to rate how much you think the word resembles its meaning on a scale from ",
+      " words from the previous task. In each trial, you will be shown a word together with its English meaning. Your task is to rate how much you think the word resembles its meaning on a scale from ",
     );
     expect(RATING_INTRO_TO).toBe(" to ");
     expect(RATING_SENTENCE_END).toBe(".");
@@ -120,7 +137,7 @@ describe("rating task strings are frozen verbatim (27D, adjudicated 2026-07-02)"
     expect(RATING_HOW_TO).toBe(
       "Click on a number (1–7) to select your rating, then press 'Next' to submit your response.",
     );
-    expect(RATING_LISTEN_LINE_1).toBe("Listen to the Japanese word below.");
+    expect(RATING_LISTEN_LINE_1).toBe("Listen to the word below.");
     expect(RATING_LISTEN_LINE_2).toBe("Click to replay.");
     expect(RATING_MEANING_PREFIX).toBe("It means ");
     expect(RATING_QUESTION).toBe(
@@ -136,7 +153,7 @@ describe("rating task strings are frozen verbatim (27D, adjudicated 2026-07-02)"
 describe("Word Mint strings are frozen verbatim (NIL-83, adjudicated 2026-07-06)", () => {
   // SPEC-view-designs.md §8. Authored sentence case and uppercased by CSS
   // (.specimen / .mint-chip): §8 prints them uppercase because that is their
-  // rendered form. Player copy is language-neutral — no string names Japanese.
+  // rendered form. Player copy is language-neutral (enforced module-wide below).
   it("keeps the prompt-state wording exactly", () => {
     expect(MINT_INSTRUCTION).toBe(
       "Invent a word whose sound fits the meaning below. Type it in roman letters.",
@@ -167,21 +184,28 @@ describe("Word Mint strings are frozen verbatim (NIL-83, adjudicated 2026-07-06)
     expect(MINT_BACK_BUTTON).toBe("Back to modes");
   });
 
-  it("keeps each score band exactly, score included", () => {
-    // §8.2 freezes the bands as "{score} — <tail>": the numeral is part of the
-    // sentence, and interpolates before the tail.
-    expect("{score}" + MINT_BAND_ALMOST).toBe(
-      "{score} — your instinct is almost the same word.",
+  it("keeps each score band exactly, as a standalone caption", () => {
+    // §8.2 as amended by NIL-85: the numeral is no longer part of the sentence
+    // (the score figure carries it), and no band contains an em-dash.
+    expect(MINT_BAND_ALMOST).toBe("Your instinct is almost the same word.");
+    expect(MINT_BAND_MOST).toBe(
+      "Your instinct shares most of its shape with the real word.",
     );
-    expect("{score}" + MINT_BAND_MOST).toBe(
-      "{score} — your instinct shares most of its shape with the real word.",
+    expect(MINT_BAND_SOME).toBe(
+      "Your word and the real one share some bones.",
     );
-    expect("{score}" + MINT_BAND_SOME).toBe(
-      "{score} — your word and the real one share some bones.",
+    expect(MINT_BAND_DIFFERENT).toBe(
+      "A different creature, which is also data.",
     );
-    expect("{score}" + MINT_BAND_DIFFERENT).toBe(
-      "{score} — a different creature — which is also data.",
-    );
+    for (const band of [
+      MINT_BAND_ALMOST,
+      MINT_BAND_MOST,
+      MINT_BAND_SOME,
+      MINT_BAND_DIFFERENT,
+    ]) {
+      expect(band).not.toContain("—");
+      expect(band).toBe(band.trim());
+    }
   });
 
   it("keeps the chip and status vocabularies exactly", () => {

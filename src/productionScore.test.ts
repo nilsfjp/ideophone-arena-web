@@ -13,7 +13,7 @@ import {
   featureTableValue,
   isMintInputWellFormed,
   normalizeMintInput,
-  scoreBandTail,
+  scoreBandCaption,
 } from "./productionScore";
 
 // The adjudicated worked example: player types "pikapika" against dokidoki (i9),
@@ -29,20 +29,20 @@ const PIKAPIKA_VS_DOKIDOKI: FeatureMatch[] = [
   { feature: "moraCount", yours: 4, target: 4, matched: true },
 ];
 
-describe("scoreBandTail", () => {
+describe("scoreBandCaption", () => {
   it("bands at the frozen boundaries", () => {
-    expect(scoreBandTail(100)).toBe(MINT_BAND_ALMOST);
-    expect(scoreBandTail(85)).toBe(MINT_BAND_ALMOST);
-    expect(scoreBandTail(84)).toBe(MINT_BAND_MOST);
-    expect(scoreBandTail(60)).toBe(MINT_BAND_MOST);
-    expect(scoreBandTail(59)).toBe(MINT_BAND_SOME);
-    expect(scoreBandTail(35)).toBe(MINT_BAND_SOME);
-    expect(scoreBandTail(34)).toBe(MINT_BAND_DIFFERENT);
-    expect(scoreBandTail(0)).toBe(MINT_BAND_DIFFERENT);
+    expect(scoreBandCaption(100)).toBe(MINT_BAND_ALMOST);
+    expect(scoreBandCaption(85)).toBe(MINT_BAND_ALMOST);
+    expect(scoreBandCaption(84)).toBe(MINT_BAND_MOST);
+    expect(scoreBandCaption(60)).toBe(MINT_BAND_MOST);
+    expect(scoreBandCaption(59)).toBe(MINT_BAND_SOME);
+    expect(scoreBandCaption(35)).toBe(MINT_BAND_SOME);
+    expect(scoreBandCaption(34)).toBe(MINT_BAND_DIFFERENT);
+    expect(scoreBandCaption(0)).toBe(MINT_BAND_DIFFERENT);
   });
 
   it("puts the worked example in the 60-84 band", () => {
-    expect(scoreBandTail(78)).toBe(MINT_BAND_MOST);
+    expect(scoreBandCaption(78)).toBe(MINT_BAND_MOST);
   });
 });
 

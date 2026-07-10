@@ -24,7 +24,7 @@ export const MODES: ModeDefinition[] = [
     measure: "Measure · Guessing",
     status: "available",
     description:
-      "Hear two Japanese words, then choose the card that best fits the target meaning.",
+      "Hear two words, then choose the card that best fits the target meaning.",
   },
   {
     id: "rating",

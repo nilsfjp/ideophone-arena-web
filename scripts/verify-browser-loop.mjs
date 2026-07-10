@@ -638,7 +638,7 @@ async function run() {
         }
         if (
           nextText.includes("+") ||
-          nextText.includes("Listen to these two Japanese words.") ||
+          nextText.includes("Listen to these two words.") ||
           nextText.includes("Which one do you think means")
         ) {
           return "next-round";

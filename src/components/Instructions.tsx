@@ -47,9 +47,9 @@ export default function Instructions({
       ) : null}
 
       <p>
-        In this task, you will see two Japanese ideophones and their English
-        meanings. Your task is to match one translation with the Japanese word
-        you think best fits that meaning.
+        In this task, you will see two ideophones and their English meanings.
+        Your task is to match one translation with the word you think best fits
+        that meaning.
       </p>
 
       <p>

@@ -154,7 +154,9 @@ describe("MintRevealPanel", () => {
   it("assembles the score block from the frozen band string", () => {
     expect(markup).toContain('<span class="score-figure">78</span>');
     expect(markup).toContain(MINT_SCORE_LABEL);
-    expect(markup).toContain(`78${MINT_BAND_MOST}`);
+    expect(markup).toContain(`<span class="score-caption">${MINT_BAND_MOST}</span>`);
+    // The numeral belongs to the score figure alone; the caption never repeats it.
+    expect(markup).not.toContain(`78${MINT_BAND_MOST}`);
   });
 
   it("keeps the top rule neutral — never verdict- or score-colored (V12)", () => {

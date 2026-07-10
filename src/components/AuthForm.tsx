@@ -65,7 +65,7 @@ export default function AuthForm({
 
       <h1 id="auth-title">Ideophone Arena</h1>
       <p className="muted">
-        Choose the Japanese ideophone that best matches the target meaning.
+        Choose the ideophone that best matches the target meaning.
       </p>
 
       {/* Native wrapping labels keep the input a descendant of its label — the

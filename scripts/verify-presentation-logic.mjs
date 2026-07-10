@@ -213,7 +213,7 @@ try {
   const text = await import(`file://${join(tempDir, "experimentText.js")}`);
   assertEqual(
     text.LISTEN_INSTRUCTION,
-    "Listen to these two Japanese words.",
+    "Listen to these two words.",
     "LISTEN_INSTRUCTION must keep the adjudicated wording",
   );
   assertEqual(
@@ -324,7 +324,7 @@ try {
   const ratingStrings = {
     RATING_INTRO_PREFIX: "In this task, you will rate ",
     RATING_INTRO_AFTER_COUNT:
-      " words from the previous task. In each trial, you will be shown a Japanese word together with its English meaning. Your task is to rate how much you think the word resembles its meaning on a scale from ",
+      " words from the previous task. In each trial, you will be shown a word together with its English meaning. Your task is to rate how much you think the word resembles its meaning on a scale from ",
     RATING_INTRO_TO: " to ",
     RATING_SENTENCE_END: ".",
     RATING_SCALE_MIN: "1",
@@ -335,7 +335,7 @@ try {
     RATING_ANCHOR_HIGH_INLINE: "strong resemblance",
     RATING_HOW_TO:
       "Click on a number (1–7) to select your rating, then press 'Next' to submit your response.",
-    RATING_LISTEN_LINE_1: "Listen to the Japanese word below.",
+    RATING_LISTEN_LINE_1: "Listen to the word below.",
     RATING_LISTEN_LINE_2: "Click to replay.",
     RATING_MEANING_PREFIX: "It means ",
     RATING_QUESTION:
@@ -449,10 +449,10 @@ try {
     MINT_PARSE_ERROR_EXAMPLE_TWO: "pika",
     MINT_REVEAL_PREFIX: "The real word is ",
     MINT_SCORE_LABEL: "Similarity · 0–100",
-    MINT_BAND_ALMOST: " — your instinct is almost the same word.",
-    MINT_BAND_MOST: " — your instinct shares most of its shape with the real word.",
-    MINT_BAND_SOME: " — your word and the real one share some bones.",
-    MINT_BAND_DIFFERENT: " — a different creature — which is also data.",
+    MINT_BAND_ALMOST: "Your instinct is almost the same word.",
+    MINT_BAND_MOST: "Your instinct shares most of its shape with the real word.",
+    MINT_BAND_SOME: "Your word and the real one share some bones.",
+    MINT_BAND_DIFFERENT: "A different creature, which is also data.",
     MINT_NEXT_BUTTON: "Next meaning",
     MINT_BACK_BUTTON: "Back to modes",
     MINT_STATUS_WORD_PREFIX: "Word ",
@@ -550,11 +550,16 @@ try {
     1,
     "the mint reveal should render the player's romaji exactly as typed",
   );
-  // §8.2: the band string carries the score, and the numeral also stands alone.
+  // §8.2 (NIL-85): the caption is a standalone sentence; the numeral stands alone.
   assertEqual(
-    countOccurrences(mintRevealMarkup, `78${text.MINT_BAND_MOST}`),
+    countOccurrences(mintRevealMarkup, text.MINT_BAND_MOST),
     1,
     "the mint reveal should assemble the banded one-liner from the frozen string",
+  );
+  assertEqual(
+    countOccurrences(mintRevealMarkup, `78${text.MINT_BAND_MOST}`),
+    0,
+    "the caption must not repeat the score numeral",
   );
   // §2.3.5: present-in-either features only — shared absences live in the table.
   assertEqual(

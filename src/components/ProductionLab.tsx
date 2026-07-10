@@ -36,7 +36,7 @@ import {
   featureTableValue,
   isMintInputWellFormed,
   normalizeMintInput,
-  scoreBandTail,
+  scoreBandCaption,
 } from "../productionScore";
 import { classifySubmitError } from "../productionSubmit";
 import StimulusPlayback from "./StimulusPlayback";
@@ -269,8 +269,7 @@ export function MintRevealPanel({
         <span className="score-figure">{result.similarityScore}</span>
         <span className="specimen">{MINT_SCORE_LABEL}</span>
         <span className="score-caption">
-          {result.similarityScore}
-          {scoreBandTail(result.similarityScore)}
+          {scoreBandCaption(result.similarityScore)}
         </span>
       </div>
 

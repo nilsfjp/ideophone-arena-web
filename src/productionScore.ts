@@ -35,9 +35,9 @@ export function isMintInputWellFormed(raw: string): boolean {
   return ROMAJI_INPUT_PATTERN.test(normalizeMintInput(raw));
 }
 
-// Section 8.2 freezes each band as "{score} — <tail>". The numeral is rendered
-// before the tail (and again, alone, as the large score figure per 2.3.4).
-export function scoreBandTail(score: number): string {
+// Section 8.2 (as amended by NIL-85) makes each band a standalone caption beside the
+// score figure, which carries the numeral on its own (2.3.4).
+export function scoreBandCaption(score: number): string {
   if (score >= 85) return MINT_BAND_ALMOST;
   if (score >= 60) return MINT_BAND_MOST;
   if (score >= 35) return MINT_BAND_SOME;

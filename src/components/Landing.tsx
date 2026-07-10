@@ -100,13 +100,13 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
         <div className="hero-inner">
           <div className="hero-copy">
             <h1 id="hero-h1">
-              You've never studied Japanese. You'll still get most of these right.
+              You've never heard this language. You'll still get most of these right.
             </h1>
             <WaveRule width={180} />
             <p className="hero-sub">
               Ideophone Arena is a live replication of a real experiment on sound
-              symbolism — Japanese words whose shape carries their meaning. Guess,
-              rate, and see how far your ear takes you before convention takes over.
+              symbolism — words whose shape carries their meaning. Guess, rate, and
+              see how far your ear takes you before convention takes over.
             </p>
             <div className="cta-row">
               <Button type="button" onClick={() => onPlayMode("choosing")}>
@@ -133,8 +133,8 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
             <span className="specimen">Choosing task · N = 36</span>
             <p className="stat-figure">64%</p>
             <p>
-              mean guessing accuracy for people with zero Japanese. Pure chance
-              would be 50%. Can you beat the cohort?
+              mean guessing accuracy for people with no knowledge of the language.
+              Pure chance would be 50%. Can you beat the cohort?
             </p>
           </div>
           <div className="stat-card">
@@ -172,15 +172,15 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
             <li>
               <span className="specimen">1 · Listen</span>
               <p>
-                Two Japanese words play, one meaning shown. Both words are real;
-                they contrast within one sense.
+                Two words play, one meaning shown. Both words are real; they
+                contrast within one sense.
               </p>
             </li>
             <li>
               <span className="specimen">2 · Trust your ear</span>
               <p>
-                Pick the word you think carries the meaning. No Japanese needed —
-                that's the experiment.
+                Pick the word you think carries the meaning. No knowledge of the
+                language needed — that's the experiment.
               </p>
             </li>
             <li>
@@ -192,8 +192,8 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
             </li>
           </ol>
           <p className="honesty">
-            Your guesses join the arena record — the same 30 pairs, still collecting
-            data.
+            Your guesses join the arena record — the thesis pairs and the ones added
+            since, still collecting data.
           </p>
         </div>
       </section>
@@ -254,7 +254,7 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
               <img
                 className="e1-image"
                 src="/observatory-strip.png"
-                alt="Scatter plot: each Japanese word placed by how often the cohort guessed it right against how word-like they rated it — the two measures diverge."
+                alt="Scatter plot: each word placed by how often the cohort guessed it right against how word-like they rated it — the two measures diverge."
                 onError={() => setE1Failed(true)}
               />
             )}

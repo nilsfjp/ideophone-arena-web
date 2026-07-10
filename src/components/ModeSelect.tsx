@@ -14,7 +14,7 @@ export default function ModeSelect({ modes, onSelect }: ModeSelectProps) {
   return (
     <section className="mode-select" aria-labelledby="mode-select-title">
       <h1 id="mode-select-title">Choose a mode</h1>
-      <p>Pick how you want to explore Japanese ideophones today.</p>
+      <p>Pick how you want to explore ideophones today.</p>
 
       <div className="mode-list">
         {modes.map((mode) => {

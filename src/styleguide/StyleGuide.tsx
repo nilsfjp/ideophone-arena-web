@@ -298,7 +298,7 @@ function PairingSpecimen({ pairing }: { pairing: Pairing }) {
       </div>
 
       <p className="sg-body-sample">
-        In this task, you will see two Japanese ideophones and their English
+        In this task, you will see two ideophones and their English
         meanings. Ideophones are words that depict sensory experience — a
         rustle, a glitter, a heartbeat. Listen to both words, then choose the
         card you think matches the highlighted meaning. 0123456789 · AaBbGgRr
