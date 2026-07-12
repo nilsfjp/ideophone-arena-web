@@ -1,4 +1,4 @@
-// Authored preview — the real shadcn Label from window.IdeophoneArena. Label is
+// Authored preview - the real shadcn Label from window.IdeophoneArena. Label is
 // control text (body-bold, §3.1); it lives above its field, so the honest story
 // is the labelled field the auth form composes.
 import { Label, Input } from "ideophone-arena-web";
@@ -10,7 +10,7 @@ const field: React.CSSProperties = {
   padding: "var(--space-4)",
 };
 
-// A labelled input, wired by htmlFor — the auth-form field composition.
+// A labelled input, wired by htmlFor - the auth-form field composition.
 export const LabelledField = () => (
   <div style={field}>
     <Label htmlFor="display-name">Display name</Label>

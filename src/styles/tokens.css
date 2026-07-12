@@ -1,6 +1,6 @@
 /* ============================================================================
-   Ideophone Arena — design tokens
-   Thesis: "laboratory ink and paper" — editorial and scientific, warm rather
+   Ideophone Arena - design tokens
+   Thesis: "laboratory ink and paper" - editorial and scientific, warm rather
    than sterile. Raw values live ONLY in this file; components consume the
    semantic tokens. Semantics are surface-relative (not light-mode-literal) so
    a dark theme can re-map them later without touching component CSS.
@@ -13,24 +13,24 @@
 
    Modality accents derive from the thesis figure palette (thesis_colors.xml):
    accent1 #9C6114 (auditory), accent2 #E9C4C7 (visual), accent3 #B9D3DC
-   (interoceptive) — text-safe variants are tuned for WCAG AA on both paper
+   (interoceptive) - text-safe variants are tuned for WCAG AA on both paper
    surfaces; -soft variants keep the original figure tints for fills.
    ========================================================================== */
 
 :root {
-  /* Surfaces — warm paper neutrals: page ground, washi card, raised panel. */
+  /* Surfaces - warm paper neutrals: page ground, washi card, raised panel. */
   --surface-page: oklch(91.70% 0.0145 84.58); /* #e8e3d9 */
   --surface-card: oklch(97.98% 0.0086 84.57); /* #fbf8f2 */
   --surface-raised: oklch(100% 0 0); /* #ffffff */
 
-  /* Ink — warm sumi near-black; never pure #000. */
-  --ink-primary: oklch(23.66% 0.0104 80.60); /* #211e19 — 13.0:1 on page, 15.7:1 on card */
-  --ink-muted: oklch(45.92% 0.0237 84.56); /* #5e5749 — 5.6:1 on page, 6.8:1 on card */
-  --ink-inverse: oklch(97.98% 0.0086 84.57); /* #fbf8f2 — text on accent/ink fills */
+  /* Ink - warm sumi near-black; never pure #000. */
+  --ink-primary: oklch(23.66% 0.0104 80.60); /* #211e19 - 13.0:1 on page, 15.7:1 on card */
+  --ink-muted: oklch(45.92% 0.0237 84.56); /* #5e5749 - 5.6:1 on page, 6.8:1 on card */
+  --ink-inverse: oklch(97.98% 0.0086 84.57); /* #fbf8f2 - text on accent/ink fills */
 
-  /* Primary accent — vermillion (shu-iro family), evolved from the old
+  /* Primary accent - vermillion (shu-iro family), evolved from the old
      crimson #e90b3f. 4.99:1 with --ink-inverse text; as colored TEXT use it
-     on card/raised surfaces (4.7:1) — on the page ground it only clears the
+     on card/raised surfaces (4.7:1) - on the page ground it only clears the
      3:1 large-text/UI bar. */
   --vermillion: oklch(56.34% 0.1781 34.51); /* #c8401f */
   --vermillion-hover: oklch(51.42% 0.1654 34.39); /* #b23618 */
@@ -45,26 +45,26 @@
   --modality-interoceptive: oklch(47.64% 0.0568 228.32); /* #386376 */
   --modality-interoceptive-soft: oklch(85.04% 0.0306 220.63); /* #b9d3dc */
 
-  /* Haptic — the fourth modality (KOKE moss, ledger L1, spec §4.4). Base is
+  /* Haptic - the fourth modality (KOKE moss, ledger L1, spec §4.4). Base is
      rule-faithful (trio L/C, hue rotated to 120deg). AA 4.61:1 page, 5.56:1
      card. Its deuteranopia weakness vs the auditory brown (dE 0.023) is
      accepted with a MANDATORY mitigation: haptic-colored UI ALWAYS carries a
-     text label (floor names, chips) — modality color is never the sole
+     text label (floor names, chips) - modality color is never the sole
      carrier (§4.3). Hover/active follow the §4.2 ramp model, in gamut.
      oklch computed from the adopted hex (round-trips byte-identically). */
   --modality-haptic: oklch(49.87% 0.0897 119.39); /* #5d6a2a */
-  --modality-haptic-soft: oklch(86.38% 0.0441 120.10); /* #ced7b7 — fill/chart tint; ink-on-it 11.09:1 */
+  --modality-haptic-soft: oklch(86.38% 0.0441 120.10); /* #ced7b7 - fill/chart tint; ink-on-it 11.09:1 */
   --modality-haptic-hover: oklch(44.89% 0.0773 119.38); /* #505b26 */
   --modality-haptic-active: oklch(40.90% 0.0629 119.45); /* #464f26 */
 
-  /* Feedback — correct/incorrect in thesis-compatible tones (paper-green ink
+  /* Feedback - correct/incorrect in thesis-compatible tones (paper-green ink
      and burnt red), AA as text on both surfaces, distinct from --vermillion. */
   --positive: oklch(47.44% 0.0930 153.74); /* #2a6b43 */
   --positive-soft: oklch(81.24% 0.0400 158.15); /* #adcab8 */
   --negative: oklch(46.64% 0.1520 31.81); /* #9d2c1a */
   --negative-soft: oklch(83.58% 0.0417 33.01); /* #e3c0b8 */
 
-  /* Typography — self-hosted faces (OFL), Nils-adjudicated 2026-06-13:
+  /* Typography - self-hosted faces (OFL), Nils-adjudicated 2026-06-13:
      headings = Zen Maru Gothic, body = LINE Seed JP 400, stimulus kana =
      LINE Seed JP Bold (good kata/hira contrast, semi-playful, true 700).
      Body and stimuli share DNA; the rounded headings keep the warm-lab voice
@@ -75,10 +75,10 @@
   --font-body: "LINE Seed JP", "Hiragino Sans", "Yu Gothic", sans-serif;
   /* IPA-capable fallback stack for XL non-kana word forms (spec §3.3,
      reserved). The self-hosted Noto Sans @fontsource install rides the XL
-     build's own dependency gate, not NIL-65 — this is fallback-only for now. */
+     build's own dependency gate, not NIL-65 - this is fallback-only for now. */
   --font-stimuli-latin: "Noto Sans", "DejaVu Sans", sans-serif;
 
-  /* Type scale — body sizes plus dedicated kana display sizes. The JP faces
+  /* Type scale - body sizes plus dedicated kana display sizes. The JP faces
      render visually small for their em box, so control text gets its own
      role (--text-ui) and the heading sizes sit slightly above their Latin
      equivalents. */
@@ -91,7 +91,7 @@
   --text-xl: 1.75rem;
   --text-2xl: 2.55rem;
 
-  /* Trial-board prompt ladder (spec §3.2) — replaces the .trial-copy /
+  /* Trial-board prompt ladder (spec §3.2) - replaces the .trial-copy /
      .question-text / .translation-lines literals with named roles. Clamp
      midpoints keep rendered sizes within ~5% of the old literals at 375px
      and 1120px so the reserved slots need no re-derivation (invariant 5). */
@@ -106,12 +106,12 @@
   --text-hero: clamp(2.2rem, 5vw, 3.4rem); /* landing hero H1 (chrome only) */
   --text-xl-form: clamp(1.6rem, 5vw, 2.4rem); /* XL long non-kana forms (reserved) */
 
-  /* Line heights — kana display lines stay tight; body stays readable. */
+  /* Line heights - kana display lines stay tight; body stays readable. */
   --leading-kana: 1.08;
   --leading-tight: 1.2;
   --leading-body: 1.45;
 
-  /* Tracking — for small uppercase labels (e.g. "NOT SCORED", card sides). */
+  /* Tracking - for small uppercase labels (e.g. "NOT SCORED", card sides). */
   --tracking-wide: 0.04em;
 
   /* Spacing scale. */
@@ -124,9 +124,9 @@
   --space-7: 3rem;
   --space-8: 4rem;
 
-  /* Container measures (spec §2.1) — one --container-read wrapper per view. */
+  /* Container measures (spec §2.1) - one --container-read wrapper per view. */
   --container-app: 1120px; /* header bar content width */
-  --container-read: 760px; /* every panel and the trial stage — reading measure */
+  --container-read: 760px; /* every panel and the trial stage - reading measure */
   --container-form: 420px; /* auth form, completion summary */
 
   /* Radii. */
@@ -135,11 +135,11 @@
   --radius-lg: 10px;
   --radius-pill: 999px;
 
-  /* Elevation — soft warm-ink shadows; paper sits close to the ground. */
+  /* Elevation - soft warm-ink shadows; paper sits close to the ground. */
   --shadow-card: 0 1px 2px rgba(33, 30, 25, 0.08), 0 2px 8px rgba(33, 30, 25, 0.06);
   --shadow-raised: 0 2px 4px rgba(33, 30, 25, 0.1), 0 8px 24px rgba(33, 30, 25, 0.1);
 
-  /* Borders — hairlines in diluted ink; -mid for form-control affordance
+  /* Borders - hairlines in diluted ink; -mid for form-control affordance
      (>=3:1 non-text contrast on every surface). */
   --border-strong: oklch(23.66% 0.0104 80.60); /* #211e19 */
   --border-mid: oklch(59.83% 0.0237 85.96); /* #867f70 */
@@ -153,7 +153,7 @@
   --motion-reveal: 220ms; /* ease-out */
   --motion-spin: 400ms; /* ease-in-out */
 
-  /* Focus — visible vermillion ring on any surface. */
+  /* Focus - visible vermillion ring on any surface. */
   --focus-ring: 2px solid var(--vermillion);
   --focus-ring-offset: 2px;
 }

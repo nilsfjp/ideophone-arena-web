@@ -1,14 +1,14 @@
 // Observatory E1 figure-export generator (NIL-81).
 //
 // Static, poster-grade exports of the committed Observatory v1.0 (ab04469),
-// rendered from the SAME vendored data the live panels read — no invented
+// rendered from the SAME vendored data the live panels read - no invented
 // numbers. Emits self-contained SVGs; a sibling rasterizer (render.sh) turns
 // them into the PNGs that ship to public/ and docs/design/observatory-figures/.
 //
 // Binding constraints honored here:
 //   - Palette = UI-SYSTEM §4.1 tokens (raw hex mirrored from src/styles/
 //     tokens.css). --vermillion is ARENA DATA ONLY; the live arena layer is
-//     empty in a static export, so nothing is plotted in vermillion — it
+//     empty in a static export, so nothing is plotted in vermillion - it
 //     appears solely as the §10.6 wave-rule identity motif.
 //   - Divergence framing: "the two measures see different things", never
 //     "orthogonal".
@@ -17,7 +17,7 @@
 //
 // Fonts: the brand faces (Zen Maru Gothic / LINE Seed JP) are woff2-only and
 // the render host has no woff2->ttf tooling, so figures render in the host's
-// Adwaita Sans (display/body) + JetBrainsMono (specimen/mono) — a clean
+// Adwaita Sans (display/body) + JetBrainsMono (specimen/mono) - a clean
 // lab-instrument voice. Re-render with the brand faces installed for the
 // final brand pass if desired; layout is unchanged.
 
@@ -34,7 +34,7 @@ const thesis = read("thesis-pairs.json");
 const mclean = read("mclean.json");
 const norms = read("norms.json");
 
-// Verified canonical kana forms — from the backend seed (authoritative
+// Verified canonical kana forms - from the backend seed (authoritative
 // displayForm source): ideophone-arena-api `db/init/ideophone_arena.sql`,
 // `canonical_form` / `canonical_script` columns. NOT fabricated: script choice
 // (hiragana vs katakana) is the thesis's own variable, so kana is only ever
@@ -97,7 +97,7 @@ function text(x, y, s, o = {}) {
 const spec = (x, y, s, o = {}) =>
   text(x, y, s.toUpperCase(), { font: BODY, weight: 700, size: 13, fill: C.inkMuted, spacing: "0.1em", ...o });
 
-// The §10.6 seismograph wave-rule — form depicting sound. Identity motif.
+// The §10.6 seismograph wave-rule - form depicting sound. Identity motif.
 function waveRule(x, y, scale = 1, stroke = C.vermillion, w = 2) {
   const pts = [[0,7],[34,7],[42,2],[52,12],[62,3],[72,11],[82,5],[90,9],[98,7],[160,7]]
     .map(([px, py]) => `${x + px * scale},${y + py * scale}`).join(" ");
@@ -132,18 +132,18 @@ ${body}
 </svg>`;
 }
 
-// A washi "card" surface (paper card, hairline border, no shadow — §1).
+// A washi "card" surface (paper card, hairline border, no shadow - §1).
 const cardRect = (x, y, w, h, fill = C.card, r = 14) =>
   rect({ x, y, width: w, height: h, rx: r, fill, stroke: C.borderSoft, "stroke-width": 1.25 });
 
 // ---- attribution lines (must string-match Observatory.tsx footer) ----------
-const ATTR_THESIS = "Paulsson (2026), MA thesis — the study this arena replicates (30 pairs, 36 participants).";
-const ATTR_MCLEAN = "McLean, Dunn & Dingemanse (2023), Two measures are better than one — the 304-item backdrop, data CC BY 4.0.";
+const ATTR_THESIS = "Paulsson (2026), MA thesis: the study this arena replicates (30 pairs, 36 participants).";
+const ATTR_MCLEAN = "McLean, Dunn & Dingemanse (2023), Two measures are better than one: the 304-item backdrop, data CC BY 4.0.";
 const ATTR_IIDA = "Iida & Akita (2023), perceptual strength norms for 510 Japanese words.";
-const DIVERGENCE = "The two measures see different things — ρ ≈ +.44 overall, +.65 within ideophones (McLean, Dunn & Dingemanse 2023).";
+const DIVERGENCE = "The two measures see different things: ρ ≈ +.44 overall, +.65 within ideophones (McLean, Dunn & Dingemanse 2023).";
 
 // ===========================================================================
-// FIGURE: dumbbell — "The claim" (accuracy by modality)
+// FIGURE: dumbbell - "The claim" (accuracy by modality)
 // ===========================================================================
 function figureDumbbell(W = 1600, H = 980) {
   const pad = 72;
@@ -157,7 +157,7 @@ function figureDumbbell(W = 1600, H = 980) {
   b += spec(pad, 84, "The claim · guessing by modality");
   b += text(pad, 150, "Sound carries furthest", { font: FONT, weight: 700, size: 62 });
   b += waveRule(pad, 172, 1.1);
-  b += text(pad, 250, "In the thesis, 2AFC guessing slid as meanings turned inward —", { size: 27, fill: C.inkMuted });
+  b += text(pad, 250, "In the thesis, 2AFC guessing slid as meanings turned inward:", { size: 27, fill: C.inkMuted });
   b += text(pad, 288, "sound (68.6%) → sight (64.2%) → inner states (59.7%).", { size: 27, fill: C.inkMuted });
 
   // chart card
@@ -201,7 +201,7 @@ function figureDumbbell(W = 1600, H = 980) {
 }
 
 // ===========================================================================
-// FIGURE: divergence scatter — "The two measures"
+// FIGURE: divergence scatter - "The two measures"
 // ===========================================================================
 function scatterCore(ox, oy, plotW, plotH, opts = {}) {
   const ideo = mclean.items.filter((i) => i.stratum === "ideophone");
@@ -288,14 +288,14 @@ function figureScatter(W = 1400, H = 1320) {
   b += text(pad, 150, "Two measures, two stories", { font: FONT, weight: 700, size: 60 });
   b += waveRule(pad, 172, 1.1);
   b += text(pad, 248, "Ratings separate ideophones from prosaic words; guessing doesn’t.", { size: 26, fill: C.inkMuted });
-  b += text(pad, 284, "Each mark is one word — the backdrop is McLean 2023’s 304 items,", { size: 26, fill: C.inkMuted });
+  b += text(pad, 284, "Each mark is one word; the backdrop is McLean 2023’s 304 items,", { size: 26, fill: C.inkMuted });
   b += text(pad, 320, "the ink dots the 30 thesis pairs.", { size: 26, fill: C.inkMuted });
 
   // chart card
   const cx = pad, cy = 356, cw = W - pad * 2, ch = H - cy - 176;
   b += cardRect(cx, cy, cw, ch);
   b += scatterLegend(cx + 44, cy + 44);
-  // axis titles — plotT leaves headroom for the top marginal band below the legend
+  // axis titles - plotT leaves headroom for the top marginal band below the legend
   const plotL = cx + 96, plotT = cy + 116, plotW = cw - 200, plotH = ch - 262;
   b += scatterCore(plotL, plotT, plotW, plotH, { marginals: 46 });
   b += spec(plotL + plotW / 2, plotT + plotH + 58, "Accuracy · % correct", { anchor: "middle", size: 12 });
@@ -314,10 +314,10 @@ function figureScatter(W = 1400, H = 1320) {
 }
 
 // ===========================================================================
-// FIGURE: word radar — "The fingerprint" (Iida & Akita perceptual profiles)
+// FIGURE: word radar - "The fingerprint" (Iida & Akita perceptual profiles)
 // Faithful to WordRadar.tsx: six axes (aud/vis/hap/gus/olf/int in the panel's
 // re-slotted display order), two ideophones as ink solid vs ink-muted dashed
-// polygons. Reference data — no vermillion, no modality-trio colors (the axes
+// polygons. Reference data - no vermillion, no modality-trio colors (the axes
 // ARE the modalities). Verified canonical kana on the chips (KANA, from seed).
 // ===========================================================================
 const RADAR_AXES = [
@@ -351,7 +351,7 @@ function figureRadar(W = 1200, H = 1320) {
   b += spec(pad, 84, "The fingerprint · perceptual profiles");
   b += text(pad, 150, "A word’s six senses", { font: FONT, weight: 700, size: 60 });
   b += waveRule(pad, 172, 1.1);
-  b += text(pad, 248, "Every normed word carries a profile across six perceptual axes —", { size: 26, fill: C.inkMuted });
+  b += text(pad, 248, "Every normed word carries a profile across six perceptual axes:", { size: 26, fill: C.inkMuted });
   b += text(pad, 284, "how strongly it evokes each sense. Two ideophones, two shapes.", { size: 26, fill: C.inkMuted });
 
   const cx0 = pad, cy0 = 356, cw = W - pad * 2, ch = H - cy0 - 132;
@@ -442,11 +442,11 @@ function figureOg(W = 1200, H = 630) {
   b += text(pad, 190, "Ideophone", { font: FONT, weight: 700, size: 78, fill: C.ink });
   b += text(pad, 274, "Arena", { font: FONT, weight: 700, size: 78, fill: C.vermillion });
   b += waveRule(pad + 2, 300, 1.35);
-  b += text(pad, 392, "The Observatory — every guess and", { size: 27, fill: C.inkMuted });
+  b += text(pad, 392, "The Observatory: every guess and", { size: 27, fill: C.inkMuted });
   b += text(pad, 428, "rating, aggregated live against the thesis.", { size: 27, fill: C.inkMuted });
   b += spec(pad, 520, "Japanese ideophones · script iconicity · 2AFC", { size: 13 });
 
-  // right: kana specimen plate — verified canonical form (KANA, from the seed).
+  // right: kana specimen plate - verified canonical form (KANA, from the seed).
   // The stimulus voice is the brand's kana face (LINE Seed JP); ink, never
   // vermillion (kana is not arena data).
   const rw = 430, rh = H - pad * 2, rx = W - pad - rw, ry = pad, mid = rx + rw / 2;

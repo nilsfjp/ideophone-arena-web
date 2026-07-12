@@ -83,7 +83,7 @@ function modalityText(modality: ReturnType<typeof normalizeModality>) {
     case "INTEROCEPTIVE":
       return "Interoceptive ideophones point toward internal states, so their expressiveness can be harder to pin down quickly.";
     case "HAPTIC":
-      return "Haptic ideophones map sound onto texture and touch — a newer floor with no thesis baseline yet.";
+      return "Haptic ideophones map sound onto texture and touch, a newer floor with no thesis baseline yet.";
     default:
       return "This round still tests a form-meaning guess; a correct choice is not the same thing as proving stronger iconicity.";
   }

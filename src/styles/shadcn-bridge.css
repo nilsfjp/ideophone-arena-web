@@ -1,5 +1,5 @@
 /* ============================================================================
-   shadcn variable bridge (spec §4.6) — the ONLY place shadcn's semantic var
+   shadcn variable bridge (spec §4.6) - the ONLY place shadcn's semantic var
    names exist. shadcn/ui components read `--background`, `--card`, `--primary`,
    etc.; here each is `var(--our-token)`, again by reference, so the chrome
    layer inherits the "ink and paper" palette with zero value duplication.
@@ -7,7 +7,7 @@
 
    NAME NOTE (spec §4.6, harmonized NIL-69): shadcn's canonical `--accent` var
    is its LIST-HOVER WASH, not our vermillion. The vermillion family was renamed
-   to `--vermillion*` (H2), which frees this name — so the bridge now defines
+   to `--vermillion*` (H2), which frees this name - so the bridge now defines
    `--accent` = washi (`--surface-card`) and `--accent-foreground` = ink here,
    the stock shadcn wiring. Hand-authored components in src/components/ui use the
    stock shadcn `accent` classes (`hover:bg-accent hover:text-accent-foreground`),

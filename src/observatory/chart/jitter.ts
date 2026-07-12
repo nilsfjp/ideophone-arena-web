@@ -1,5 +1,5 @@
 // Deterministic seeded jitter for the raincloud raw dots (SPEC-stats-dashboard
-// §3.4). Math.random is banned in this codebase — jitter must be reproducible
+// §3.4). Math.random is banned in this codebase - jitter must be reproducible
 // so the SSR/renderToStaticMarkup tests are machine-independent and the same
 // dot never hops between renders. Pure integer math (Math.imul / >>> 0): no
 // floats-from-locale, identical on every machine. (Seeded determinism is also

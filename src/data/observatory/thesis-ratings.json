@@ -1,8 +1,8 @@
 {
   "meta": {
     "source": "docs/research/data/gorilla-tidy-rating.csv",
-    "citation": "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach — MA thesis, Cognitive Semiotics, Lund University; 1–7 iconicity rating trials, N = 36 participants × 30 words",
-    "license": "Author's own data — pre-aggregated per-modality counts only; participant-level trials never vendored",
+    "citation": "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach, MA thesis, Cognitive Semiotics, Lund University; 1–7 iconicity rating trials, N = 36 participants × 30 words",
+    "license": "Author's own data; pre-aggregated per-modality counts only; participant-level trials never vendored",
     "generatedBy": "scripts/build-observatory-data.mjs",
     "ratingScale": "1-7",
     "totalRatings": 1080

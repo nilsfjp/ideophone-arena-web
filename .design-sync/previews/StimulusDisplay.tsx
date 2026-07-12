@@ -1,4 +1,4 @@
-// Authored preview — the script/placeholder face of a stimulus. Both faces and
+// Authored preview - the script/placeholder face of a stimulus. Both faces and
 // the romaji/meaning reveal slots stay mounted in every phase so the card keeps
 // one stable size; phases toggle visibility only. Pre-answer the audio-only
 // face shows just a position label; script conditions show the display form;

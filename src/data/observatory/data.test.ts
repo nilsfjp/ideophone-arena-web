@@ -35,7 +35,7 @@ describe("thesis-pairs.json", () => {
     const meanZ = zs.reduce((a, b) => a + b, 0) / zs.length;
     expect(Math.abs(meanZ)).toBeLessThan(0.01);
     expect(thesisPairs.meta.ratingSd).toBeGreaterThan(0);
-    // The z column reconstructs from meta mean/sd — the crosshair math relies on it.
+    // The z column reconstructs from meta mean/sd - the crosshair math relies on it.
     const p0 = thesisPairs.pairs[0];
     expect(p0.meanRatingZ).toBeCloseTo(
       (p0.meanRating - thesisPairs.meta.ratingMean) / thesisPairs.meta.ratingSd,

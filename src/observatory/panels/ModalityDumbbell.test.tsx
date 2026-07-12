@@ -53,7 +53,7 @@ describe("ModalityDumbbell", () => {
     expect(hollow).toContain("Hollow dots mark modalities still under 30");
   });
 
-  it("renders no live dot for a modality without data — N = 0, no NaN", () => {
+  it("renders no live dot for a modality without data - N = 0, no NaN", () => {
     const markup = render([]);
     expect(count(markup, 'class="dumbbell-live"')).toBe(0);
     expect(count(markup, "N = 0")).toBe(3);

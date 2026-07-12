@@ -1,7 +1,7 @@
 // Hand-rolled kernel density estimate for the scatter's marginal curves
 // (SPEC-stats-dashboard §3.3: Epanechnikov, ~15 lines, no dependency).
 // Curves are PEAK-normalized (max 1): the marginals communicate shape, not
-// mass — sample sizes live in labels and margin notes, never in curve height.
+// mass - sample sizes live in labels and margin notes, never in curve height.
 
 /** Epanechnikov kernel: 0.75·(1 − u²) for |u| ≤ 1, else 0. */
 export function epanechnikov(u: number): number {

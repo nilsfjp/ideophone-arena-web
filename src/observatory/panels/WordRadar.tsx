@@ -1,7 +1,7 @@
-// The fingerprint — per-word modality profiles (SPEC-stats-dashboard §3.4).
+// The fingerprint - per-word modality profiles (SPEC-stats-dashboard §3.4).
 // Six perceptual-strength axes (0–5) from the vendored Iida & Akita norms;
 // two-word compare overlay; searchable pickers over all 510 words with the
-// arena's 17 romaji-equality matches badged. Reference data — no vermillion,
+// arena's 17 romaji-equality matches badged. Reference data - no vermillion,
 // and no modality-trio colors either (the axes themselves are modalities):
 // the two words differ by line style + vertex shape + direct labels.
 // Pure trigonometry; d3 stays out of this panel.
@@ -15,7 +15,7 @@ import { SpecimenLabel, SpecimenText } from "../chart/SpecimenLabel";
 import { useChartSize } from "../chart/useChartSize";
 
 // Display order re-slots the norms axes (aud, vis, hap, gus, olf, int) so the
-// two longest labels sit top/bottom where centered text has the full width —
+// two longest labels sit top/bottom where centered text has the full width -
 // what keeps 320 px legible without abbreviating (§4.3: direct labels are the
 // CVD carrier). Angles in degrees, −90 = top, clockwise.
 const DISPLAY_AXES: readonly { normIndex: number; label: string; angle: number }[] = [
@@ -163,7 +163,7 @@ function Picker({
                 onClick={() => {
                   onSelect(w.word);
                   setQuery("");
-                  // The list unmounts with the click target in it — return
+                  // The list unmounts with the click target in it - return
                   // focus to the input instead of dropping it on <body>.
                   inputRef.current?.focus();
                 }}
@@ -186,7 +186,7 @@ function Picker({
           ))}
           {matches.length > shown.length ? (
             <li className="radar-picker-more">
-              … {matches.length - shown.length} more — keep typing.
+              … {matches.length - shown.length} more; keep typing.
             </li>
           ) : null}
           {matches.length === 0 ? (
@@ -221,11 +221,11 @@ export default function WordRadar({
 
   return (
     <section className="observatory-panel observatory-panel--radar">
-      <h2>The fingerprint — perceptual profiles</h2>
+      <h2>The fingerprint · perceptual profiles</h2>
       <p className="observatory-panel-copy">
         Every word carries a six-sense profile: how strongly it evokes
         hearing, sight, touch, taste, smell, and inner states. Compare any two
-        of the 510 normed words — the arena's own words wear their badge.
+        of the 510 normed words; the arena's own words wear their badge.
       </p>
       <div className="radar-pickers">
         <Picker
@@ -268,7 +268,7 @@ export default function WordRadar({
             />
           ))}
           {/* spokes + axis labels. Side labels clamp into the figure bounds
-              (estimated glyph width — no DOM measuring, SSR-safe) so nothing
+              (estimated glyph width - no DOM measuring, SSR-safe) so nothing
               clips at 320 px; the CVD rule needs every axis direct-labeled. */}
           {DISPLAY_AXES.map(({ label, angle }) => {
             const [sx, sy] = vertex(cx, cy, radius, angle, AXIS_MAX);
@@ -358,7 +358,7 @@ export default function WordRadar({
         </svg>
         <figcaption className="chart-notes">
           <span>
-            Perceptual strength 0–5 per axis, Iida &amp; Akita (2023) norms —
+            Perceptual strength 0–5 per axis, Iida &amp; Akita (2023) norms:
             510 words; {norms.meta.arenaMatchCount} arena words carry the badge.
           </span>
         </figcaption>
@@ -369,8 +369,8 @@ export default function WordRadar({
         columns={["Axis", wordA, wordB]}
         rows={DISPLAY_AXES.map(({ normIndex, label }) => [
           label,
-          a ? a.axes[normIndex].toFixed(1) : "—",
-          b ? b.axes[normIndex].toFixed(1) : "—",
+          a ? a.axes[normIndex].toFixed(1) : "–",
+          b ? b.axes[normIndex].toFixed(1) : "–",
         ])}
       />
     </section>

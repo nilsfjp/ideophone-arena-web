@@ -1,5 +1,5 @@
 // Null-safe aggregation over the live divergence rows (backend contract:
-// guessAccuracy / meanRating are null — never 0 — when that side has zero
+// guessAccuracy / meanRating are null - never 0 - when that side has zero
 // observations; the client must distinguish "no data" from "always wrong").
 // Every function here returns null for "no data" and never produces NaN.
 
@@ -45,7 +45,7 @@ export function weightedModalityAccuracy(
   return result;
 }
 
-/** Header strip totals — every row counts, whatever its modality (§3.1). */
+/** Header strip totals - every row counts, whatever its modality (§3.1). */
 export function recordTotals(rows: DivergenceEntry[]): {
   guesses: number;
   ratings: number;
@@ -69,7 +69,7 @@ export type ZContext = { mean: number; sd: number };
 
 /**
  * Within-layer standardization context (scatter y-axis, adjudicated
- * 2026-07-05: z within study). Needs ≥ 3 values AND spread — the sd of one or
+ * 2026-07-05: z within study). Needs ≥ 3 values AND spread - the sd of one or
  * two ratings (or of identical values) is noise, so the caller suppresses the
  * layer instead of plotting fake positions.
  */
@@ -114,7 +114,7 @@ export type ArenaScatterResult = {
   awaitingRating: number;
   /** Rows with ratings awaiting their first guess. */
   awaitingGuess: number;
-  /** Pool words that have not entered the record at all. Matched by romaji —
+  /** Pool words that have not entered the record at all. Matched by romaji -
    * the local record can carry non-pool rows, so this is NOT pool − rows. */
   neverPlayed: number;
   /** Standardization parameters, reused for the session crosshair's y. */

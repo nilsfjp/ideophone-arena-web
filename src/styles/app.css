@@ -1,4 +1,4 @@
-/* Visual identity: "laboratory ink and paper" — all color/font/radius/shadow
+/* Visual identity: "laboratory ink and paper" - all color/font/radius/shadow
    values come from tokens.css; layout and reserved-slot structure (CLAUDE.md
    invariant 5) are unchanged by the token pass. A few odd in-between sizes
    that predate the type scale stay literal where substitution would move
@@ -337,7 +337,7 @@ a {
 }
 
 /* Motion (§7): color/border/fill state changes ride --motion-micro, opt-in
-   under prefers-reduced-motion. No transforms, no scale-on-hover — paper does
+   under prefers-reduced-motion. No transforms, no scale-on-hover - paper does
    not stretch; the lift is fill + border only. */
 @media (prefers-reduced-motion: no-preference) {
   .primary-button,
@@ -427,7 +427,7 @@ a {
 
 /* Motion policy (§7): the progress-track width fill is the ONE sanctioned
    layout-property animation (decorative feedback on a reserved geometry), but
-   it still stays opt-in — reduced-motion users get an instant fill. */
+   it still stays opt-in - reduced-motion users get an instant fill. */
 @media (prefers-reduced-motion: no-preference) {
   .progress-track span {
     transition: width 180ms ease;
@@ -579,7 +579,7 @@ a {
 
 /* The reveal slots reserve one line each from mount (empty until feedback),
    so revealing romaji/meaning never grows the card. The display kana are the
-   identity anchor — they render in the display face at the dedicated kana
+   identity anchor - they render in the display face at the dedicated kana
    size. */
 .script-display-text {
   min-height: 1.08em;
@@ -593,8 +593,8 @@ a {
 /* Kana-measure guard (§8): on a replay-capable card, narrow the centered kana
    measure symmetrically so a 6-mora word (そろりそろり-class) wraps clear of the
    top-right control on both corners. Scoped to the pre-feedback faces
-   (`:not(.revealed-display)`) — playback and choice, where only the kana shows
-   and there is vertical room — so the measure is stable from playback through
+   (`:not(.revealed-display)`) - playback and choice, where only the kana shows
+   and there is vertical room - so the measure is stable from playback through
    choice (invariant 5) but the reveal face keeps its full measure (the canonical
    word + romaji + meaning must fit the fixed card without a forced extra line).
    Card dimensions unchanged (§2.4): this narrows only the text measure. */
@@ -633,7 +633,7 @@ a {
   font-weight: 700;
 }
 
-/* Per-card replay control (§8): instrument hardware, not chrome — same raised
+/* Per-card replay control (§8): instrument hardware, not chrome - same raised
    fill + 2px ink border + pill DNA as .media-play-button / .placeholder-mark.
    A 36px visual circle with a 44x44 hit area, absolutely positioned in the
    card's top-right padding. Identity-symmetric: A and B are byte-identical. */
@@ -822,7 +822,7 @@ a {
   text-align: left;
 }
 
-/* When the answer was wrong, the second card is always "Correct word" —
+/* When the answer was wrong, the second card is always "Correct word" -
    lift it so the eye lands on the right answer first. */
 .feedback.incorrect .feedback-choice-card:last-child {
   border-color: var(--positive);
@@ -964,7 +964,7 @@ td {
   text-align: center;
 }
 
-/* Surface grammar (§1): completion is chrome — it sits flat on washi with a
+/* Surface grammar (§1): completion is chrome - it sits flat on washi with a
    hairline border and casts NO shadow. Elevation is reserved for the
    instrument's voice (feedback panel, reveal). */
 .complete-panel {
@@ -1013,7 +1013,7 @@ td {
   background: var(--surface-card);
 }
 
-/* Surface grammar (§1): the error panel is chrome — washi + hairline, no
+/* Surface grammar (§1): the error panel is chrome - washi + hairline, no
    shadow (matches .complete-panel). */
 .error-panel {
   margin-top: var(--space-8);
@@ -1061,7 +1061,7 @@ td {
   cursor: pointer;
 }
 
-/* Measure chip — the specimen-label primitive (§3.4), plain variant. */
+/* Measure chip - the specimen-label primitive (§3.4), plain variant. */
 .mode-card-measure {
   color: var(--ink-muted);
   font-size: var(--text-xs);
@@ -1118,7 +1118,7 @@ td {
 }
 
 /* Available cards keep the slot present (equal structure, §2.3) but draw no
-   pill — reserved even when empty. */
+   pill - reserved even when empty. */
 .mode-card-status:empty {
   margin-top: auto;
   min-height: 1.5rem;
@@ -1316,7 +1316,7 @@ td {
 }
 
 /* ============================================================================
-   Rating Lab (27D) — the thesis Rating Task as a mode. Gorilla layout on the
+   Rating Lab (27D) - the thesis Rating Task as a mode. Gorilla layout on the
    lab paper: listen lines, neutral audio-only card, meaning line, question,
    anchored 1-7 scale (selection fills vermillion), Next, then a reserved
    arena-record slot. Tokens only.
@@ -1468,7 +1468,7 @@ td {
 
 /* Reserved arena-record slot: mounted from first paint at its final size so
    the reveal never shifts the scale (invariant-5 discipline). */
-/* Surface grammar (§1): the arena record is instrument output — raised paper,
+/* Surface grammar (§1): the arena record is instrument output - raised paper,
    and it gains --shadow-card for consistency with the feedback verdict. */
 .rating-reveal {
   width: min(100%, 520px);

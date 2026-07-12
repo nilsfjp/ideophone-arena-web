@@ -213,7 +213,7 @@ export default function App() {
   );
 
   const handleVisitObservatory = useCallback(() => {
-    // D1: the Observatory is public — open it with no auth leg.
+    // D1: the Observatory is public - open it with no auth leg.
     setObservatorySessionAccuracy(null);
     setView("observatory");
   }, []);
@@ -325,7 +325,7 @@ export default function App() {
     }
 
     // Feedback reveals the word-to-meaning mapping, which makes both of this
-    // round's words rateable — the backend derives that from player_answers,
+    // round's words rateable - the backend derives that from player_answers,
     // so the Rating Lab pool needs no client-side bookkeeping here.
     setLatestResult(result);
     setSessionStats((current) => ({
@@ -352,7 +352,7 @@ export default function App() {
   }
 
   function renderMain() {
-    // Public surfaces (no auth): the landing and — per D1 — the Observatory.
+    // Public surfaces (no auth): the landing and - per D1 - the Observatory.
     // They precede the auth gate so a logged-out visitor can reach them.
     if (view === "landing") {
       return (
@@ -633,7 +633,7 @@ export default function App() {
       )}
 
       {/* Chrome-level toast layer (§5): themed and mounted, staged like the
-          Dialog primitive. In-trial status lines stay reserved slots — no toast
+          Dialog primitive. In-trial status lines stay reserved slots - no toast
           triggers are wired this session (zero behavior change). */}
       <Toaster />
     </div>

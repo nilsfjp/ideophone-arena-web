@@ -2,7 +2,7 @@
 // (SPEC-stats-dashboard §3.4). Works over a length-7 counts array
 // (counts[i] = number of ratings equal to i+1), which is exactly the shape the
 // backend's rating-distributions endpoint carries per modality AND the shape
-// the vendored thesis reference is pre-aggregated into — so live and thesis
+// the vendored thesis reference is pre-aggregated into - so live and thesis
 // layers normalize through the same helpers. Every function is null/empty-safe
 // and never produces NaN (thin data is the app's register, not a crash).
 
@@ -17,7 +17,7 @@ export const RATING_MAX = 7;
 /**
  * Raw-dot budget per layer per tier. Above this the cloud is a seeded,
  * per-value-proportional subsample (shape preserved, `shown < total` disclosed
- * in the figcaption) — never a silent truncation, and no giant markup for the
+ * in the figcaption) - never a silent truncation, and no giant markup for the
  * string-asserting tests.
  */
 export const DOT_CAP = 80;
@@ -54,7 +54,7 @@ export function countsByModality(
   return map;
 }
 
-/** value v (1..7) repeated counts[v-1] times, ascending — feeds KDE + quartiles. */
+/** value v (1..7) repeated counts[v-1] times, ascending - feeds KDE + quartiles. */
 export function expandCounts(counts: readonly number[]): number[] {
   const out: number[] = [];
   for (let i = 0; i < counts.length; i += 1) {
@@ -63,7 +63,7 @@ export function expandCounts(counts: readonly number[]): number[] {
   return out;
 }
 
-/** Type-7 linear-interpolation quantile — the same convention as kde.ts. */
+/** Type-7 linear-interpolation quantile - the same convention as kde.ts. */
 function quantile(sorted: number[], q: number): number {
   const n = sorted.length;
   const pos = (n - 1) * q;

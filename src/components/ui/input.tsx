@@ -4,7 +4,7 @@ import { cn } from "../../lib/utils";
 
 /**
  * shadcn Input, themed. Raised fill is the affordance exception in the surface
- * grammar (§1) — form inputs use --surface-raised without a shadow. Border is
+ * grammar (§1) - form inputs use --surface-raised without a shadow. Border is
  * the -mid affordance weight (§6); focus is the vermillion outline (§6);
  * 44px min height (§9.2 touch target).
  */

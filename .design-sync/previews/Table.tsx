@@ -1,4 +1,4 @@
-// Authored preview — the real shadcn Table family from window.IdeophoneArena.
+// Authored preview - the real shadcn Table family from window.IdeophoneArena.
 // This is the leaderboard / lab-record chrome: a hairline-ruled table that
 // wraps itself in an overflow-x container so wide content scrolls in its own
 // box and the page never scrolls sideways (§9.1).

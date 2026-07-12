@@ -2,7 +2,7 @@
   "meta": {
     "source": "data/observatory-sources/GuessingRatingScores.csv",
     "citation": "McLean, B., Dunn, M., & Dingemanse, M. (2023). Two measures are better than one. Language and Cognition.",
-    "license": "Source repo MIT; paper data CC BY 4.0 — attribution required",
+    "license": "Source repo MIT; paper data CC BY 4.0, attribution required",
     "generatedBy": "scripts/build-observatory-data.mjs",
     "itemCount": 304,
     "ideophoneCount": 101,

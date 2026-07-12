@@ -7,7 +7,7 @@ Repository: `/code/js/ideophone-arena-web`
 
 This checklist verifies that the frontend demonstrates the Spring Boot backend correctly. The backend is the main grading target, but the frontend must make the project demonstrable: authentication, game flow, feedback, completion, leaderboard, and recent attempts.
 
-It also tracks the items the frontend genuinely *owns* — the experiment invariants and the verify scripts that gate them (see the "Experiment invariants (frontend-owned)" section). This is the frontend's checklist, not the course's Spring grading doc; that lives in the backend repo as `docs/backend-grading-checklist.md`.
+It also tracks the items the frontend genuinely *owns* - the experiment invariants and the verify scripts that gate them (see the "Experiment invariants (frontend-owned)" section). This is the frontend's checklist, not the course's Spring grading doc; that lives in the backend repo as `docs/backend-grading-checklist.md`.
 
 Do not mark an item complete unless it has browser evidence, build evidence, or a clear file reference.
 
@@ -66,8 +66,8 @@ npm run build
 ## Landing and public boundary (NIL-43)
 
 - [x] Logged-out visitors land on the public landing (`src/components/Landing.tsx`),
-      not the bare auth form — a new `"landing"` AppView, full-bleed outside `.site-main`.
-- [x] Hero "Prove it — play a round" → auth on the **register tab** → Meaning Match
+      not the bare auth form - a new `"landing"` AppView, full-bleed outside `.site-main`.
+- [x] Hero "Prove it - play a round" → auth on the **register tab** → Meaning Match
       instructions (a browser-loop waypoint); logged-in visitors skip the auth leg.
 - [x] The Observatory is a public surface (D1): strip-6 "Visit the Observatory" opens it
       logged-out (`GET /api/research/divergence` is `permitAll`; no protected call fires
@@ -77,7 +77,7 @@ npm run build
       fallback (the placeholder renders if the asset is absent).
 
 2026-07-07 evidence: `verify-browser-loop.mjs` (rewritten entry) exits 0 at desktop (1280)
-and 375px — landing renders, strip-7 grid honest (2 live / 4 coming-soon), no horizontal
+and 375px - landing renders, strip-7 grid honest (2 live / 4 coming-soon), no horizontal
 overflow, hero CTA lands on Meaning Match instructions post-register. Full-page landing
 screenshots confirm all eight strips at both viewports, single `<h1>`, E1 scatter loaded.
 
@@ -188,7 +188,7 @@ Browser proof:
 
 2026-06-07 Phase 2 source update: feedback cards now identify the selected and correct card side, canonical display form, romaji, and meaning when the round/result data provides enough information.
 
-2026-06-12 practice-rounds evidence: with the practice toggle on, `node scripts/verify-browser-loop.mjs` (desktop and 375px) answered 32 rounds — exactly the first 2 with header "Practice round" plus a "Not scored" badge, no round counter or score readout, progress bar held at 0%, and normal feedback. The first scored round showed `Round 1 / 30 | Session score: 0 / 0 | 0% answered`. Practice answers never increment session stats (`App.handleAnswered` returns early on `result.practice`). A separate CDP proof unticked the toggle and confirmed the first round is `Round 1 / 30` immediately. Practice stimuli were ordinary `/stimuli/audio/p*.m4a` files (e.g. `p0h-sotto.m4a`).
+2026-06-12 practice-rounds evidence: with the practice toggle on, `node scripts/verify-browser-loop.mjs` (desktop and 375px) answered 32 rounds - exactly the first 2 with header "Practice round" plus a "Not scored" badge, no round counter or score readout, progress bar held at 0%, and normal feedback. The first scored round showed `Round 1 / 30 | Session score: 0 / 0 | 0% answered`. Practice answers never increment session stats (`App.handleAnswered` returns early on `result.practice`). A separate CDP proof unticked the toggle and confirmed the first round is `Round 1 / 30` immediately. Practice stimuli were ordinary `/stimuli/audio/p*.m4a` files (e.g. `p0h-sotto.m4a`).
 
 ## Stimuli/media
 
@@ -218,13 +218,13 @@ Browser devtools Network tab shows successful /stimuli/... media requests.
 
 2026-06-07 proof update: `node scripts/verify-presentation-logic.mjs` verifies Audio only, Script match, Script mismatch, unknown-condition fallback, HU-to-hiragana canonical display, KD-to-katakana canonical display, and opposite-script conversion for mismatch mode.
 
-2026-06-10 S1 source update (supersedes the 2026-06-07 kana-conversion design): the kana conversion/detection heuristics in `conditionPresentation.ts` are deleted — they inverted the script manipulation. The backend now serves `displayForm` (visible pre-answer script, pre-flipped for mismatch) and `canonicalForm` (feedback reveal) on each round option, and `StimulusDisplay` renders them verbatim. `src/roundValidation.ts` rejects rounds missing those fields through the round-problem error state instead of falling back. Stimulus playback consumes per-word audio (`/stimuli/audio/<file>.m4a`) through the existing blob/`ended`-event path.
+2026-06-10 S1 source update (supersedes the 2026-06-07 kana-conversion design): the kana conversion/detection heuristics in `conditionPresentation.ts` are deleted - they inverted the script manipulation. The backend now serves `displayForm` (visible pre-answer script, pre-flipped for mismatch) and `canonicalForm` (feedback reveal) on each round option, and `StimulusDisplay` renders them verbatim. `src/roundValidation.ts` rejects rounds missing those fields through the round-problem error state instead of falling back. Stimulus playback consumes per-word audio (`/stimuli/audio/<file>.m4a`) through the existing blob/`ended`-event path.
 
 2026-06-10 S1 proof update: `npm run test` (vitest, new) covers condition mapping, per-condition `displayForm`/placeholder rendering, `canonicalForm` reveal, and the missing-field round-problem path. `node scripts/verify-presentation-logic.mjs` now also scans `src/` for forbidden kana-conversion identifiers and asserts via rendered markup that pre-answer script text equals the backend `displayForm` verbatim (including the `じゃあじゃあ` → `ジャージャー` long-vowel case per-character conversion cannot produce) and that Audio only shows placeholders pre-answer.
 
-2026-07-04 NIL-63 replay proof: `node scripts/verify-browser-loop.mjs` full pass (exit 0, `relevantConsoleErrorCount: 0`) at desktop and 375px, including the new choice-phase replay waypoint — 2 `.card-replay-button` controls present, card A and card B markup byte-identical (modulo the aria-label), clicking card A's control fires a second `HTMLMediaElement.play()` while the choice question stays visible, no `.feedback`, and both `.choice-button`s remain (replay ≠ select). Kana-measure guard verified (injected 6-mora そろりそろり at a pre-feedback face): `max-width: calc(100% - 88px)`, wraps to 2 lines, right edge clears the top-right control. Reduced-motion (`Emulation.setEmulatedMedia` reduce): icon `animationName: "none"` (spin gated off) with a `--vermillion` border pulse. Regression caught + fixed in-session: the guard was force-wrapping medium katakana at the reveal face (card overflow); scoped to `:not(.revealed-display)` and re-verified `ガタン`/`ゴツゴツ` render one line at both viewports. (375px browser proof needs a background `/json/activate` tab poller to survive Web-Audio throttling in a headless run — see the browser-proof-environment memory.)
+2026-07-04 NIL-63 replay proof: `node scripts/verify-browser-loop.mjs` full pass (exit 0, `relevantConsoleErrorCount: 0`) at desktop and 375px, including the new choice-phase replay waypoint - 2 `.card-replay-button` controls present, card A and card B markup byte-identical (modulo the aria-label), clicking card A's control fires a second `HTMLMediaElement.play()` while the choice question stays visible, no `.feedback`, and both `.choice-button`s remain (replay ≠ select). Kana-measure guard verified (injected 6-mora そろりそろり at a pre-feedback face): `max-width: calc(100% - 88px)`, wraps to 2 lines, right edge clears the top-right control. Reduced-motion (`Emulation.setEmulatedMedia` reduce): icon `animationName: "none"` (spin gated off) with a `--vermillion` border pulse. Regression caught + fixed in-session: the guard was force-wrapping medium katakana at the reveal face (card overflow); scoped to `:not(.revealed-display)` and re-verified `ガタン`/`ゴツゴツ` render one line at both viewports. (375px browser proof needs a background `/json/activate` tab poller to survive Web-Audio throttling in a headless run - see the browser-proof-environment memory.)
 
-2026-06-10 browser proof: `node scripts/verify-browser-loop.mjs` passed a full 30-round Audio-only session against backend 8081 (2 React placeholders per choice phase, 0 muted media, 180 successful per-word `/stimuli/audio/*.m4a` responses; the additional `net::ERR_ABORTED` entries are React StrictMode dev double-mounts aborting the duplicate blob fetch). The helper itself was refreshed for current UI text ("Which one do you think means", uppercase `Card A/B` via CSS, single feedback card on correct answers) and now scrolls buttons into view before trusted clicks. A CDP pass per script condition confirmed pre-answer DOM equals backend `displayForm` verbatim — Script match: `["ごそごそ","カタカタ"]`; Script mismatch: `["ゴソゴソ","かたかた"]`, i.e. the katakana-canonical word `katakata` correctly flips to hiragana (the previously inverted case) — and that feedback reveals `canonicalForm` + romaji, with no horizontal overflow at a 375px viewport.
+2026-06-10 browser proof: `node scripts/verify-browser-loop.mjs` passed a full 30-round Audio-only session against backend 8081 (2 React placeholders per choice phase, 0 muted media, 180 successful per-word `/stimuli/audio/*.m4a` responses; the additional `net::ERR_ABORTED` entries are React StrictMode dev double-mounts aborting the duplicate blob fetch). The helper itself was refreshed for current UI text ("Which one do you think means", uppercase `Card A/B` via CSS, single feedback card on correct answers) and now scrolls buttons into view before trusted clicks. A CDP pass per script condition confirmed pre-answer DOM equals backend `displayForm` verbatim - Script match: `["ごそごそ","カタカタ"]`; Script mismatch: `["ゴソゴソ","かたかた"]`, i.e. the katakana-canonical word `katakata` correctly flips to hiragana (the previously inverted case) - and that feedback reveals `canonicalForm` + romaji, with no horizontal overflow at a 375px viewport.
 
 Manual Edge proof still needed for rendered Phase 2 presentation:
 
@@ -376,7 +376,7 @@ Browser proof:
 - [x] `production` AppView reachable from the mode grid and the public landing
       (promoted to a live card); prompt served by `GET /api/productions/next`.
 - [x] The meaning is the whole prompt: no kana, no romaji, no audio pre-submit.
-      Modality shows as a tinted `MEANING · {MODALITY}` specimen chip — it is
+      Modality shows as a tinted `MEANING · {MODALITY}` specimen chip - it is
       prompt-side meaning, not a hint about the form to invent (V10).
 - [x] All player copy comes from the frozen §8 slate in `experimentText.ts`
       (NIL-83), authored sentence case and uppercased by CSS. No string names
@@ -385,11 +385,11 @@ Browser proof:
       spellCheck/autoComplete` off, labelled by the instruction line, Enter
       submits, no live character counter.
 - [x] Mirror-validation tests `input.trim().toLowerCase()` against
-      `^[a-z]{2,24}$` and sends the lowercased value — rejecting the raw value
+      `^[a-z]{2,24}$` and sends the lowercased value - rejecting the raw value
       would invent a parse error on auto-capitalising mobile keyboards that the
       server would never raise.
-- [x] **One try per word.** A `400` renders the frozen §8.1 helper — never the
-      backend's `validationErrors.input` text — keeps the typed value and the
+- [x] **One try per word.** A `400` renders the frozen §8.1 helper - never the
+      backend's `validationErrors.input` text - keeps the typed value and the
       focus, and does not consume the attempt. Proven in-browser by failing on a
       word and then successfully minting *the same word* (a consumed attempt
       would answer `409`). The submit button is never disabled on bad input.
@@ -397,7 +397,7 @@ Browser proof:
       `completed: true` shows the done panel on Rating Lab patterns.
 - [x] The reveal renders `target.displayForm` verbatim with `lang="ja"`
       (invariant 1/3); the player's romaji is shown exactly as typed, never
-      converted. The reveal's top rule is neutral `--border-strong` — **never
+      converted. The reveal's top rule is neutral `--border-strong` - **never
       score- or verdict-colored** (V12).
 - [x] Feature chips show present-in-either features plus the two continuous ones,
       matched first (§2.3.5). Unmatched is muted, never negative. No kana glyphs
@@ -405,11 +405,11 @@ Browser proof:
       absences included.
 - [x] The reveal card is the first consumer of `--motion-reveal`: opacity +
       `translateY` over 220ms, gated by `prefers-reduced-motion: no-preference`
-      (enforced by `verify-token-purity.mjs` — an ungated animation fails it).
+      (enforced by `verify-token-purity.mjs` - an ungated animation fails it).
       Reduced motion gets a non-animated equivalent.
 - [x] The status line `WORD {i} OF {n} · YOUR MEAN {m}` takes every count from
       the API. `{n}` is `totalProducible` from the prompt endpoint (NIL-62 FE
-      rider) — never derived, never hardcoded (V14). The mean segment is omitted
+      rider) - never derived, never hardcoded (V14). The mean segment is omitted
       until the player has minted a word, since a mean of zero samples has no
       frozen form.
 - [x] `responseTimeMs` is anchored at prompt paint, submitted as an integer, and
@@ -417,7 +417,7 @@ Browser proof:
 - [ ] Known gap: the proof battery cannot detect an uppercase regression, since
       no leg inspects `text-transform`.
 - [ ] Deferred: `getTriangulation` and the §2.4 completion benchmark
-      ("Arena mean producibility…") + per-modality breakdown — `ProductionEntry`
+      ("Arena mean producibility…") + per-modality breakdown - `ProductionEntry`
       carries no `modality`, and the benchmark line is unfrozen copy.
 
 ## Error handling and loading states
@@ -556,7 +556,7 @@ src/components/StimulusDisplay.tsx
 These scripts are the oracle for "no behavioral / invariant change" and must pass
 before any task is considered done.
 
-- [x] `node scripts/verify-presentation-logic.mjs` passes — verifies forbidden
+- [x] `node scripts/verify-presentation-logic.mjs` passes - verifies forbidden
       kana identifiers absent from `src/`, condition mapping, verbatim
       `displayForm` rendering, audio-only placeholder behavior, frozen
       `experimentText.ts` strings, and reserved-layout slots.
@@ -564,7 +564,7 @@ before any task is considered done.
       (skip when a change does not affect the loop; say so).
 - [x] `npm run lint` passes.
 - [x] `npm run build` passes.
-- [x] `npm run test` (vitest) passes — condition mapping, verbatim rendering,
+- [x] `npm run test` (vitest) passes - condition mapping, verbatim rendering,
       missing-field round-problem path, leaderboard best-session fixtures.
 
 2026-06-20 reconciliation evidence: this checklist was brought current with the

@@ -1,4 +1,4 @@
-// Authored preview — the pre-game start screen. Instructions presents the
+// Authored preview - the pre-game start screen. Instructions presents the
 // Script Lab condition picker, a practice-round toggle, a sound check, and the
 // start control. Callbacks are no-ops here; the cells differ by the condition
 // selected and the sound-check status so the variant axis is visible.

@@ -1,4 +1,4 @@
-// Authored preview — the real shadcn Card family from window.IdeophoneArena.
+// Authored preview - the real shadcn Card family from window.IdeophoneArena.
 // Per the surface grammar (§1) chrome cards sit FLAT on washi: a hairline
 // border, no shadow (elevation is reserved for the instrument's voice).
 import {

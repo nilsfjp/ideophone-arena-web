@@ -3,7 +3,7 @@ import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 /**
  * shadcn sonner Toaster, themed. CHROME-LEVEL toasts only (auth expiry,
- * network loss) — spec §5: must NEVER replace in-trial status lines, which are
+ * network loss) - spec §5: must NEVER replace in-trial status lines, which are
  * reserved slots (§2.4). Toasts are overlays, so they carry the raised surface
  * and --shadow-raised (§1). Themed to our tokens via CSS vars (the app is
  * light-only this session; a dark re-map stays possible later).

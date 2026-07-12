@@ -1,10 +1,10 @@
-/* The public landing (NIL-43) — bespoke full-bleed strips on the ink-and-paper
+/* The public landing (NIL-43) - bespoke full-bleed strips on the ink-and-paper
    tokens (SPEC-view-designs §3; mockup landing-composition.html). CHROME: tokens
-   only (no raw hex — token-purity guard), CTAs are the shadcn Button. The view
+   only (no raw hex - token-purity guard), CTAs are the shadcn Button. The view
    renders OUTSIDE .site-main (App shell), so .landing is full-width and its
    strips alternate the page ground and washi card edge-to-edge. Elevation is the
    instrument's voice (§1): stat/art cards use raised FILL + hairline, never a
-   shadow. Motion: none — hover is an instant token swap, so the motion gate has
+   shadow. Motion: none - hover is an instant token swap, so the motion gate has
    nothing to inspect. The .landing-mode-card class is deliberately distinct from
    the ModeSelect `.mode-card` pinned hook (different surface, no collision). */
 
@@ -113,7 +113,7 @@
     text-transform: uppercase;
   }
 
-  /* --- 2 · numbers (raised FILL, no shadow — §1) ------------------------- */
+  /* --- 2 · numbers (raised FILL, no shadow - §1) ------------------------- */
 
   .landing .numbers-inner {
     display: grid;

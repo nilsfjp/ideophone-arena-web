@@ -297,7 +297,7 @@ try {
     "the choice question should render exactly once, bold target then question mark",
   );
 
-  // Reserved layout: every phase slot exists in the initial render — both
+  // Reserved layout: every phase slot exists in the initial render - both
   // card slots, the fixation overlay, translations, question, status line.
   for (const slot of [
     "trial-board",
@@ -419,12 +419,12 @@ try {
     assertEqual(
       ratingMarkup.includes(leaked),
       false,
-      `the rating trial must not leak "${leaked}" — the stimulus stays audio-only`,
+      `the rating trial must not leak "${leaked}" - the stimulus stays audio-only`,
     );
   }
   // §11.2: the "rating-reveal slot-hidden" adjacency survives because the §5
   // stable-hook contract keeps the semantic classes first (utilities, if any,
-  // are appended after slot-hidden — never between the two hooks).
+  // are appended after slot-hidden - never between the two hooks).
   for (const slot of ["rating-reveal slot-hidden", "status-line"]) {
     assertEqual(
       ratingMarkup.includes(slot),
@@ -530,7 +530,7 @@ try {
     }),
   );
   // Invariant 1/3: the reveal form is the backend's displayForm, rendered
-  // verbatim — never converted, and never a per-character kana derivation.
+  // verbatim - never converted, and never a per-character kana derivation.
   assertEqual(
     countOccurrences(
       mintRevealMarkup,
@@ -561,7 +561,7 @@ try {
     0,
     "the caption must not repeat the score numeral",
   );
-  // §2.3.5: present-in-either features only — shared absences live in the table.
+  // §2.3.5: present-in-either features only - shared absences live in the table.
   assertEqual(
     (mintRevealMarkup.match(/class="mint-chip[ "]/g) ?? []).length,
     4,

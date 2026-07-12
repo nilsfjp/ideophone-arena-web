@@ -1,9 +1,9 @@
-// Registry of game modes shown on the home screen. Data only — App.tsx maps
+// Registry of game modes shown on the home screen. Data only - App.tsx maps
 // mode ids to views, so future modes (Perception Ladder, Word Mint, ...) flip
 // `status` here and add a view branch without touching ModeSelect. Player-
 // facing names are the adopted slate (NIL-64 §10.2); internal ids and API
 // values are unchanged. New modes are NOT added here until their own build
-// ships — the six-mode shell (§2.3) scales from this data, not from stubs.
+// ships - the six-mode shell (§2.3) scales from this data, not from stubs.
 export type ModeId = "choosing" | "rating" | "ladder" | "production";
 export type ModeStatus = "available" | "coming-soon";
 
@@ -48,6 +48,6 @@ export const MODES: ModeDefinition[] = [
     measure: "Measure · Production",
     status: "available",
     description:
-      "See a meaning, invent the word — scored feature by feature against the real one.",
+      "See a meaning, invent the word, scored feature by feature against the real one.",
   },
 ];

@@ -6,17 +6,17 @@ and citations). Committed so the runtime build is network-free and the files
 diff meaningfully; the pipeline is deterministic (stable sorts, fixed rounding)
 and refuses to write when any validation fails.
 
-- `thesis-pairs.json` — 30 thesis pairs (accuracy, 1–7 mean rating + within-
+- `thesis-pairs.json` - 30 thesis pairs (accuracy, 1–7 mean rating + within-
   layer z, response time) plus per-modality weighted aggregates (68.6 / 64.2 /
-  59.7% — the dumbbell's reference layer).
-- `mclean.json` — McLean, Dunn & Dingemanse (2023): 304 items × guessing +
+  59.7% - the dumbbell's reference layer).
+- `mclean.json` - McLean, Dunn & Dingemanse (2023): 304 items × guessing +
   rating scores with their published z-scores; the scatter's backdrop.
-- `norms.json` — Iida & Akita norms: 510 words × 6 perceptual-strength axes
+- `norms.json` - Iida & Akita norms: 510 words × 6 perceptual-strength axes
   (0–5); the radar's data. Meta carries the arena∩norms match count (17) and
   the build-time default compare pair (max-L1 contrast in the intersection).
-- `arena-pool.json` — the 68 pool words (API romaji + gloss) for picker
+- `arena-pool.json` - the 68 pool words (API romaji + gloss) for picker
   badging and never-played counts; divergence rows only cover played words.
 
-Runtime imports go through `index.ts` — the single place the widened JSON
+Runtime imports go through `index.ts` - the single place the widened JSON
 types are cast to the shapes in `types.ts`. `data.test.ts` re-validates the
 committed files in CI.

@@ -1,4 +1,4 @@
-/* DEV-ONLY styles for /styleguide.html. Consumes tokens.css exclusively —
+/* DEV-ONLY styles for /styleguide.html. Consumes tokens.css exclusively -
    every raw value on this page is a token, so the guide doubles as a token
    smoke test. The per-pairing classes remap the font tokens locally. */
 
@@ -107,7 +107,7 @@ body {
 }
 
 /* Hybrid: vermillion stays on primaries (CTAs, focus); rose-soft takes the
-   quieter selection chrome — selected condition card, progress fill, badges. */
+   quieter selection chrome - selected condition card, progress fill, badges. */
 .sg-accent-hybrid .sg-condition-active {
   border-color: #99454f;
   background: #e9c4c7;
@@ -126,7 +126,7 @@ body {
 
 /* The pairing sections pin --font-display for the historical comparison, so
    the font variants re-override them; while a LINE Seed preview is active the
-   candidate sections show LINE Seed headings/kana too — toggle back to
+   candidate sections show LINE Seed headings/kana too - toggle back to
    "Production" to compare the original candidates. */
 .sg-fonts-ls-headings,
 .sg-fonts-ls-headings .sg-pairing {

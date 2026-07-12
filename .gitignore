@@ -40,7 +40,7 @@ dist
 dist-ssr
 *.local
 
-# design-sync (staged scripts, build output, machine state — durable inputs under
+# design-sync (staged scripts, build output, machine state - durable inputs under
 # .design-sync/ that AREN'T listed here stay committed: config.json, NOTES.md,
 # conventions.md, previews/, overrides/)
 .ds-sync/

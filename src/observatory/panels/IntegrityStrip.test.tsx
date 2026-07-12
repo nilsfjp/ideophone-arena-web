@@ -61,7 +61,7 @@ describe("IntegrityStrip", () => {
     const markup = render({ status: "ready", data: EMPTY });
     expect(markup).not.toContain("integrity-marker");
     expect(markup).toContain("Awaiting the first scored round");
-    expect(markup).toContain("—");
+    expect(markup).toContain("–");
     expect(markup).not.toContain("NaN");
   });
 

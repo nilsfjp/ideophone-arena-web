@@ -28,7 +28,7 @@ const FOUR: LadderFloorResponse[] = [
   floor("INTEROCEPTIVE"),
 ];
 
-// A three-floor payload (no HAPTIC) exercises the client-side teaser path — the
+// A three-floor payload (no HAPTIC) exercises the client-side teaser path - the
 // same rendering code, zero code delta (V8 graceful degradation).
 const THREE: LadderFloorResponse[] = [
   floor("AUDITORY"),
@@ -51,7 +51,7 @@ describe("deriveFloorRows", () => {
     expect(teaser!.pillText).toBe("In preparation");
     expect(teaser!.interactive).toBe(false);
 
-    // Inner states keeps its API ordinal (3) — the teaser consumes no ordinal.
+    // Inner states keeps its API ordinal (3) - the teaser consumes no ordinal.
     const inner = rows.find((row) => row.modality === "INTEROCEPTIVE");
     expect(inner!.ordinal).toBe(3);
   });

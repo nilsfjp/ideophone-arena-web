@@ -1,4 +1,4 @@
-// Authored preview — the real shadcn Input from window.IdeophoneArena. Raised
+// Authored preview - the real shadcn Input from window.IdeophoneArena. Raised
 // fill is the form-affordance exception in the surface grammar (§1); the border
 // is the -mid affordance weight, and focus is the vermillion outline (§6).
 import { Input } from "ideophone-arena-web";

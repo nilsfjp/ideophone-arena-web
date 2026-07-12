@@ -1,5 +1,5 @@
 // Responsive chart width via ResizeObserver, SSR/test-safe: the state starts
-// at defaultWidth and the observer attaches through a callback ref — under
+// at defaultWidth and the observer attaches through a callback ref - under
 // renderToStaticMarkup refs never fire, so node-env tests render the charts
 // deterministically at the default width. In a browser without ResizeObserver
 // the chart simply stays at the default (graceful, not broken).

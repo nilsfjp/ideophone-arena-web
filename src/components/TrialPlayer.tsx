@@ -248,7 +248,7 @@ export default function TrialPlayer({
 
       {/* The full board mounts at fixation with every slot at its final
           reserved size; phases toggle visibility only, never document flow
-          (invariant 5 — layout stability is also a timing-validity rule). */}
+          (invariant 5 - layout stability is also a timing-validity rule). */}
       <div className="trial-board">
         <div className="trial-copy">
           <p>{LISTEN_INSTRUCTION}</p>

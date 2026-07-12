@@ -51,7 +51,7 @@ type MintPhase = "loading" | "prompt" | "submitting" | "revealed" | "done" | "er
 const RESPONSE_TIME_MAX_MS = 600_000;
 
 // The player's own record, which drives the status line. Seeded once from the
-// productions page-walk, then advanced locally from each 201 — the count and the
+// productions page-walk, then advanced locally from each 201 - the count and the
 // mean are both derivable from what we already hold, so no refetch per word.
 type MintRecord = {
   produced: number;
@@ -64,7 +64,7 @@ function meanScore(record: MintRecord): number | null {
     : Math.round(record.scoreTotal / record.produced);
 }
 
-// The reveal's audio source. The prompt carries no stimulus by design — the real
+// The reveal's audio source. The prompt carries no stimulus by design - the real
 // word only speaks once the player has committed to theirs.
 function targetStimulusSource(result: ProductionResponse): string | undefined {
   return result.target.stimulusUrl
@@ -134,7 +134,7 @@ export function MintPromptPanel({
   return (
     <section className="mint-prompt" aria-label="Invent a word">
       {/* The modality is prompt-side meaning, not a hint about the form to
-          invent — so showing it pre-submit is sanctioned (V10). */}
+          invent - so showing it pre-submit is sanctioned (V10). */}
       <span
         className={
           modality
@@ -216,7 +216,7 @@ export function MintRevealPanel({
       <p className="reveal-line">
         {MINT_REVEAL_PREFIX}
         {/* Backend value, rendered verbatim. lang="ja" is a rendering
-            attribute only — the form is never derived (invariant 1/3). */}
+            attribute only - the form is never derived (invariant 1/3). */}
         <strong className="reveal-kana" lang="ja">
           {result.target.displayForm}
         </strong>

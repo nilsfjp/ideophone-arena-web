@@ -1,4 +1,4 @@
-// Thin d3-scale wrappers — d3 does math only, React owns the DOM (spec §5).
+// Thin d3-scale wrappers - d3 does math only, React owns the DOM (spec §5).
 // Panels import from here, never from d3 directly.
 
 import { scaleLinear, type ScaleLinear } from "d3-scale";
@@ -17,7 +17,7 @@ export const PERCENT_TICKS = [0, 0.25, 0.5, 0.75, 1] as const;
 /**
  * Dumbbell x-domain: [0.25, 1] by default (the interesting band around chance
  * and above), auto-extended downward in 0.05 steps when a tiny-n live value
- * dips below the floor — values are never clipped silently.
+ * dips below the floor - values are never clipped silently.
  */
 export function dumbbellDomain(values: number[]): [number, number] {
   let lo = 0.25;

@@ -159,7 +159,7 @@ describe("MintRevealPanel", () => {
     expect(markup).not.toContain(`78${MINT_BAND_MOST}`);
   });
 
-  it("keeps the top rule neutral — never verdict- or score-colored (V12)", () => {
+  it("keeps the top rule neutral - never verdict- or score-colored (V12)", () => {
     for (const verdict of ["correct", "incorrect", "positive", "negative"]) {
       expect(markup.split("<section")[1]?.slice(0, 120)).not.toContain(verdict);
     }
@@ -221,7 +221,7 @@ describe("MintStatusLine", () => {
   });
 });
 
-describe("classifySubmitError — the one-shot promise", () => {
+describe("classifySubmitError - the one-shot promise", () => {
   const parseFailure = new ApiError(400, "input: not speakable", {
     validationErrors: { input: "must segment into morae" },
   });

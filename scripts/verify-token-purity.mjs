@@ -31,10 +31,10 @@ function stripJsComments(text) {
     .replace(/(^|[^:])\/\/[^\n]*/g, (m, p1) => p1 + " ".repeat(m.length - p1.length));
 }
 
-// #rgb / #rgba / #rrggbb / #rrggbbaa — a color literal. The trailing \b makes a
+// #rgb / #rgba / #rrggbb / #rrggbbaa - a color literal. The trailing \b makes a
 // longer hex run (e.g. a >8-char git SHA) fail to match, since there is no word
 // boundary within the first 3-8 chars; `#leaderboard` fails (l is not hex) and
-// `word #9` fails (too few digits). No pre-strip is needed — and a pre-strip
+// `word #9` fails (too few digits). No pre-strip is needed - and a pre-strip
 // that consumed 4-8-digit runs would blind the guard to the common #rrggbb form.
 const HEX = /#[0-9a-fA-F]{3,8}\b/;
 
@@ -42,7 +42,7 @@ function checkHex(rel, code) {
   code.split("\n").forEach((line, i) => {
     const m = line.match(HEX);
     if (m) {
-      problems.push(`${rel}:${i + 1} raw hex color "${m[0]}" — use a token`);
+      problems.push(`${rel}:${i + 1} raw hex color "${m[0]}" - use a token`);
     }
   });
 }

@@ -57,7 +57,7 @@ describe("chipsFor", () => {
   });
 
   it("suppresses shared absences", () => {
-    // sokuon, finalN and riSuffix all match — as absences in both forms. A row of
+    // sokuon, finalN and riSuffix all match - as absences in both forms. A row of
     // green chips celebrating what neither word has would read as noise.
     const shown = chipsFor(PIKAPIKA_VS_DOKIDOKI).map((match) => match.feature);
     expect(shown).not.toContain("sokuon");

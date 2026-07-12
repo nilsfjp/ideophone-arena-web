@@ -1,4 +1,4 @@
-// Authored preview — the real shadcn Button from window.IdeophoneArena, themed
+// Authored preview - the real shadcn Button from window.IdeophoneArena, themed
 // on the ink-and-paper tokens. Variant is the primary axis; sizes and the
 // disabled state round it out. Vermillion is the default (primary) fill.
 import { Button } from "ideophone-arena-web";

@@ -52,7 +52,7 @@ export default function IdeophoneCard({
   onReplay,
 }: IdeophoneCardProps) {
   // spinCount remounts the icon so the one-shot spin restarts per activation
-  // (never on first appearance — guarded by > 0). pulsing drives the
+  // (never on first appearance - guarded by > 0). pulsing drives the
   // reduced-motion border flash.
   const [spinCount, setSpinCount] = useState(0);
   const [pulsing, setPulsing] = useState(false);
@@ -72,7 +72,7 @@ export default function IdeophoneCard({
     mode === "button" ? "choice-button" : "",
     visible ? "" : "empty",
     // The kana-measure guard (§8) rides this class for the card's whole visible
-    // life — not just while the button shows — so a 6-mora word never reflows
+    // life - not just while the button shows - so a 6-mora word never reflows
     // when the control mounts at the choice phase (invariant 5).
     onReplay ? "has-replay" : "",
   ]
@@ -81,7 +81,7 @@ export default function IdeophoneCard({
 
   // The card and its display content stay mounted in every phase so the slot
   // keeps its reserved size; `empty` toggles visibility only. The media
-  // element still mounts per-phase to preserve autoplay behavior — it renders
+  // element still mounts per-phase to preserve autoplay behavior - it renders
   // no visible box, so the reserved space is unaffected.
   const content = (
     <>

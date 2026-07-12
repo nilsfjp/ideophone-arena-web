@@ -1,4 +1,4 @@
-// Authored preview — the leaderboard + personal-attempts section. This is the
+// Authored preview - the leaderboard + personal-attempts section. This is the
 // live, data-fetching wrapper (it calls the backend on mount); LeaderboardPanel
 // is the presentational table you'd compose with data you already have. With no
 // backend it renders its section chrome and empty/placeholder states. Shown here

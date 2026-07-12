@@ -17,7 +17,7 @@ import { RatingTrialPanel } from "./components/RatingLab";
 import TrialPlayer from "./components/TrialPlayer";
 import { MODES } from "./modes";
 
-// Guard (spec §11.3.1) — the migration's replacement for exact-markup pinning.
+// Guard (spec §11.3.1) - the migration's replacement for exact-markup pinning.
 // It protects the *substrate* of the browser-loop waypoints and the §5
 // stable-hook contract: every semantic hook still resolves as a class token,
 // and Tailwind utilities are only ever appended AFTER the semantic class(es),
@@ -226,7 +226,7 @@ const PINNED_HOOKS = [
 ];
 
 // Hooks the verify scripts / repaired tests match by CLASS PREFIX (`class="hook`
-// or first-token reads) — these MUST be the first class token on their element,
+// or first-token reads) - these MUST be the first class token on their element,
 // so appended utilities never break the match. The remaining pinned hooks are
 // used via querySelector-by-class (position-agnostic): they need only resolve.
 // `auth-tabs` is a decorative marker on the shadcn TabsList (utilities-first per

@@ -105,7 +105,7 @@ export function isCompletionPayload(payload: unknown) {
   );
 }
 
-// A 404 whose message reads as "no more rounds" — completion, not a real error.
+// A 404 whose message reads as "no more rounds" - completion, not a real error.
 export function isCompletionError(caught: unknown) {
   if (!(caught instanceof ApiError) || caught.status !== 404) {
     return false;

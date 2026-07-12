@@ -215,7 +215,7 @@ async function trustedClickText(ws, text) {
   return true;
 }
 
-// Trusted touch tap — like trustedClickText, but via touch events. Under
+// Trusted touch tap - like trustedClickText, but via touch events. Under
 // mobile device emulation (viewportWidth < 600) Edge sometimes drops
 // synthetic mouse input while touch input lands; both carry the user
 // activation the Web Audio sound check needs.
@@ -238,7 +238,7 @@ async function trustedTapText(ws, text) {
 
 // Coordinate-free trusted activation: focus the button via JS, then send a
 // trusted Enter keypress. A focused <button> activates natively on Enter, and
-// the key event carries the user activation Web Audio needs — immune to the
+// the key event carries the user activation Web Audio needs - immune to the
 // mobile-emulation coordinate/scroll drift that makes pointer input miss.
 async function trustedPressEnterOnText(ws, text) {
   const focused = await evaluate(
@@ -493,7 +493,7 @@ async function run() {
   }
 
   // §7 waypoint: the hero CTA promises "a round", so it must land on Meaning
-  // Match instructions post-auth — via the register tab, opened by default.
+  // Match instructions post-auth - via the register tab, opened by default.
   await waitFor(() => clickText(ws, "Prove it"), "hero play CTA");
   await waitFor(
     async () => (await bodyText(ws)).includes("Email"),
@@ -525,7 +525,7 @@ async function run() {
       .map((button) => button.textContent))()`,
   );
   // NIL-42 promoted Perception Ladder and NIL-62 Word Mint, so the home grid
-  // (MODES) is now four live cards with no coming-soon stubs — assert none are
+  // (MODES) is now four live cards with no coming-soon stubs - assert none are
   // disabled. New modes are not listed here until their own build ships.
   check(
     comingSoonModes.length === 0,
@@ -728,7 +728,7 @@ async function run() {
 
   const leaderboardProof = await verifyLeaderboard(ws);
 
-  // shadcn (Radix) Tabs trigger — activate with focus+Enter, as above.
+  // shadcn (Radix) Tabs trigger - activate with focus+Enter, as above.
   if (!(await trustedPressEnterOnText(ws, "Recent attempts"))) {
     throw new Error("Recent attempts tab is not clickable after completion");
   }
@@ -750,7 +750,7 @@ async function run() {
   );
 
   // 27E: the pool must be sourced from the backend, never from the retired
-  // localStorage pool — assert the network call happened and the legacy key
+  // localStorage pool - assert the network call happened and the legacy key
   // was never written.
   check(
     ratableWordsRequests.length > 0,
@@ -862,7 +862,7 @@ async function run() {
   if (!nextClicked) {
     throw new Error("Rating Next button not clickable after selection");
   }
-  // The reveal label is CSS-uppercased, so innerText reads "ARENA RECORD" —
+  // The reveal label is CSS-uppercased, so innerText reads "ARENA RECORD" -
   // match case-insensitively.
   await waitFor(
     async () => /arena record/i.test(await bodyText(ws)),
@@ -879,7 +879,7 @@ async function run() {
     ratingConfirmed: ratingRevealText.includes("Your rating:"),
   };
 
-  // 27E pool parity: a completely fresh client (this Node process — no
+  // 27E pool parity: a completely fresh client (this Node process - no
   // browser state, no localStorage) logs into the same account and must see
   // the identical pool, minus the first pool word the waypoint just rated.
   // Pure Node HTTP, no DOM: a failure here cannot disturb the checks that follow.
@@ -1437,7 +1437,7 @@ async function getJsonResponseBody(ws, requestId, label) {
 // 27E meaning-order assertion: the round payload the app just fetched is the
 // ground truth; the payload is bound to the on-screen round via the question
 // gloss, then the two meaning lines must place the glosses per the flag. The
-// frozen prefixes never move — only the glosses swap.
+// frozen prefixes never move - only the glosses swap.
 async function assertMeaningLineOrder(ws, questionText) {
   const lastFetch = roundFetches[roundFetches.length - 1];
   if (!lastFetch) {
@@ -1657,7 +1657,7 @@ async function answerCurrentRound(ws, expectFixation) {
 
   // 27E: the two meaning lines must follow the round's seed-drawn
   // targetMeaningListedFirst flag, asserted against this round's actual
-  // payload (never a cross-session diff — a coin flip can coincide).
+  // payload (never a cross-session diff - a coin flip can coincide).
   const meaningOrder = await assertMeaningLineOrder(ws, questionProof.text);
 
   const activeProgressText = await evaluate(
@@ -1730,7 +1730,7 @@ async function answerCurrentRound(ws, expectFixation) {
   // per-card replay control re-plays card A's audio without touching phase or
   // selection. A replay re-plays the cached blob (no network request), so this
   // instruments HTMLMediaElement.prototype.play and asserts a play() call, not a
-  // request. It asserts audio + state only — spin is decorative, never checked.
+  // request. It asserts audio + state only - spin is decorative, never checked.
   if (!replayWaypointDone) {
     replayWaypointDone = true;
 
@@ -1776,7 +1776,7 @@ async function answerCurrentRound(ws, expectFixation) {
 
     await captureScreenshot(ws, "replay-choice");
 
-    // Click card A's replay (native button — element.click() is fine, §16 H7).
+    // Click card A's replay (native button - element.click() is fine, §16 H7).
     const clicked = await evaluate(
       ws,
       `(() => {
@@ -1929,7 +1929,7 @@ async function answerCurrentRound(ws, expectFixation) {
 // by the Meaning Match sound check earlier in this same session.
 //
 // §16 H7 rider (V9): the floor-intro Dialog is new Radix on a browser-loop
-// path, so its activation/dismiss idiom ships here — open it from the native
+// path, so its activation/dismiss idiom ships here - open it from the native
 // floor-card button (a controlled Dialog), read its PORTALED content from
 // document.body, activate the primary (coordinate-free focus+Enter, click
 // fallback), and confirm it dismisses into the running floor.
@@ -1947,7 +1947,7 @@ async function verifyPerceptionLadder(ws) {
   }
   await waitFor(
     async () => {
-      // Floor-stack labels/pills are `.specimen`, CSS-uppercased in innerText —
+      // Floor-stack labels/pills are `.specimen`, CSS-uppercased in innerText -
       // match case-insensitively (as the loop does for other uppercased labels).
       const text = (await bodyText(ws)).toLowerCase();
       return text.includes("floor 1 · sound") && text.includes("up next");
@@ -1976,7 +1976,7 @@ async function verifyPerceptionLadder(ws) {
   }
   await captureScreenshot(ws, "ladder-floor-intro");
 
-  // Activate the primary — coordinate-free (works at 375px), click fallback.
+  // Activate the primary - coordinate-free (works at 375px), click fallback.
   if (
     !(await trustedPressEnterOnText(ws, "Start floor 1")) &&
     !(await clickText(ws, "Start floor 1"))
@@ -1984,7 +1984,7 @@ async function verifyPerceptionLadder(ws) {
     throw new Error("Start floor 1 button not found");
   }
   // The Dialog must dismiss (its content leaves the document) once the floor
-  // starts — the run view replaces it with the trial board.
+  // starts - the run view replaces it with the trial board.
   await waitFor(
     async () => !(await bodyText(ws)).includes("Start floor 1"),
     "floor-intro dialog to dismiss on start",

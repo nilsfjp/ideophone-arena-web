@@ -5,7 +5,7 @@ import { cn } from "../../lib/utils";
 
 /**
  * shadcn Dialog, themed. STAGED for future use (spec §5: logout-mid-session
- * confirm, ladder floor intro) — not consumed this session. Overlays are the
+ * confirm, ladder floor intro) - not consumed this session. Overlays are the
  * one at-rest surface allowed --shadow-raised (§1). The close glyph is an
  * inline SVG (no icon package). Entrance uses a plain motion-safe opacity/
  * transform transition (no tw-animate-css, which is outside the dep gate).

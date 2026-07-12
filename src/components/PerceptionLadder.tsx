@@ -77,7 +77,7 @@ export default function PerceptionLadder({
   const [reloadToken, setReloadToken] = useState(0);
 
   // The floor being introduced (dialog) or played. Always a real, playable
-  // floor — the client-side teaser is never selectable.
+  // floor - the client-side teaser is never selectable.
   const [activeFloor, setActiveFloor] = useState<FloorRow | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCondition, setSelectedCondition] = useState<ConditionName>(
@@ -459,7 +459,7 @@ export default function PerceptionLadder({
   );
 }
 
-// Floor stack — a <ul> of cards; playable floors are buttons, locked floors and
+// Floor stack - a <ul> of cards; playable floors are buttons, locked floors and
 // the teaser are non-interactive <article>s. Exported for the fixture test.
 export function LadderFloorStack({
   rows,

@@ -5,14 +5,14 @@
 // "tailwindcss"` plus `@import`s of tokens.css / theme.css / shadcn-bridge.css,
 // and the shipped UI (bespoke experiment surfaces AND the shadcn primitive
 // layer) styles itself with generated utility classes. The old naive concat
-// (tokens.css + app.css) left `@import "tailwindcss"` UNEXPANDED — no utilities,
-// no @theme custom properties — so every preview card rendered unstyled.
+// (tokens.css + app.css) left `@import "tailwindcss"` UNEXPANDED - no utilities,
+// no @theme custom properties - so every preview card rendered unstyled.
 //
 // So we run the real Tailwind v4 compiler over app.css. It: expands the used
-// utilities (content-scanned from the repo — src/ and .design-sync/previews/,
+// utilities (content-scanned from the repo - src/ and .design-sync/previews/,
 // node_modules and gitignored trees skipped), inlines the token/theme/bridge
 // @imports, and emits a stand-alone sheet with NO dangling @import. app.css
-// imports no fonts (main.tsx does, via JS), so the output has ZERO @font-face —
+// imports no fonts (main.tsx does, via JS), so the output has ZERO @font-face -
 // fonts still reach the bundle through cfg.extraFonts, unchanged.
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
@@ -55,7 +55,7 @@ if (!cli) {
 }
 
 // Tailwind v4 auto-detects content from the CWD downward, so run from the repo
-// root regardless of who invoked us — that scans src/ AND .design-sync/previews/
+// root regardless of who invoked us - that scans src/ AND .design-sync/previews/
 // (neither gitignored) while skipping node_modules and the gitignored build dirs.
 const res = spawnSync(process.execPath, [cli, '-i', input, '-o', output], {
   cwd: repo,

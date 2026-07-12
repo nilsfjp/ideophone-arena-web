@@ -1,4 +1,4 @@
-// The Observatory — the arena's read-only research surface (SPEC-stats-
+// The Observatory - the arena's read-only research surface (SPEC-stats-
 // dashboard). A separate AppView, not a mode card: it records nothing and
 // renders no trial surface; the live API surface is the public research
 // aggregates (divergence, rating-distributions, position-bias). Strips follow
@@ -50,7 +50,7 @@ export type SessionMarker = {
   meanRating: number | null;
 };
 
-/** §10.6 identity motif: a seismograph blip — form depicting sound. Static. */
+/** §10.6 identity motif: a seismograph blip - form depicting sound. Static. */
 function WaveRule() {
   return (
     <svg
@@ -98,11 +98,11 @@ export function ObservatoryView({
         <dl className="observatory-counts">
           <div className="observatory-count">
             <dt className="specimen-label">Guesses</dt>
-            <dd>{liveRows === null ? "—" : formatCount(totals.guesses)}</dd>
+            <dd>{liveRows === null ? "–" : formatCount(totals.guesses)}</dd>
           </div>
           <div className="observatory-count">
             <dt className="specimen-label">Ratings</dt>
-            <dd>{liveRows === null ? "—" : formatCount(totals.ratings)}</dd>
+            <dd>{liveRows === null ? "–" : formatCount(totals.ratings)}</dd>
           </div>
         </dl>
         {divergence.status === "loading" ? (
@@ -164,10 +164,9 @@ export function ObservatoryView({
           <em>
             Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A
             Cognitive-Semiotic Approach
-          </em>{" "}
-          — the MA thesis this arena replicates (30 pairs, 36 participants).
+          </em>, the MA thesis this arena replicates (30 pairs, 36 participants).
           McLean, Dunn &amp; Dingemanse (2023),{" "}
-          <em>Two measures are better than one</em> — the 304-item backdrop,
+          <em>Two measures are better than one</em>: the 304-item backdrop,
           data CC BY 4.0. Iida &amp; Akita (2023), perceptual strength norms
           for 510 Japanese words.
         </p>

@@ -584,8 +584,8 @@ describe("isUnparseableInput", () => {
 
     expect(caught).toBeInstanceOf(ApiError);
     expect(isUnparseableInput(caught)).toBe(true);
-    // The player never sees this text — the frozen §8.1 helper is rendered
-    // instead — but the flattened message proves why .message is unusable.
+    // The player never sees this text - the frozen §8.1 helper is rendered
+    // instead - but the flattened message proves why .message is unusable.
     expect((caught as ApiError).message).toContain("input:");
   });
 

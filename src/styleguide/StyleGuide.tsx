@@ -1,6 +1,6 @@
 // DEV-ONLY style guide (Checkpoint 1): token palette, candidate font
 // pairings, and feedback states for the "laboratory ink and paper" identity.
-// Trial wording is imported from experimentText — frozen strings are never
+// Trial wording is imported from experimentText - frozen strings are never
 // duplicated as literals (CLAUDE.md invariant 1).
 import { useState } from "react";
 import {
@@ -66,11 +66,11 @@ const PAIRINGS: Pairing[] = [
   {
     id: "a",
     className: "sg-pair-a",
-    name: "Pairing A — Warm Lab (production, 2026-06-13)",
+    name: "Pairing A · Warm Lab (production, 2026-06-13)",
     display: "Zen Maru Gothic (headings)",
     body: "LINE Seed JP",
     rationale:
-      "Production config: headings in rounded maru-gothic; body and stimulus kana in LINE Seed JP (OFL 1.1) — body 400, stimuli Bold 700; shared DNA between copy and cards, with the rounded headings keeping the warm-lab voice distinct. This section renders the real production faces.",
+      "Production config: headings in rounded maru-gothic; body and stimulus kana in LINE Seed JP (OFL 1.1): body 400, stimuli Bold 700; shared DNA between copy and cards, with the rounded headings keeping the warm-lab voice distinct. This section renders the real production faces.",
   },
 ];
 
@@ -101,7 +101,7 @@ export default function StyleGuide() {
   return (
     <div className={pageClassName}>
       <header className="sg-header">
-        <p className="sg-dev-badge">Dev-only style guide — not part of the game</p>
+        <p className="sg-dev-badge">Dev-only style guide · not part of the game</p>
         <h1>
           Ideophone Arena <span className="sg-header-kana">ゴソゴソ</span>
         </h1>
@@ -268,7 +268,7 @@ function PairingSpecimen({ pairing }: { pairing: Pairing }) {
       <h2 id={`sg-pairing-${pairing.id}`}>{pairing.name}</h2>
       <p className="sg-pairing-meta">
         Display: <strong>{pairing.display}</strong> · Body:{" "}
-        <strong>{pairing.body}</strong> — {pairing.rationale}
+        <strong>{pairing.body}</strong>: {pairing.rationale}
         {pairing.flags ? (
           <span className="sg-pairing-flag"> {pairing.flags}</span>
         ) : null}
@@ -299,7 +299,7 @@ function PairingSpecimen({ pairing }: { pairing: Pairing }) {
 
       <p className="sg-body-sample">
         In this task, you will see two ideophones and their English
-        meanings. Ideophones are words that depict sensory experience — a
+        meanings. Ideophones are words that depict sensory experience: a
         rustle, a glitter, a heartbeat. Listen to both words, then choose the
         card you think matches the highlighted meaning. 0123456789 · AaBbGgRr
       </p>
@@ -324,7 +324,7 @@ function PairingSpecimen({ pairing }: { pairing: Pairing }) {
       </div>
 
       <div className="sg-script-sanity">
-        <h3>Script sanity — chouonpu &amp; sokuon</h3>
+        <h3>Script sanity · chouonpu &amp; sokuon</h3>
         <p className="sg-script-sample">
           ジャージャー きゃーきゃー サクッと どきどき ドキドキ
         </p>

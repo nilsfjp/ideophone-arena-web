@@ -80,7 +80,7 @@ describe("ObservatoryView shell", () => {
     expect(markup).toContain('class="wave-rule"');
   });
 
-  it("survives an EMPTY divergence response — the deploy-day reality", () => {
+  it("survives an EMPTY divergence response - the deploy-day reality", () => {
     const markup = render({ status: "ready", rows: [] });
     // Counts read an honest zero; every panel and slot still renders.
     expect(markup).toContain("The record opens with the first guess.");
@@ -137,7 +137,7 @@ describe("ObservatoryView shell", () => {
     expect(markup).toContain(">3</dd>");
   });
 
-  it("degrades honestly on a live-record error — reference layers stand", () => {
+  it("degrades honestly on a live-record error - reference layers stand", () => {
     const markup = render({ status: "error" });
     expect(markup).toContain("The live record is unreachable right now.");
     expect(markup).toContain("observatory-panel--radar"); // vendored, unaffected
@@ -149,7 +149,7 @@ describe("ObservatoryView shell", () => {
     expect(render({ status: "loading" })).toContain("Opening the record…");
   });
 
-  it("carries the attribution footer — mandatory, all three sources", () => {
+  it("carries the attribution footer - mandatory, all three sources", () => {
     const markup = render({ status: "ready", rows: [] });
     expect(markup).toContain("Paulsson (2025)");
     expect(markup).toContain(

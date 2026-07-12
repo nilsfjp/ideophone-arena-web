@@ -1,7 +1,7 @@
-// The public landing page (NIL-43) — the eight-strip, research-framed
+// The public landing page (NIL-43) - the eight-strip, research-framed
 // composition of record (SPEC-view-designs §3 + ledger V15-V19; mockup
 // docs/design/view-adjudication-mockups/landing-composition.html). Chrome only:
-// bespoke sections + the shadcn Button (§5 scope fence) — no frozen strings, no
+// bespoke sections + the shadcn Button (§5 scope fence) - no frozen strings, no
 // new components, no new deps. Every stat traces to docs/research/thesis-facts.md
 // (§3/§4/§9). Adopted copy (strips 1/2/4/5) is UI-SYSTEM §10.5, verbatim; strip 6
 // is the V15 Observatory draft; strip 8 attribution is V17 and string-matches the
@@ -20,7 +20,7 @@ type LandingProps = {
   onVisitObservatory: () => void;
 };
 
-/** §10.6 / L5 identity motif — a seismograph blip: a line that depicts sound is
+/** §10.6 / L5 identity motif - a seismograph blip: a line that depicts sound is
     itself iconicity. Static; stroke comes from the shared `.wave-rule` class. */
 function WaveRule({ width = 120 }: { width?: number }) {
   const path =
@@ -57,13 +57,13 @@ const LIVE_MODES: { measure: string; title: string; copy: string; mode: ModeId }
     {
       measure: "Journey · Perception",
       title: "Perception Ladder",
-      copy: "Climb from sound to inner states — accuracy falls as feelings deepen.",
+      copy: "Climb from sound to inner states; accuracy falls as feelings deepen.",
       mode: "ladder",
     },
     {
       measure: "Measure · Production",
       title: "Word Mint",
-      copy: "See a meaning, invent the word — scored feature by feature against the real one.",
+      copy: "See a meaning, invent the word, scored feature by feature against the real one.",
       mode: "production",
     },
   ];
@@ -76,7 +76,7 @@ const SOON_MODES: { measure: string; title: string; copy: string }[] = [
   {
     measure: "Structure · Patterns",
     title: "Word Anatomy",
-    copy: "Which sound shapes carry which meanings — the system behind the words.",
+    copy: "Which sound shapes carry which meanings: the system behind the words.",
   },
   {
     measure: "Transfer · 5 languages",
@@ -90,7 +90,7 @@ const THESIS_URL = "https://lup.lub.lu.se/student-papers/record/9214474";
 
 export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps) {
   // E1 slot (§3.2 / V16): render the NIL-81 scatter export, but never hard-require
-  // it — a missing/failed asset falls back to the token-styled wave placeholder.
+  // it - a missing/failed asset falls back to the token-styled wave placeholder.
   const [e1Failed, setE1Failed] = useState(false);
 
   return (
@@ -105,12 +105,12 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
             <WaveRule width={180} />
             <p className="hero-sub">
               Ideophone Arena is a live replication of a real experiment on sound
-              symbolism — words whose shape carries their meaning. Guess, rate, and
+              symbolism: words whose shape carries their meaning. Guess, rate, and
               see how far your ear takes you before convention takes over.
             </p>
             <div className="cta-row">
               <Button type="button" onClick={() => onPlayMode("choosing")}>
-                Prove it — play a round
+                Prove it: play a round
               </Button>
               <Button asChild variant="outline">
                 <a href="#observatory">Read the research</a>
@@ -120,13 +120,13 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
           <div className="hero-motif">
             <p className="kana-specimen">
               <span lang="ja">ガタン</span>
-              <small>gatan · with a bang — hear it?</small>
+              <small>gatan · with a bang. Hear it?</small>
             </p>
           </div>
         </div>
       </section>
 
-      {/* 2 · THE NUMBERS (§10.5.2 adopted; raised FILL, no shadow — §1) */}
+      {/* 2 · THE NUMBERS (§10.5.2 adopted; raised FILL, no shadow - §1) */}
       <section className="strip washi" aria-label="The numbers">
         <div className="numbers-inner">
           <div className="stat-card">
@@ -156,7 +156,7 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
             <span className="specimen">The hardest word</span>
             <p className="stat-figure">36%</p>
             <p>
-              <em>shobon</em> (downhearted) — the one word the cohort guessed worse
+              <em>shobon</em> (downhearted), the one word the cohort guessed worse
               than a coin flip.
             </p>
           </div>
@@ -180,19 +180,19 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
               <span className="specimen">2 · Trust your ear</span>
               <p>
                 Pick the word you think carries the meaning. No knowledge of the
-                language needed — that's the experiment.
+                language needed; that's the experiment.
               </p>
             </li>
             <li>
               <span className="specimen">3 · See the data</span>
               <p>
-                Every answer gets the thesis's numbers for that pair — how the
+                Every answer gets the thesis's numbers for that pair: how the
                 original cohort did on it.
               </p>
             </li>
           </ol>
           <p className="honesty">
-            Your guesses join the arena record — the thesis pairs and the ones added
+            Your guesses join the arena record: the thesis pairs and the ones added
             since, still collecting data.
           </p>
         </div>
@@ -205,12 +205,12 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
           <h2 id="dissoc-h2">Your gut and your reflection disagree.</h2>
           <WaveRule />
           <p>
-            <em>dokidoki</em> — a racing heartbeat — was rated the most word-like
+            <em>dokidoki</em>, a racing heartbeat, was rated the most word-like
             word in the whole study. People still couldn't reliably guess it.{" "}
             <strong>Ratings detect ideophone-ness; guessing doesn't.</strong>
           </p>
           <p className="footnote">
-            Across scales the two measures correlate at ρ ≈ +.44 / +.65 — related,
+            Across scales the two measures correlate at ρ ≈ +.44 / +.65: related,
             far from interchangeable. That gap is what the Rating Lab measures.
           </p>
           <div className="cta-row">
@@ -221,14 +221,14 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
         </div>
       </section>
 
-      {/* 5 · SCRIPT LAB TEASER (§10.5.5 adopted; framing rule — "presentation
+      {/* 5 · SCRIPT LAB TEASER (§10.5.5 adopted; framing rule - "presentation
           changes the experience," never "matched script helps"). */}
       <section className="strip" aria-labelledby="script-h2">
         <div className="read">
           <h2 id="script-h2">Presentation changes the experience.</h2>
           <WaveRule />
           <p className="script-body">
-            Seeing the script didn't change how well people guessed — it changed how
+            Seeing the script didn't change how well people guessed; it changed how
             the words <em>felt</em> (audio-only raters: 4.50; script raters: 4.15).
             In the Script Lab you pick your own presentation and feel the difference.
           </p>
@@ -254,7 +254,7 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
               <img
                 className="e1-image"
                 src="/observatory-strip.png"
-                alt="Scatter plot: each word placed by how often the cohort guessed it right against how word-like they rated it — the two measures diverge."
+                alt="Scatter plot: each word placed by how often the cohort guessed it right against how word-like they rated it; the two measures diverge."
                 onError={() => setE1Failed(true)}
               />
             )}
@@ -263,7 +263,7 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
             <h2 id="obs-h2">The arena keeps score of itself.</h2>
             <WaveRule />
             <p>
-              Every guess and rating feeds a public research dashboard — the same
+              Every guess and rating feeds a public research dashboard: the same
               charts the thesis drew, redrawn live as players test its claims out of
               sample. Thesis baselines stay pinned; the live layer grows.
             </p>
@@ -314,10 +314,10 @@ export default function Landing({ onPlayMode, onVisitObservatory }: LandingProps
       </section>
 
       {/* 8 · PROVENANCE + ATTRIBUTION (V17; credit set string-matches the
-          Observatory footer — Winter et al. is not in the footer, so not here). */}
+          Observatory footer - Winter et al. is not in the footer, so not here). */}
       <footer className="provenance">
         <p>
-          Built on the author's MA thesis data — every number on this page is from
+          Built on the author's MA thesis data; every number on this page is from
           the study. (
           <a href={THESIS_URL} target="_blank" rel="noopener noreferrer">
             Paulsson (2025), Unimodal and Cross-Modal Iconicity in Japanese

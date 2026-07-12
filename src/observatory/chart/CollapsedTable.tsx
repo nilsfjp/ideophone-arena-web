@@ -1,8 +1,8 @@
 // Every Observatory chart ships a data-table twin (SPEC-stats-dashboard §2:
-// "View as table", shadcn Table collapsed) — screen readers and keyboard
+// "View as table", shadcn Table collapsed) - screen readers and keyboard
 // users get the real numbers without tabbing through marks. The table stays
 // in the DOM behind the `hidden` attribute (not conditional render): the
-// content is assertable in static markup and the toggle is plain state — no
+// content is assertable in static markup and the toggle is plain state - no
 // Radix, so no new browser-loop idiom (UI-SYSTEM §16 H7).
 
 import { useState, type ReactNode } from "react";

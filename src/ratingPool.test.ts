@@ -55,7 +55,7 @@ afterEach(() => {
 // The pool is a thin client of GET /api/game/me/ratable-words since 27E: the
 // backend enforces the contamination rule (answered rounds only, rated words
 // excluded) and owns encounter order, so these tests only cover the fetch
-// plumbing — there is no localStorage path left to test.
+// plumbing - there is no localStorage path left to test.
 describe("fetchRatingPool", () => {
   it("fetches the server pool from the ratable-words endpoint", async () => {
     fetchMock.mockResolvedValue(

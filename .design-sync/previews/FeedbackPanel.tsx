@@ -1,4 +1,4 @@
-// Authored preview — the post-answer feedback panel. It reads a RoundResponse
+// Authored preview - the post-answer feedback panel. It reads a RoundResponse
 // and an AnswerResultResponse and lets a non-Japanese reader identify, for both
 // the selected and correct words: side (A/B), display form, romaji, and meaning.
 // Both grid cells always render so panel height never depends on correctness.

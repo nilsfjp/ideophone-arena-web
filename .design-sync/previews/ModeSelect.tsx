@@ -1,4 +1,4 @@
-// Authored preview — the real ModeSelect (the six-mode home shell, §2.3) from
+// Authored preview - the real ModeSelect (the six-mode home shell, §2.3) from
 // window.IdeophoneArena. Cards render from `modes` data only, so the auto-fill
 // grid scales without code changes. Each card carries a measure chip (specimen
 // label), title, one-line description, and a reserved status slot. Data mirrors

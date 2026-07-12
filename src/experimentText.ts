@@ -1,4 +1,4 @@
-// EXPERIMENTALLY FROZEN TEXT — DO NOT REWORD (CLAUDE.md invariant 1).
+// EXPERIMENTALLY FROZEN TEXT - DO NOT REWORD (CLAUDE.md invariant 1).
 //
 // These are the participant-facing trial strings of the 2AFC experiment,
 // adjudicated with the researcher on 2026-06-10. They carry experimental
@@ -23,7 +23,7 @@ export const MEANING_OTHER_PREFIX = "The other means ";
 export const CHOICE_QUESTION_PREFIX = "Which one do you think means ";
 export const CHOICE_QUESTION_SUFFIX = "?";
 
-// EXPERIMENTALLY FROZEN TEXT — RATING TASK (27D, adjudicated 2026-07-02).
+// EXPERIMENTALLY FROZEN TEXT - RATING TASK (27D, adjudicated 2026-07-02).
 //
 // Thesis/Gorilla-verbatim copy for the Rating Lab (reflective measure), from
 // docs/research/design-archive/gorilla-rating-task-*.png. The instructions are
@@ -72,10 +72,10 @@ export const RATING_SCALE_HIGH_LABEL = "Strong resemblance";
 export const RATING_REPLAY_BUTTON = "Replay";
 export const RATING_NEXT_BUTTON = "Next";
 
-// EXPERIMENTALLY FROZEN TEXT — WORD MINT / PRODUCTION (NIL-83, adjudicated
+// EXPERIMENTALLY FROZEN TEXT - WORD MINT / PRODUCTION (NIL-83, adjudicated
 // 2026-07-06; SPEC-view-designs.md section 8).
 //
-// Overriding principle from the adjudication: player copy is LANGUAGE-NEUTRAL —
+// Overriding principle from the adjudication: player copy is LANGUAGE-NEUTRAL -
 // no string names Japanese. The kana reveal and the romaji examples carry the
 // language implicitly, which is what keeps the cross-linguistic mode possible.
 // NIL-85 extended this principle from Word Mint to EVERY player-facing string in
@@ -106,15 +106,15 @@ export const MINT_PARSE_ERROR_EXAMPLE_TWO = "pika";
 export const MINT_PARSE_ERROR_SUFFIX = ".";
 
 // {displayForm} interpolates in <strong lang="ja">, rendered verbatim from the
-// DTO — never converted, never derived (invariant 1/3).
+// DTO - never converted, never derived (invariant 1/3).
 export const MINT_REVEAL_PREFIX = "The real word is ";
 export const MINT_REVEAL_SUFFIX = ".";
 
 export const MINT_SCORE_LABEL = "Similarity · 0–100";
 
 // Section 8.2 amendment (NIL-85, adjudicated 2026-07-10). Each band was frozen as
-// "{score} — <tail>"; the numeral is now dropped from the caption and the em-dash
-// removed (project-wide ban). The score still carries its magnitude alone, as the
+// "{score}", an em-dash, then the tail; the numeral is now dropped from the
+// caption and the em-dash removed (project-wide ban). The score still carries its magnitude alone, as the
 // large .score-figure per section 2.3.4 -- the caption had been repeating it. Each
 // band is therefore a standalone sentence, not a tail.
 export const MINT_BAND_ALMOST = "Your instinct is almost the same word.";
@@ -139,7 +139,7 @@ export const MINT_CHIP_LENGTH_PREFIX = "Length · ";
 export const MINT_CHIP_LENGTH_SUFFIX = " morae";
 
 // Section 8.4: "WORD {i} OF {n} · YOUR MEAN {m}". The mean segment is omitted
-// until the player has minted at least one word — a mean of zero samples has no
+// until the player has minted at least one word - a mean of zero samples has no
 // frozen form, and inventing one would be a copy decision.
 export const MINT_STATUS_WORD_PREFIX = "Word ";
 export const MINT_STATUS_OF = " of ";

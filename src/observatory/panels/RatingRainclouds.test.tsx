@@ -49,10 +49,10 @@ describe("RatingRainclouds", () => {
     expect(markup).not.toContain("NaN");
   });
 
-  it("degrades honestly on error — thesis stands, N is em-dash not 0", () => {
+  it("degrades honestly on error - thesis stands, N is an en dash not 0", () => {
     const markup = render({ status: "error" });
     expect(markup).toContain("raincloud-violin--thesis");
-    expect(markup).toContain("N = —");
+    expect(markup).toContain("N = –");
     expect(markup).toContain("unreachable");
     expect(markup).not.toContain("NaN");
   });

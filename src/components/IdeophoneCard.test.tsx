@@ -15,7 +15,7 @@ const option: IdeophoneOption = {
 
 describe("IdeophoneCard choice accessibility", () => {
   // Invariant 7: during choice the accessibility tree must identify the card
-  // by position only — no kana, romaji, or meaning before feedback.
+  // by position only - no kana, romaji, or meaning before feedback.
   it("uses a position-only aria-label in button mode", () => {
     const markup = renderToStaticMarkup(
       <IdeophoneCard

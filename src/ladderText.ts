@@ -12,19 +12,19 @@ export const LADDER_TITLE = "Perception Ladder";
 
 export const LADDER_INTRO =
   "Climb from the outside world inward. The deeper you go, the more iconic the " +
-  "words feel — and the worse everyone guesses. In the thesis, interoceptive " +
+  "words feel, and the worse everyone guesses. In the thesis, interoceptive " +
   "words were rated most word-like (4.45/7) and guessed worst.";
 
 export const LADDER_FOOTNOTE =
   "Floor order follows the implicational hierarchy (Dingemanse 2012; McLean " +
-  "2021): sound is guessed best, inner states worst — the ladder is that claim, " +
+  "2021): sound is guessed best, inner states worst. The ladder is that claim, " +
   "playable.";
 
 // Floor-intro dialog (§1.7): a 2-sentence framing = this hierarchy line + the
 // floor's own description, then the condition picker, then "Start floor {n}".
 export const LADDER_DIALOG_HIERARCHY_LINE =
   "Each floor steps one rung inward, from the outside world toward the body's " +
-  "inside — and the words get harder to guess as you climb.";
+  "inside, and the words get harder to guess as you climb.";
 
 // Condition picker framing (invariant 9: "presentation changes the experience,"
 // never "matched script helps you guess").
@@ -50,7 +50,7 @@ export function startFloorLabel(ordinal: number): string {
 }
 
 export function nextFloorCtaLabel(ordinal: number, name: string): string {
-  return `Start floor ${ordinal} — ${name}`;
+  return `Start floor ${ordinal} · ${name}`;
 }
 
 export function floorCompleteHeading(correct: number, pairCount: number): string {
@@ -74,7 +74,7 @@ export function floorBenchmark(
   const { thesisMean } = getFloorPresentation(modality);
   if (thesisMean === null) {
     return {
-      lead: "No thesis baseline — you're the norming study.",
+      lead: "No thesis baseline; you're the norming study.",
       thesis: null,
       you: `${correct}/${pairCount}`,
     };
@@ -101,7 +101,7 @@ type FloorPresentation = {
   colorClass: string;
   description: string;
   // Thesis floor mean out of 10 (thesis-facts). Null for Touch, which has no
-  // thesis baseline — the norming-study case.
+  // thesis baseline - the norming-study case.
   thesisMean: number | null;
 };
 
@@ -109,7 +109,7 @@ const FLOOR_PRESENTATION: Record<string, FloorPresentation> = {
   AUDITORY: {
     name: "Sound",
     colorClass: "floor-aud",
-    description: "Noises mapped to noises — the most transparent rung.",
+    description: "Noises mapped to noises: the most transparent rung.",
     thesisMean: 6.86,
   },
   VISUAL: {
@@ -125,14 +125,14 @@ const FLOOR_PRESENTATION: Record<string, FloorPresentation> = {
     name: "Touch",
     colorClass: "floor-hap",
     description:
-      "Texture and contact — prickly vs fluffy, sticky vs dry-smooth. No lab " +
+      "Texture and contact: prickly vs fluffy, sticky vs dry-smooth. No lab " +
       "has baseline numbers for these, so you're the norming study.",
     thesisMean: null,
   },
   INTEROCEPTIVE: {
     name: "Inner states",
     colorClass: "floor-int",
-    description: "Feelings from the body's inside — rated most iconic, guessed worst.",
+    description: "Feelings from the body's inside: rated most iconic, guessed worst.",
     thesisMean: 5.97,
   },
 };
@@ -159,14 +159,14 @@ const HIERARCHY_RANK: Record<string, number> = {
 
 // V8 client-side Touch teaser. Rendered ONLY when the API returns no HAPTIC
 // floor (graceful degradation); the live backend serves Touch as a real floor,
-// so in production this is dormant — but the code path is proven by fixture.
+// so in production this is dormant - but the code path is proven by fixture.
 const TOUCH_TEASER = {
   name: "Touch",
   colorClass: "floor-hap",
   description:
-    "Six touch pairs are signed off — prickly vs fluffy, sticky vs dry-smooth. " +
+    "Six touch pairs are signed off: prickly vs fluffy, sticky vs dry-smooth. " +
     "They need studio recordings before they can be measured; when they arrive, " +
-    "you're the norming study — no lab has baseline numbers for these.",
+    "you're the norming study; no lab has baseline numbers for these.",
   statsText: "Predicted to land between Sight and Inner states",
   pillText: "In preparation",
 };
@@ -179,7 +179,7 @@ export type FloorRow = {
   key: string;
   // null for the client-side teaser (no API modality yet).
   modality: Modality | null;
-  // FLOOR n from API array position (V3). null for the teaser (no ordinal —
+  // FLOOR n from API array position (V3). null for the teaser (no ordinal -
   // "the only floor card without one, which is honest").
   ordinal: number | null;
   name: string;
@@ -199,8 +199,8 @@ export type FloorRow = {
 };
 
 // Turn the API floor array into render rows: ordinals from array position,
-// sequential-unlock pill states (V4), and — only when no HAPTIC floor is
-// present — the Touch teaser spliced in at hierarchy position 3 (V8).
+// sequential-unlock pill states (V4), and - only when no HAPTIC floor is
+// present - the Touch teaser spliced in at hierarchy position 3 (V8).
 export function deriveFloorRows(floors: LadderFloorResponse[]): FloorRow[] {
   const firstUncleared = floors.findIndex((floor) => !floor.cleared);
 
@@ -269,7 +269,7 @@ export function deriveFloorRows(floors: LadderFloorResponse[]): FloorRow[] {
   return rows;
 }
 
-// True once every floor is cleared — drives the summit summary.
+// True once every floor is cleared - drives the summit summary.
 export function isSummit(floors: LadderFloorResponse[]): boolean {
   return floors.length > 0 && floors.every((floor) => floor.cleared);
 }
@@ -291,7 +291,7 @@ function deriveState(
       pillText: score ? `Cleared · ${score}` : "Cleared",
       pillVariant: "cleared",
       interactive: true,
-      stateWord: "cleared — play again",
+      stateWord: "cleared · play again",
     };
   }
 

@@ -203,7 +203,7 @@ describe("Word Mint strings are frozen verbatim (NIL-83, adjudicated 2026-07-06)
       MINT_BAND_SOME,
       MINT_BAND_DIFFERENT,
     ]) {
-      expect(band).not.toContain("—");
+      expect(band).not.toContain("\u2014");
       expect(band).toBe(band.trim());
     }
   });

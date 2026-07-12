@@ -79,7 +79,7 @@ describe("DivergenceScatter layers", () => {
     expect(markup).toContain("pool words have yet to enter the record");
   });
 
-  it("keeps the empty record honest — no arena marks, no NaN", () => {
+  it("keeps the empty record honest - no arena marks, no NaN", () => {
     const markup = render([]);
     expect(markup).not.toContain('class="scatter-mark--arena"');
     expect(markup).not.toContain("NaN");
@@ -115,7 +115,7 @@ describe("DivergenceScatter session crosshair", () => {
     expect(markup).toContain("Your ratings · 4.2 / 7");
   });
 
-  it("carries a text twin of the crosshair — the SVG overlay is aria-hidden", () => {
+  it("carries a text twin of the crosshair - the SVG overlay is aria-hidden", () => {
     const markup = render(THREE_ELIGIBLE, { accuracy: 0.63, meanRating: 4.2 });
     expect(markup).toContain(
       "This session lands at 63% accuracy with a mean rating of 4.2 / 7",

@@ -292,7 +292,7 @@ export function getMyRatings(page = 0, size = 50) {
   );
 }
 
-// The backend clamps size to 50, so 40 pages covers 2000 entries — far past
+// The backend clamps size to 50, so 40 pages covers 2000 entries - far past
 // the stimulus set for both walkers below. The cap only guards against a
 // pathological totalPages.
 const PAGE_WALK_MAX_PAGES = 40;
@@ -370,7 +370,7 @@ export async function getAllMyProductions(): Promise<ProductionEntry[]> {
 // A 400 from POST /api/productions carries validationErrors.input. This reports
 // only its PRESENCE: the backend's message is developer-facing, and rendering it
 // would ship unfrozen player copy. The view shows the frozen 8.1 helper instead.
-// ApiError.message is unusable here too — errorMessage() prefixes it with the
+// ApiError.message is unusable here too - errorMessage() prefixes it with the
 // field name.
 export function isUnparseableInput(error: unknown): boolean {
   if (!(error instanceof ApiError) || error.status !== 400) {

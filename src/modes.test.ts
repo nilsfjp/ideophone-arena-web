@@ -6,7 +6,7 @@ describe("mode registry", () => {
     expect(new Set(MODES.map((mode) => mode.id)).size).toBe(MODES.length);
   });
 
-  // The registry lists shipped modes only — the six-mode shell scales from this
+  // The registry lists shipped modes only - the six-mode shell scales from this
   // data, not from stubs, so a new entry here means a new build landed.
   it("Meaning Match, Rating Lab, Perception Ladder and Word Mint are available", () => {
     const available = MODES.filter((mode) => mode.status === "available");

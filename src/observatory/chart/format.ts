@@ -1,5 +1,5 @@
 // Deterministic number formatting for chart labels and tooltips. Fixed
-// output, no locale APIs — toLocaleString would make rendered markup (and the
+// output, no locale APIs - toLocaleString would make rendered markup (and the
 // string-assertion tests) machine-dependent.
 
 import type { Interval } from "./wilson";
@@ -32,7 +32,7 @@ export function formatZ(z: number): string {
   return v > 0 ? `+${abs}` : v < 0 ? `−${abs}` : "0.0";
 }
 
-/** Plain integer count — no thousands separators (lab-notebook register). */
+/** Plain integer count - no thousands separators (lab-notebook register). */
 export function formatCount(count: number): string {
   return String(count);
 }

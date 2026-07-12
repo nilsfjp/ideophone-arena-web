@@ -521,7 +521,7 @@ export type RatingTrialPanelProps = {
 // One word's rating screen, mirroring the Gorilla Rating Task layout. The
 // stimulus stays audio-only: no script, no romaji until the lab record. Every
 // slot (reveal, status line, Next) is mounted from the start and toggles
-// visibility only — no mid-trial layout shift.
+// visibility only - no mid-trial layout shift.
 export function RatingTrialPanel({
   word,
   index,
@@ -682,7 +682,7 @@ export function RatingRevealContent({ reveal }: RatingRevealContentProps) {
       <p className="rating-reveal-label">Arena record</p>
 
       {reveal.alreadyRated ? (
-        <p>You had already rated this word{reveal.yourRating !== null ? ` — your rating stands at ${reveal.yourRating}` : ""}.</p>
+        <p>You had already rated this word{reveal.yourRating !== null ? `; your rating stands at ${reveal.yourRating}` : ""}.</p>
       ) : reveal.recordFailed ? (
         <p>This word could not be recorded right now, so the arena moves on.</p>
       ) : (
@@ -742,12 +742,12 @@ export function LabRecordPanel({ rows }: LabRecordPanelProps) {
                   <td>
                     {row.meanRating !== null
                       ? `${row.meanRating.toFixed(1)} (${formatCount(row.ratingCount, "rating", "ratings")})`
-                      : "—"}
+                      : "–"}
                   </td>
                   <td>
                     {row.guessAccuracy !== null
                       ? `${formatPercent(row.guessAccuracy)} (${formatCount(row.guessCount, "guess", "guesses")})`
-                      : "—"}
+                      : "–"}
                   </td>
                 </tr>
               ))}
@@ -806,7 +806,7 @@ export function RatingEmptyState({
       <h1 id="rating-empty-title">Rating Lab</h1>
       <p>
         The Rating Lab works with words you have already met. Play Meaning
-        Match first — every word you hear there becomes available to rate.
+        Match first; every word you hear there becomes available to rate.
       </p>
 
       <div className="completion-actions">

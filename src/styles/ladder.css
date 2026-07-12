@@ -1,8 +1,8 @@
-/* Perception Ladder (NIL-42) — the floor stack, floor-intro dialog, in-run
+/* Perception Ladder (NIL-42) - the floor stack, floor-intro dialog, in-run
    chrome strip, floor completion, and summit. Bespoke surface on the ink-and-
    paper tokens (SPEC-view-designs §1 + V1–V9; mockup ladder-floors.html),
    mirroring the landing's scoped-CSS pattern. Tokens only (token-purity guard).
-   The trial board itself is untouched (invariant 5) — the ladder only frames
+   The trial board itself is untouched (invariant 5) - the ladder only frames
    it. Motion: the one hover is an instant token swap under motion-safe; no
    layout motion. NOTE: the shadcn Dialog PORTALS its content to <body>, outside
    `.ladder`, so shared primitives (specimen, floor label, modality accent) are
@@ -53,7 +53,7 @@
     --floor-accent: var(--modality-interoceptive);
   }
 
-  /* tinted floor label — accent inherits from its card, or is set on the label
+  /* tinted floor label - accent inherits from its card, or is set on the label
      itself (run strip / completion / dialog, which sit outside a card). The
      .specimen.floor-label pair beats the plain .specimen ink color. */
   .ladder .specimen.floor-label,
@@ -151,7 +151,7 @@
     flex-wrap: wrap;
     gap: var(--space-2) var(--space-4);
     align-items: center;
-    min-height: 1.6rem; /* reserved stats slot — equal-height §2.3 */
+    min-height: 1.6rem; /* reserved stats slot - equal-height §2.3 */
   }
   .ladder .pill-cleared {
     color: var(--positive);
@@ -165,7 +165,7 @@
     color: var(--ink-muted);
   }
 
-  /* ---- in-run chrome strip (State B) — the trial board's own progress track
+  /* ---- in-run chrome strip (State B) - the trial board's own progress track
      stays "the existing progress track" (§1.5); this strip only adds floor
      identity + pair index + the final-rung marker. ---- */
   .ladder .run-strip {
@@ -244,7 +244,7 @@
     font-size: var(--text-sm);
   }
 
-  /* ---- ghost button (mockup State C) — .primary-button/.secondary-button are
+  /* ---- ghost button (mockup State C) - .primary-button/.secondary-button are
      global in app.css; the ladder adds the ghost variant. ---- */
   .ladder .ghost-button {
     min-height: 44px;
@@ -271,7 +271,7 @@
     outline-offset: var(--focus-ring-offset);
   }
 
-  /* ---- floor-intro dialog condition picker (portaled — not under .ladder) ---- */
+  /* ---- floor-intro dialog condition picker (portaled - not under .ladder) ---- */
   .ladder-intro-dialog .ladder-condition-heading {
     margin: 0 0 var(--space-1);
     font-family: var(--font-display);

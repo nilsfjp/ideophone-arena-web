@@ -1,5 +1,5 @@
 /* The Observatory (SPEC-stats-dashboard §2): bespoke chart surfaces on the
-   ink-and-paper tokens. Panels are CHROME — washi card, hairline border, no
+   ink-and-paper tokens. Panels are CHROME - washi card, hairline border, no
    shadow (UI-SYSTEM §1: elevation is the instrument's voice; nothing here is
    the instrument). Charts ship zero animation: reduced-motion is satisfied by
    construction, and the token-purity motion gate has nothing to inspect.
@@ -136,7 +136,7 @@
     gap: var(--space-1);
   }
 
-  /* Legend swatches alias the mark fills without sharing the mark classes —
+  /* Legend swatches alias the mark fills without sharing the mark classes -
      tests assert on mark classes to count plotted data, not legend glyphs. */
   .legend-swatch--thesis {
     fill: var(--ink-primary);
@@ -202,7 +202,7 @@
     color: var(--ink-muted);
   }
 
-  /* Verbatim kana (displayForm) — rendered, never derived (invariant 1). */
+  /* Verbatim kana (displayForm) - rendered, never derived (invariant 1). */
   .chart-tooltip-kana {
     font-size: var(--text-md);
     color: var(--ink-primary);
@@ -234,7 +234,7 @@
   }
 
   .dumbbell-value--live {
-    /* Accent as text: card surface only (§4.5) — panels are washi cards. */
+    /* Accent as text: card surface only (§4.5) - panels are washi cards. */
     fill: var(--vermillion);
   }
 
@@ -431,7 +431,7 @@
     font-size: var(--text-sm);
   }
 
-  /* Verbatim kana on an ARENA-badged word — rendered, never derived. */
+  /* Verbatim kana on an ARENA-badged word - rendered, never derived. */
   .radar-chip-kana {
     color: var(--ink-primary);
     font-size: var(--text-md);
@@ -439,14 +439,14 @@
 
   /* --- rainclouds (§3.4, v1.1) -------------------------------------------- */
 
-  /* Thesis reference silhouette behind each cloud — ink, faint, no stroke so
+  /* Thesis reference silhouette behind each cloud - ink, faint, no stroke so
      it never competes with the live layer. */
   .raincloud-violin--thesis {
     fill: var(--ink-primary);
     fill-opacity: 0.1;
   }
 
-  /* The arena's own live distribution — vermillion, the accent that means the
+  /* The arena's own live distribution - vermillion, the accent that means the
      experiment is speaking. */
   .raincloud-violin--arena {
     fill: var(--vermillion);
@@ -471,7 +471,7 @@
     stroke-width: 1.5;
   }
 
-  /* Raw judgements — the honesty of thin n made visible. */
+  /* Raw judgements - the honesty of thin n made visible. */
   .raincloud-dot {
     fill: var(--vermillion);
     fill-opacity: 0.7;
@@ -487,7 +487,7 @@
     stroke: var(--border-soft);
   }
 
-  /* 95% Wilson band behind the marker — uncertainty made visible. */
+  /* 95% Wilson band behind the marker - uncertainty made visible. */
   .integrity-ci {
     stroke: var(--vermillion);
     stroke-width: 3;

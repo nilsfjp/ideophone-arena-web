@@ -1,5 +1,5 @@
 /* ============================================================================
-   Tailwind theme bridge (spec §4.6) — maps the tokens.css semantic properties
+   Tailwind theme bridge (spec §4.6) - maps the tokens.css semantic properties
    into Tailwind's utility namespaces BY var() REFERENCE. Zero value
    duplication: tokens.css stays the single source of truth; utilities like
    `bg-accent`, `text-ink-muted`, `text-auditory`, `font-stimuli`,
@@ -8,7 +8,7 @@
 
    `@theme inline` is what makes the self-named references (e.g.
    `--font-display: var(--font-display)`) legal: with `inline` Tailwind does
-   NOT emit its own copy of the property — it inlines the RHS into the
+   NOT emit its own copy of the property - it inlines the RHS into the
    generated utility, so `.font-display { font-family: var(--font-display) }`
    resolves against tokens.css. (This is the exact pattern the spec §4.6
    example uses.)
@@ -65,11 +65,11 @@
   --font-stimuli: var(--font-stimuli);
   --font-stimuli-latin: var(--font-stimuli-latin);
 
-  /* Type ladder (§3) — STANDARD Tailwind font-size names only (§16 H4). The
+  /* Type ladder (§3) - STANDARD Tailwind font-size names only (§16 H4). The
      non-standard §3 roles (ui, md, prompt, question, kana-*, hero, xl-form)
      stay tokens in tokens.css, consumed via var() in @layer app bespoke
      surfaces and as arbitrary-value utilities (e.g. text-[length:var(--text-ui)])
-     on chrome — never as named utilities. Line-height companions keep each
+     on chrome - never as named utilities. Line-height companions keep each
      standard `text-<role>` utility self-contained. */
   --text-xs: var(--text-xs);
   --text-xs--line-height: 1.4;
@@ -98,11 +98,11 @@
   --radius-xl: var(--radius-lg);
   --radius-pill: var(--radius-pill);
 
-  /* Elevation — instrument voice (card) + overlay only (raised) */
+  /* Elevation - instrument voice (card) + overlay only (raised) */
   --shadow-card: var(--shadow-card);
   --shadow-raised: var(--shadow-raised);
 
-  /* Container measures (§2.1) — max-w-app / max-w-read / max-w-form */
+  /* Container measures (§2.1) - max-w-app / max-w-read / max-w-form */
   --container-app: var(--container-app);
   --container-read: var(--container-read);
   --container-form: var(--container-form);

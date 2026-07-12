@@ -22,7 +22,7 @@ export type StartSessionRequest = {
   // LADDER sessions reject includePractice (backend), so it is omitted there.
   includePractice?: boolean;
   // NIL-42: absent means CHOOSING (the core Meaning Match loop). LADDER selects
-  // a Perception Ladder floor through `floor` (a Modality) — the backend takes
+  // a Perception Ladder floor through `floor` (a Modality) - the backend takes
   // explicit floor selection and never an overloaded difficultyLevel (A3).
   gameMode?: GameMode;
   floor?: Modality;
@@ -60,7 +60,7 @@ export type GameSessionResponse = {
   // Present on LADDER sessions (NIL-42): the play mode and the served floor.
   gameMode?: GameMode;
   floor?: Modality;
-  // Scored rounds this session will serve — the denominator of "Round n / total".
+  // Scored rounds this session will serve - the denominator of "Round n / total".
   // The client cannot derive it (CHOOSING serves the whole scored pool, LADDER only
   // its floor's pairs), so the backend states it. Practice rounds are excluded.
   totalRounds: number;
@@ -113,7 +113,7 @@ export type NextRoundResponse = RoundResponse | CompletionResponse | null | unde
 
 // Perception Ladder overview (GET /api/game/ladder/floors, NIL-42). Floors
 // arrive in climb/hierarchy order (Sound → Sight → Touch → Inner states); the
-// array index is the floor ordinal — 28B derives "Floor n" from it and never
+// array index is the floor ordinal - 28B derives "Floor n" from it and never
 // persists an ordinal (V3). Floors carry no name/description/thesis-mean; the
 // client supplies those per modality (see ladderText.ts). Progress fields are
 // the caller's own: `cleared` iff a completed LADDER session for the floor
@@ -217,7 +217,7 @@ export type RatingPageResponse = {
   totalPages: number;
 };
 
-// GET /api/game/me/ratable-words (27E) — the server-side Rating Lab pool:
+// GET /api/game/me/ratable-words (27E) - the server-side Rating Lab pool:
 // words encountered through answered scored rounds, minus already-rated. The
 // thesis contamination rule is enforced by the backend; `meaning` is the
 // word's own gloss, exactly as the round feedback revealed it. Entries come
@@ -240,7 +240,7 @@ export type RatableWordPageResponse = {
   totalPages: number;
 };
 
-// GET /api/research/divergence — PUBLIC, bare array (no wrapper). One row per
+// GET /api/research/divergence - PUBLIC, bare array (no wrapper). One row per
 // ideophone with >=1 guess OR >=1 rating; aggregates are null (not 0) when
 // that side has zero observations.
 export type DivergenceEntry = {
@@ -257,7 +257,7 @@ export type DivergenceEntry = {
   ratingCount: number;
 };
 
-// GET /api/research/rating-distributions — PUBLIC, single object. Dense grid:
+// GET /api/research/rating-distributions - PUBLIC, single object. Dense grid:
 // every modality with >=1 rating carries all seven cells (ratingValue 1..7,
 // zero-filled); modalities with no ratings are omitted entirely (no cells, no
 // byModalityN key). byModalityN[m] = the sum of that modality's seven cells =
@@ -273,11 +273,11 @@ export type RatingDistributionsResponse = {
   byModalityN: Record<string, number>;
 };
 
-// GET /api/research/position-bias — PUBLIC, single object. SDT fairness check
+// GET /api/research/position-bias - PUBLIC, single object. SDT fairness check
 // on the forced choice, reconstructed from the deterministic per-session
 // shuffle. leftPickRate / dPrime / criterion / target*Accuracy are null (NOT
 // 0) when a denominator / stimulus class is empty. `dPrime` casing is
-// @JsonProperty-pinned on the backend — consume that exact key. Feeds the
+// @JsonProperty-pinned on the backend - consume that exact key. Feeds the
 // Observatory integrity strip.
 export type PositionBiasResponse = {
   n: number;
@@ -306,7 +306,7 @@ export type TrialPhase =
   | "complete"
   | "error";
 
-// Production — Word Mint (backend NIL-62). The meaning is the whole prompt: no
+// Production - Word Mint (backend NIL-62). The meaning is the whole prompt: no
 // romaji, no kana, no audio until the word is minted.
 export type ProductionPrompt = {
   completed: boolean;
@@ -314,7 +314,7 @@ export type ProductionPrompt = {
   gloss: string | null;
   modality: Modality | null;
   // The {n} of the frozen "word {i} of {n}" status line. Caller-invariant, and
-  // carried on the completion sentinel too. Never derive or hardcode it (V14) —
+  // carried on the completion sentinel too. Never derive or hardcode it (V14) -
   // the same rule as GameSessionResponse.totalRounds. Optional on the type only
   // because apiRequest does no runtime validation: an older backend omits it.
   totalProducible?: number;
@@ -338,7 +338,7 @@ export type FeatureKey =
 
 // `yours`/`target` are heterogeneous by contract: five booleans, moraCount an
 // integer, heavyVowelRatio a 2-dp decimal. `matched` means the feature paid its
-// full weight — a shared absence still matches.
+// full weight - a shared absence still matches.
 export type FeatureMatch = {
   feature: FeatureKey;
   yours: boolean | number;

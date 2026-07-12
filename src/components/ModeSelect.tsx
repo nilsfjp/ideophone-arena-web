@@ -8,7 +8,7 @@ type ModeSelectProps = {
 // The six-mode home shell (§2.3): cards render from modes.ts data only, so the
 // auto-fill grid scales 3->6 without a code change. Each card carries a
 // measure chip (specimen label), title, one-line description, and a status
-// slot reserved even when empty. Cards stay <button class="mode-card"> — the
+// slot reserved even when empty. Cards stay <button class="mode-card"> - the
 // interactive root the proof battery pins and the browser loop drives.
 export default function ModeSelect({ modes, onSelect }: ModeSelectProps) {
   return (

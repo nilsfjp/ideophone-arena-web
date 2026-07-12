@@ -21,7 +21,7 @@ import {
 
 // The player types roman letters; the server is authoritative. This mirrors the
 // backend's `^[a-z]{2,24}$` so an obviously malformed try never costs a request
-// — it is NOT a phonology check (mora segmentation happens server-side only).
+// - it is NOT a phonology check (mora segmentation happens server-side only).
 const ROMAJI_INPUT_PATTERN = /^[a-z]{2,24}$/;
 
 // Lowercase before testing AND before sending: the backend trims and lowercases
@@ -97,7 +97,7 @@ export function chipLabel(match: FeatureMatch): string {
 }
 
 // In the table twin the count moves to the value column, so the row is labelled
-// with the bare noun — derived from the frozen chip prefix, not a second literal.
+// with the bare noun - derived from the frozen chip prefix, not a second literal.
 const MORA_TABLE_LABEL = MINT_CHIP_LENGTH_PREFIX.replace(/\s*·\s*$/u, "");
 
 export function featureTableLabel(match: FeatureMatch): string {

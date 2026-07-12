@@ -1,4 +1,4 @@
-// Authored preview — the real shadcn Dialog from window.IdeophoneArena, shown in
+// Authored preview - the real shadcn Dialog from window.IdeophoneArena, shown in
 // its open state. Overlays are the one at-rest surface allowed --shadow-raised
 // (§1); the close glyph is an inline SVG. (Dialog is staged for spec §5 uses
 // like a logout-mid-session confirm.)

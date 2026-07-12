@@ -16,7 +16,7 @@ export type LabRecordRow = {
 // still label a word rated in an EARLIER visit even when the public divergence
 // fetch fails on the current visit: once a word is rated it leaves the ratable
 // pool, so neither the divergence map (failed) nor the pool (excludes it) can
-// supply its romaji/gloss — and RatingResponse carries neither. The cache is
+// supply its romaji/gloss - and RatingResponse carries neither. The cache is
 // written while the word is still rateable (from the pool word, which has both),
 // so the data survives into later visits. (NIL-65 rider.)
 export type WordMeta = { romaji?: string; gloss?: string };
@@ -61,7 +61,7 @@ export function rememberWordMeta(
       localStorage.setItem(WORD_META_KEY, JSON.stringify(store));
     }
   } catch {
-    // Quota/parse failures are non-fatal — the cache is a best-effort fallback.
+    // Quota/parse failures are non-fatal - the cache is a best-effort fallback.
   }
 }
 

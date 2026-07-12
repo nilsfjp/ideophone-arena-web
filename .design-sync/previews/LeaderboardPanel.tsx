@@ -1,4 +1,4 @@
-// Authored preview — the leaderboard table. Renders the best *completed*
+// Authored preview - the leaderboard table. Renders the best *completed*
 // session per player (correct / answered and accuracy). Takes its page data
 // directly, so it shows real rows without a backend. Includes the empty state
 // and the paged state (pager appears when totalPages > 1).

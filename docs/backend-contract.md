@@ -137,7 +137,7 @@ Floor overview:
 GET /api/game/ladder/floors
 ```
 
-Response — floors in climb order; the **array index is the floor ordinal** (the
+Response - floors in climb order; the **array index is the floor ordinal** (the
 frontend derives "Floor n" from array position and never persists it):
 
 ```json
@@ -176,7 +176,7 @@ Start a floor session (same `POST /api/game/sessions` endpoint):
 
 - `floor` is a `Modality`, required iff `gameMode == "LADDER"` and forbidden
   otherwise.
-- LADDER sessions **reject `includePractice`** — omit it.
+- LADDER sessions **reject `includePractice`** - omit it.
 - The session response carries `gameMode` and `floor`.
 - Round serving (`.../rounds/next`) and answers (`.../answers`) are the ordinary
   Choosing endpoints, unchanged; each round option carries the floor's `modality`.
@@ -316,7 +316,7 @@ server-side; `responseTimeMs` (optional) must be 0..600000; `sessionUuid`
 ```
 
 Errors: **409** when the user has already rated the ideophone (ratings are
-NOT upserts — `(user_id, ideophone_id)` is unique and a rating can never be
+NOT upserts - `(user_id, ideophone_id)` is unique and a rating can never be
 changed through this API), 400 on validation failures, 404 for an unknown
 ideophone or sessionUuid, 403 when the sessionUuid belongs to another user,
 401 unauthenticated. The frontend pre-loads existing ratings, shows them
@@ -339,17 +339,17 @@ GET /api/game/me/ratable-words?page=0&size=50  (authenticated)
 
 The Rating Lab's word pool, served by the backend since 27E (2026-07-03). The
 contamination rule is enforced server-side: entries are the caller's words
-encountered through answered (scored) Choosing rounds — feedback is the only
-place the word→meaning mapping is revealed — minus words already rated. Same
+encountered through answered (scored) Choosing rounds - feedback is the only
+place the word→meaning mapping is revealed - minus words already rated. Same
 paginated wrapper as `/me/ratings`; entries are
 `{ ideophoneId, canonicalForm, romaji, stimulusFile, modality, meaning }`
 (`meaning` is the word's own gloss, exactly as feedback showed it), in stable
 first-encounter order, deduplicated. `src/ratingPool.ts` is now a thin client
 (`fetchRatingPool()` walks the pages); the former `ideophone-arena-rating-pool`
-localStorage pool is retired without migration — it broke for any multi-device
+localStorage pool is retired without migration - it broke for any multi-device
 user, which the server pool fixes by construction.
 
-## Production — Word Mint (2026-07-09, backend NIL-62)
+## Production - Word Mint (2026-07-09, backend NIL-62)
 
 ```text
 GET  /api/productions/next
@@ -359,7 +359,7 @@ GET  /api/research/triangulation           (no auth)
 ```
 
 The production measure: the player reads a meaning and invents a word for it.
-Persistence is `UNIQUE(user_id, word_id)` — **one try per word, for life** — so
+Persistence is `UNIQUE(user_id, word_id)` - **one try per word, for life** - so
 "your first instinct is the datum" is enforced by the database, not the UI.
 
 **`GET /api/productions/next`** →
@@ -367,17 +367,17 @@ Persistence is `UNIQUE(user_id, word_id)` — **one try per word, for life** —
 the whole prompt: no romaji, no kana, no audio pre-submit. Once every word is
 produced, the completion sentinel is `{ completed: true, ideophoneId: null,
 gloss: null, modality: null, totalProducible }` (the `RoundResponse`
-precedent). Selection is deterministic and stateless — the caller's production
+precedent). Selection is deterministic and stateless - the caller's production
 count is the cycle cursor, cycling `AUDITORY → VISUAL → HAPTIC →
 INTEROCEPTIVE`, lowest word id within a modality, skipping exhausted ones.
 
 `totalProducible` is the `{n}` of the frozen `WORD {i} OF {n} · YOUR MEAN {m}`
-status line (`SPEC-view-designs.md` §8.4). It is **caller-invariant** — minting
-advances `{i}`, never shrinks `{n}` — and is carried on the sentinel too, so
+status line (`SPEC-view-designs.md` §8.4). It is **caller-invariant** - minting
+advances `{i}`, never shrinks `{n}` - and is carried on the sentinel too, so
 the status line survives the last round. It counts words in ≥1 non-practice
 trial *within the four cycle modalities* (`Modality` also has `TACTILE` and
 `MOTION`, which the cycle never serves). Currently 94. **Never derive or
-hardcode it** (V14) — the same rule as `session.totalRounds`.
+hardcode it** (V14) - the same rule as `session.totalRounds`.
 
 **`POST /api/productions`** body
 `{ ideophoneId, input, responseTimeMs, sessionUuid }` → `201`:
@@ -403,7 +403,7 @@ hardcode it** (V14) — the same rule as `session.totalRounds`.
 `features` always carries all **seven** entries in the frozen chip order of
 `SPEC-view-designs.md` §8.3. `yours`/`target` are heterogeneous by design: five
 booleans, `moraCount` an integer, `heavyVowelRatio` a 2-dp decimal. `matched`
-means the feature contributed its full weight — **a shared absence still
+means the feature contributed its full weight - **a shared absence still
 matches**. The client decides which features become chips (§2.3.5: those
 present in either form, plus the two continuous features always); the full
 seven drive the comparison-table twin. `similarityScore` is
@@ -411,14 +411,14 @@ seven drive the comparison-table twin. `similarityScore` is
 match is `100`. The client never recomputes the score or the features.
 
 Status codes: `input` is trimmed + lowercased, must match `^[a-z]{2,24}$` **and**
-segment into morae — either failure is **`400` with `validationErrors.input`,
+segment into morae - either failure is **`400` with `validationErrors.input`,
 and the attempt is not consumed** (nothing is written; the player's one try
 survives a typo). Unknown `ideophoneId` → `404`. Duplicate → `409` (including
 the concurrent case, via `saveAndFlush`). `sessionUuid` is optional and
 gameMode-agnostic (provenance only); unknown → `404`, another user's → `403`.
 `responseTimeMs`, if present, must be `0..600000`.
 
-The frontend renders the frozen §8.1 parse helper on a `400` — **never the
+The frontend renders the frozen §8.1 parse helper on a `400` - **never the
 backend's `validationErrors.input` text**, which is developer-facing and would
 ship unfrozen copy. Read presence from `ApiError.body.validationErrors?.input`;
 never from `ApiError.message`, which is prefixed with the field name.
@@ -438,7 +438,7 @@ currently derivable client-side.
 **`GET /api/research/triangulation`** (public) extends the divergence pattern
 with `meanProductionScore` / `productionCount`, one row per word with *any*
 data. Its key set is a superset of `/api/research/divergence`, which is
-unchanged. **Not consumed by the frontend yet** — the §2.4 completion benchmark
+unchanged. **Not consumed by the frontend yet** - the §2.4 completion benchmark
 that would use it needs unfrozen copy, so it is deferred.
 
 ## Research divergence (public)
@@ -466,7 +466,7 @@ with at least one guess or rating:
 ```
 
 `guessAccuracy` and `meanRating` are `null` (not 0) when that side has zero
-observations — the client must distinguish "no data" from "always wrong" /
+observations - the client must distinguish "no data" from "always wrong" /
 "lowest rating". The Rating Lab shows these as a per-word "Arena record"
 reveal after each rating and joins them into the Lab record table. Framing
 stays descriptive (counts and averages), per the flavor-text rule.

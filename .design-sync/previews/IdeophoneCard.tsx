@@ -1,4 +1,4 @@
-// Authored preview — composes the real IdeophoneCard from window.IdeophoneArena.
+// Authored preview - composes the real IdeophoneCard from window.IdeophoneArena.
 // IdeophoneCard is the trial's stimulus card: a stable-size card that holds a
 // script/placeholder face, romaji + meaning reveal slots, and an audio control.
 // Audio fetches a backend blob at runtime; with no backend the playback control
@@ -53,7 +53,7 @@ export const ChoiceButton = () => (
 );
 
 // Audio-only condition: pre-answer the card shows a neutral position label
-// only — no script, no romaji (experiment invariant 4).
+// only - no script, no romaji (experiment invariant 4).
 export const AudioOnlyPlaceholder = () => (
   <div style={{ maxWidth: 320 }}>
     <IdeophoneCard

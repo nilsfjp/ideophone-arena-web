@@ -1,4 +1,4 @@
-// Authored preview — the real shadcn Checkbox from window.IdeophoneArena.
+// Authored preview - the real shadcn Checkbox from window.IdeophoneArena.
 // Checked = vermillion fill with an inline-SVG check. Its live use is the
 // Instructions "Include practice rounds" toggle, composed here with a Label.
 import { Checkbox, Label } from "ideophone-arena-web";

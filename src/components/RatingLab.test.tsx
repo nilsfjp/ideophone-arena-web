@@ -25,7 +25,7 @@ import {
 } from "./RatingLab";
 
 // Shaped like the ratable-words endpoint entries: no session provenance, no
-// timestamps — the backend owns encounter order now.
+// timestamps - the backend owns encounter order now.
 const word: RatingPoolWord = {
   ideophoneId: 7,
   canonicalForm: "カンカン",
@@ -320,7 +320,7 @@ describe("buildLabRecordRows", () => {
 
   // NIL-65 rider: a word rated in an earlier visit has left the pool, so when
   // divergence is unavailable the remembered word-meta cache is the only source
-  // of its romaji/gloss — the fallback must fire instead of "word #id".
+  // of its romaji/gloss - the fallback must fire instead of "word #id".
   it("falls back to remembered word metadata when pool and divergence are absent", () => {
     const rows = buildLabRecordRows(
       new Map([[9, { ...rating, ideophoneId: 9 }]]),
@@ -346,7 +346,7 @@ describe("LabRecordPanel and RatingEmptyState", () => {
     expect(markup).toContain("Lab record");
     expect(markup).toContain("<th>Your rating</th>");
     expect(markup).toContain("kankan");
-    expect(countOccurrences(markup, "—")).toBe(2);
+    expect(countOccurrences(markup, "–")).toBe(2);
   });
 
   it("shows the empty message when nothing has been rated", () => {

@@ -1,11 +1,11 @@
-// The integrity strip — position bias (SPEC-stats-dashboard §3.5, v1.1). An
+// The integrity strip - position bias (SPEC-stats-dashboard §3.5, v1.1). An
 // SDT-flavored fairness check on the forced choice: before any accuracy figure
 // means anything, the choice itself has to be fair. Three deviation tracks
-// against a 50% hairline — which card gets picked, and whether the target
-// meaning is as guessable on top as on the bottom — plus the d′/criterion
+// against a 50% hairline - which card gets picked, and whether the target
+// meaning is as guessable on top as on the bottom - plus the d′/criterion
 // readout. Copy register: "A fair coin, checked." (§10.4: lab-calm, no cheer,
-// never "orthogonal"). Every figure is direct-labeled — colour is never the
-// sole carrier — and nulls render as "—", never 0 or NaN.
+// never "orthogonal"). Every figure is direct-labeled - colour is never the
+// sole carrier - and nulls render as "–", never 0 or NaN.
 
 import type { PositionBiasResponse } from "../../api/types";
 import { Axis } from "../chart/axis";
@@ -52,7 +52,7 @@ function buildTracks(bias: PositionBiasResponse): TrackSpec[] {
     },
     {
       key: "top",
-      title: "Target on top — correct",
+      title: "Target on top · correct",
       shortTitle: "Target top",
       rate: bias.targetTopAccuracy,
       successes: bias.targetTopCorrect,
@@ -60,7 +60,7 @@ function buildTracks(bias: PositionBiasResponse): TrackSpec[] {
     },
     {
       key: "bottom",
-      title: "Target on bottom — correct",
+      title: "Target on bottom · correct",
       shortTitle: "Target bottom",
       rate: bias.targetBottomAccuracy,
       successes: bias.targetBottomCorrect,
@@ -91,7 +91,7 @@ export default function IntegrityStrip({ positionBias }: IntegrityProps) {
       <h2>A fair coin, checked</h2>
       <p className="observatory-panel-copy">
         Before a 64% means anything, the forced choice has to be fair. Two
-        things could tilt it — which card sits on the left, and whether the
+        things could tilt it: which card sits on the left, and whether the
         target meaning is easier to spot on top than on the bottom. A fair task
         keeps the first at the hairline and the last two level with each other.
       </p>
@@ -106,7 +106,7 @@ export default function IntegrityStrip({ positionBias }: IntegrityProps) {
       <figure className="chart-figure" ref={ref}>
         <svg
           role="img"
-          aria-label="Three fairness tracks against a 50% hairline: left-card pick rate, and accuracy when the target meaning sits on top versus on the bottom — full values in the data table."
+          aria-label="Three fairness tracks against a 50% hairline: left-card pick rate, and accuracy when the target meaning sits on top versus on the bottom; full values in the data table."
           viewBox={`0 0 ${width} ${height}`}
           width="100%"
           height={height}
@@ -133,7 +133,7 @@ export default function IntegrityStrip({ positionBias }: IntegrityProps) {
                 </SpecimenText>
                 <SpecimenText x={width - M_RIGHT} y={labelY} textAnchor="end">
                   {track.rate === null
-                    ? "—"
+                    ? "–"
                     : `${formatPercentPrecise(track.rate)} · ${formatCount(
                         track.successes,
                       )}/${formatCount(track.n)}`}
@@ -177,20 +177,20 @@ export default function IntegrityStrip({ positionBias }: IntegrityProps) {
         <dl className="integrity-readout">
           <div className="integrity-stat">
             <dt className="specimen-label">d′ · sensitivity</dt>
-            <dd>{bias && bias.dPrime !== null ? formatFixed2(bias.dPrime) : "—"}</dd>
+            <dd>{bias && bias.dPrime !== null ? formatFixed2(bias.dPrime) : "–"}</dd>
           </div>
           <div className="integrity-stat">
             <dt className="specimen-label">Criterion · 0 = unbiased</dt>
             <dd>
               {bias && bias.criterion !== null
                 ? formatFixed2(bias.criterion)
-                : "—"}
+                : "–"}
             </dd>
           </div>
         </dl>
         <figcaption className="chart-notes">
           <span>
-            d′ reads the left/right choice as signal detection — sensitivity to
+            d′ reads the left/right choice as signal detection: sensitivity to
             where the target sat; criterion is the side bias, 0 being none.
           </span>
           {empty ? <span>Awaiting the first scored round.</span> : null}
@@ -208,45 +208,45 @@ export default function IntegrityStrip({ positionBias }: IntegrityProps) {
             "Left card picked",
             bias && bias.leftPickRate !== null
               ? formatPercentPrecise(bias.leftPickRate)
-              : "—",
-            bias ? formatCount(bias.leftPickCount) : "—",
-            bias ? formatCount(bias.n) : "—",
+              : "–",
+            bias ? formatCount(bias.leftPickCount) : "–",
+            bias ? formatCount(bias.n) : "–",
           ],
           [
             "Right card picked",
             bias && bias.leftPickRate !== null
               ? formatPercentPrecise(1 - bias.leftPickRate)
-              : "—",
-            bias ? formatCount(bias.rightPickCount) : "—",
-            bias ? formatCount(bias.n) : "—",
+              : "–",
+            bias ? formatCount(bias.rightPickCount) : "–",
+            bias ? formatCount(bias.n) : "–",
           ],
           [
-            "Target on top — correct",
+            "Target on top · correct",
             bias && bias.targetTopAccuracy !== null
               ? formatPercentPrecise(bias.targetTopAccuracy)
-              : "—",
-            bias ? formatCount(bias.targetTopCorrect) : "—",
-            bias ? formatCount(bias.targetTopN) : "—",
+              : "–",
+            bias ? formatCount(bias.targetTopCorrect) : "–",
+            bias ? formatCount(bias.targetTopN) : "–",
           ],
           [
-            "Target on bottom — correct",
+            "Target on bottom · correct",
             bias && bias.targetBottomAccuracy !== null
               ? formatPercentPrecise(bias.targetBottomAccuracy)
-              : "—",
-            bias ? formatCount(bias.targetBottomCorrect) : "—",
-            bias ? formatCount(bias.targetBottomN) : "—",
+              : "–",
+            bias ? formatCount(bias.targetBottomCorrect) : "–",
+            bias ? formatCount(bias.targetBottomN) : "–",
           ],
           [
             "d′ (sensitivity)",
-            bias && bias.dPrime !== null ? formatFixed2(bias.dPrime) : "—",
-            "—",
-            "—",
+            bias && bias.dPrime !== null ? formatFixed2(bias.dPrime) : "–",
+            "–",
+            "–",
           ],
           [
             "Criterion (side bias)",
-            bias && bias.criterion !== null ? formatFixed2(bias.criterion) : "—",
-            "—",
-            "—",
+            bias && bias.criterion !== null ? formatFixed2(bias.criterion) : "–",
+            "–",
+            "–",
           ],
         ]}
       />

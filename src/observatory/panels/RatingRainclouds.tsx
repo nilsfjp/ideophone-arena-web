@@ -1,6 +1,6 @@
-// The spread — rating distributions by modality (SPEC-stats-dashboard §3.4,
+// The spread - rating distributions by modality (SPEC-stats-dashboard §3.4,
 // rainclouds v1.1). Per trio modality, the live 1–7 iconicity ratings as a
-// raincloud — half-violin (KDE) + quartile box + seeded-jitter raw dots — over
+// raincloud - half-violin (KDE) + quartile box + seeded-jitter raw dots - over
 // the thesis distribution as a faint reference silhouette behind. Raincloud
 // over ridgeline (settled): the raw dots SHOW thin n instead of smoothing a
 // dozen ratings into fake confidence. Vermillion is the arena's own live data;
@@ -127,7 +127,7 @@ export default function RatingRainclouds({ distributions }: RaincloudProps) {
 
   return (
     <section className="observatory-panel observatory-panel--rainclouds">
-      <h2>The spread — how each modality is rated</h2>
+      <h2>The spread · how each modality is rated</h2>
       <p className="observatory-panel-copy">
         Every 1–7 iconicity rating in the arena, per modality, as a cloud of raw
         judgements over the thesis distribution behind. A handful of ratings
@@ -157,7 +157,7 @@ export default function RatingRainclouds({ distributions }: RaincloudProps) {
       <figure className="chart-figure" ref={ref}>
         <svg
           role="img"
-          aria-label="Rating distributions from 1 to 7 per modality: the live arena raincloud over the thesis reference — full values in the data table."
+          aria-label="Rating distributions from 1 to 7 per modality: the live arena raincloud over the thesis reference; full values in the data table."
           viewBox={`0 0 ${width} ${height}`}
           width="100%"
           height={height}
@@ -176,8 +176,8 @@ export default function RatingRainclouds({ distributions }: RaincloudProps) {
                     : tier.spec.label}
                 </SpecimenText>
                 <SpecimenText x={width - M_RIGHT} y={labelY} textAnchor="end">
-                  {/* Unreachable record ≠ zero ratings — null is not 0. */}
-                  {live === null ? "N = —" : `N = ${formatCount(tier.liveN)}`}
+                  {/* Unreachable record ≠ zero ratings - null is not 0. */}
+                  {live === null ? "N = –" : `N = ${formatCount(tier.liveN)}`}
                 </SpecimenText>
 
                 {/* thesis reference silhouette, behind everything */}
@@ -257,12 +257,16 @@ export default function RatingRainclouds({ distributions }: RaincloudProps) {
         </svg>
         <figcaption className="chart-notes">
           <span>
-            Curves are peak-normalized — they show the shape of each modality's
+            Curves are peak-normalized: they show the shape of each modality's
             ratings, not how many. Sample sizes live in the labels.
           </span>
           <span>
             The thesis silhouette behind each cloud is the same 30 words, rated
             by 36 participants (360 ratings a modality).
+          </span>
+          <span>
+            Live ratings are elicited under instructions that name no
+            language, wording the thesis cohort never saw.
           </span>
           {thinned.length > 0 ? (
             <span>
@@ -278,7 +282,7 @@ export default function RatingRainclouds({ distributions }: RaincloudProps) {
             </span>
           ) : null}
           <span>
-            Live means include practice rounds and any automated traffic — a
+            Live means include practice rounds and any automated traffic. A
             server-side exclusion is pending; read the shapes, not the exact
             counts.
           </span>
@@ -308,17 +312,17 @@ export default function RatingRainclouds({ distributions }: RaincloudProps) {
             tier.spec.label,
             "Arena",
             ...(tier.liveCounts ?? [0, 0, 0, 0, 0, 0, 0]).map((c) =>
-              live === null ? "—" : formatCount(c),
+              live === null ? "–" : formatCount(c),
             ),
-            live === null ? "—" : formatCount(tier.liveN),
-            tier.liveQ ? tier.liveQ.median.toFixed(1) : "—",
+            live === null ? "–" : formatCount(tier.liveN),
+            tier.liveQ ? tier.liveQ.median.toFixed(1) : "–",
           ];
           const thesisRow = [
             tier.spec.label,
             "Thesis",
             ...tier.thesisCounts.map((c) => formatCount(c)),
             formatCount(tier.thesisN),
-            tier.thesisMedian !== null ? tier.thesisMedian.toFixed(1) : "—",
+            tier.thesisMedian !== null ? tier.thesisMedian.toFixed(1) : "–",
           ];
           return [liveRow, thesisRow];
         })}

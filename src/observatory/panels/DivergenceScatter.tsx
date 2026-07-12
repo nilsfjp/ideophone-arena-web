@@ -1,8 +1,8 @@
-// The two measures — divergence scatter (SPEC-stats-dashboard §3.3).
-// x = guess accuracy (native % — every layer is 2AFC), y = rating z-scored
+// The two measures - divergence scatter (SPEC-stats-dashboard §3.3).
+// x = guess accuracy (native % - every layer is 2AFC), y = rating z-scored
 // WITHIN each study (adjudicated 2026-07-05): McLean's published z, the
 // thesis pairs' committed z, and the arena layer standardized client-side
-// (suppressed under 3 rated words — no fake positions from noise sd).
+// (suppressed under 3 rated words - no fake positions from noise sd).
 // Stratum is the backdrop's story and rides shape + fill, never vermillion;
 // vermillion is reserved for the arena's own data and the session crosshair.
 
@@ -38,9 +38,9 @@ const KDE_H = 44;
 const AXIS_H = 44;
 
 type Tooltip = {
-  /** Which mark pinned it — blur dismissal only clears its own tooltip. */
+  /** Which mark pinned it - blur dismissal only clears its own tooltip. */
   owner: string;
-  /** Chart width the position was computed at — stale after a reflow. */
+  /** Chart width the position was computed at - stale after a reflow. */
   atWidth: number;
   px: number;
   py: number;
@@ -71,7 +71,7 @@ export default function DivergenceScatter({
   const { ref, width } = useChartSize();
   const [tooltip, setTooltip] = useState<Tooltip | null>(null);
   // A pinned tooltip's pixel position is only valid for the width it was
-  // computed at — clear it on reflow (render-phase state adjustment, the
+  // computed at - clear it on reflow (render-phase state adjustment, the
   // sanctioned "derived state" pattern) so it can't resurrect if the chart
   // later returns to the pinned width.
   if (tooltip !== null && tooltip.atWidth !== width) {
@@ -140,7 +140,7 @@ export default function DivergenceScatter({
 
   const clearTooltip = () => setTooltip(null);
   // Blur must not wipe a tooltip another mark just pinned (pointerdown on
-  // mark B fires before mark A's blur) — it only clears its own.
+  // mark B fires before mark A's blur) - it only clears its own.
   const clearTooltipFor = (owner: string) =>
     setTooltip((current) => (current?.owner === owner ? null : current));
   const onFigureKeyDown = (event: KeyboardEvent<HTMLElement>) => {
@@ -194,10 +194,10 @@ export default function DivergenceScatter({
 
   return (
     <section className="observatory-panel observatory-panel--scatter">
-      <h2>The two measures — guessing and rating</h2>
+      <h2>The two measures · guessing and rating</h2>
       <p className="observatory-panel-copy">
         Ratings separate ideophones from prosaic words; guessing doesn't. Each
-        mark is one word — the backdrop is McLean 2023's 304 items, the ink
+        mark is one word; the backdrop is McLean 2023's 304 items, the ink
         dots are the 30 thesis pairs, and the vermillion dots are this arena's
         own record, growing with play.
       </p>
@@ -291,7 +291,7 @@ export default function DivergenceScatter({
 
             <g
               role="img"
-              aria-label={`McLean 2023 backdrop: ${mclean.items.length} words — full values in the data table.`}
+              aria-label={`McLean 2023 backdrop: ${mclean.items.length} words; full values in the data table.`}
             >
               {mcleanIdeophones.map((item) => {
                 const show = () =>
@@ -480,7 +480,7 @@ export default function DivergenceScatter({
         ) : null}
 
         <figcaption className="chart-notes">
-          {/* Text twin for the crosshair — the SVG overlay is decorative
+          {/* Text twin for the crosshair - the SVG overlay is decorative
               (aria-hidden), so the session values must live in real text. */}
           {session ? (
             <span className="scatter-session-note">
@@ -496,13 +496,13 @@ export default function DivergenceScatter({
             native scales. Compare positions within a layer, not across layers.
           </span>
           <span>
-            The two measures see different things — ρ ≈ +.44 overall, +.65
+            The two measures see different things: ρ ≈ +.44 overall, +.65
             within ideophones (McLean, Dunn &amp; Dingemanse 2023).
           </span>
           {arena.suppressed ? (
             <span>
               The arena layer joins the plot once three words carry both
-              measures with some spread — {formatCount(arena.eligibleCount)} do
+              measures with some spread; {formatCount(arena.eligibleCount)} do
               so far.
             </span>
           ) : null}
@@ -543,14 +543,14 @@ export default function DivergenceScatter({
             item.concept,
             item.stratum,
             formatPercentPrecise(item.guessScore),
-            "—",
+            "–",
             `${item.ratingScore.toFixed(2)} · normalized`,
-            "—",
+            "–",
           ]),
           ...thesisPairs.pairs.map((pair) => [
             "Thesis",
             kanaWordCell(pair.romaji, kanaFor(pair.romaji)),
-            "—",
+            "–",
             "ideophone",
             formatPercentPrecise(pair.accuracy),
             formatCount(pair.n),
@@ -560,7 +560,7 @@ export default function DivergenceScatter({
           ...arena.points.map((point) => [
             "Arena",
             kanaWordCell(point.label, point.displayForm ?? kanaFor(point.label)),
-            point.gloss ?? "—",
+            point.gloss ?? "–",
             "ideophone",
             formatPercentPrecise(point.x),
             formatCount(point.guessCount),

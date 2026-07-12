@@ -1,10 +1,10 @@
-// Authored preview — the full trial board. TrialPlayer drives the fixed phase
+// Authored preview - the full trial board. TrialPlayer drives the fixed phase
 // order (fixation → left plays → right plays → choice → feedback) for one round
 // and submits the answer to the backend. With no backend the audio fetch fails
 // quietly and the board stays on its opening phase; the preview shows the
 // two-card trial layout, the meaning prompt, and the round chrome. Callbacks are
 // no-ops. (Frozen participant-facing wording is rendered verbatim by the real
-// component — never restated here.)
+// component - never restated here.)
 import { TrialPlayer } from "ideophone-arena-web";
 
 const round = {

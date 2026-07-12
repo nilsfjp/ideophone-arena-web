@@ -107,7 +107,7 @@ describe("buildArenaScatter", () => {
       makeRow({ meanRating: 3 }),
       makeRow({ ideophoneId: 2, romaji: "katakata", meanRating: 5 }),
       makeRow({ ideophoneId: 3, romaji: "kirakira", meanRating: 7 }),
-      // Awaiting first rating — excluded from the cloud, counted honestly.
+      // Awaiting first rating - excluded from the cloud, counted honestly.
       makeRow({ ideophoneId: 4, romaji: "dokidoki", meanRating: null, ratingCount: 0 }),
     ];
     const result = buildArenaScatter(rows, pool);
@@ -131,7 +131,7 @@ describe("buildArenaScatter", () => {
   });
 
   it("counts never-played pool words by romaji, not by row arithmetic", () => {
-    // The local record can carry non-pool rows (test artifacts) — pool math
+    // The local record can carry non-pool rows (test artifacts) - pool math
     // must match on romaji, never compute pool − rows.length.
     const rows = [
       makeRow(),

@@ -19,7 +19,7 @@ const dist: RatingDistributionsResponse = {
     { modality: "AUDITORY", ratingValue: 6, count: 1 },
     { modality: "AUDITORY", ratingValue: 7, count: 0 },
     { modality: "VISUAL", ratingValue: 1, count: 1 },
-    // A non-trio modality the endpoint may carry — must be ignored by the trio grouping.
+    // A non-trio modality the endpoint may carry - must be ignored by the trio grouping.
     { modality: "GUSTATORY", ratingValue: 4, count: 9 },
   ],
   byModalityN: { AUDITORY: 15, VISUAL: 1, GUSTATORY: 9 },

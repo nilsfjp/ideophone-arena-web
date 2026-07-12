@@ -1,8 +1,8 @@
-# Ideophone Arena — how to build with this design system
+# Ideophone Arena - how to build with this design system
 
 React 19 + TypeScript. Every component is on `window.IdeophoneArena.*` (bundle:
 root `_ds_bundle.js`). This is the UI of a 2AFC ideophone experiment (a research
-instrument): a "laboratory ink and paper" identity — warm paper (washi)
+instrument): a "laboratory ink and paper" identity - warm paper (washi)
 surfaces, sumi ink, a vermillion accent, and a thesis-figure modality trio.
 
 Two layers, both styled from the same tokens: **bespoke experiment surfaces**
@@ -15,14 +15,14 @@ Toaster).
 The app runs **Tailwind v4**. Three compatible ways to style, in order of
 preference:
 
-1. **Design tokens** (`var(--*)`) — the source of truth for color/space/type/
+1. **Design tokens** (`var(--*)`) - the source of truth for color/space/type/
    radius/shadow. Use tokens (never raw hex/px) for any custom layout glue so it
    stays on-brand.
-2. **Tailwind v4 utility classes** — the shipped `styles.css` carries the
+2. **Tailwind v4 utility classes** - the shipped `styles.css` carries the
    compiled utilities the components use (e.g. `inline-flex`, `items-center`,
    `rounded-md`, `gap-2`, `border`). Brand utilities map onto the tokens
    (`bg-vermillion`, `text-ink`, `bg-card`, `border-border-mid`).
-3. **shadcn primitives via props** — the primitive layer is configured through
+3. **shadcn primitives via props** - the primitive layer is configured through
    `variant`/`size` props (below), not by overriding its classes.
 
 Bespoke surfaces render from an `@layer app` of **semantic class names** and
@@ -48,25 +48,25 @@ Token families (all `var(--*)`):
 
 ## Components
 
-**shadcn primitives** — import from the bundle; the props ARE the API:
+**shadcn primitives** - import from the bundle; the props ARE the API:
 
-- `Button` — `variant`: default | secondary | outline | ghost | link |
+- `Button` - `variant`: default | secondary | outline | ghost | link |
   destructive; `size`: default | sm | lg | icon. Vermillion is the default fill.
 - `Card` + `CardHeader` / `CardTitle` / `CardDescription` / `CardContent` /
-  `CardFooter` — flat on washi (hairline border, no shadow).
-- `Input`, `Label`, `Checkbox` — form controls (raised fill, vermillion
+  `CardFooter` - flat on washi (hairline border, no shadow).
+- `Input`, `Label`, `Checkbox` - form controls (raised fill, vermillion
   focus/check).
 - `Table` + `TableHeader` / `TableBody` / `TableRow` / `TableHead` /
-  `TableCell` / `TableCaption` — self-scrolls horizontally.
-- `Tabs` + `TabsList` / `TabsTrigger` / `TabsContent` — segmented control
+  `TableCell` / `TableCaption` - self-scrolls horizontally.
+- `Tabs` + `TabsList` / `TabsTrigger` / `TabsContent` - segmented control
   (`defaultValue`, or controlled `value` / `onValueChange`).
 - `Dialog` + `DialogContent` / `DialogHeader` / `DialogTitle` /
-  `DialogDescription` / `DialogFooter` / `DialogTrigger` / `DialogClose` —
+  `DialogDescription` / `DialogFooter` / `DialogTrigger` / `DialogClose` -
   overlay (the one at-rest surface allowed `--shadow-raised`).
-- `Toaster` — chrome-level toast host; mount once, fire toasts via sonner's
+- `Toaster` - chrome-level toast host; mount once, fire toasts via sonner's
   `toast()`.
 
-**Bespoke surfaces** — data-driven (backend shapes; see each `<Name>.d.ts`):
+**Bespoke surfaces** - data-driven (backend shapes; see each `<Name>.d.ts`):
 `TrialPlayer`, `IdeophoneCard`, `StimulusDisplay`, `FeedbackPanel`,
 `Instructions`, `ModeSelect` (`modes` + `onSelect`), `RatingLab` (its
 presentational panels `RatingTrialPanel`, `RatingInstructionsPanel`,
@@ -86,11 +86,11 @@ Bespoke class vocabulary (reuse, don't reinvent): `.ideophone-card`,
 
 ## Wrapping & setup
 
-- **No global provider required** — components read tokens from the shipped CSS,
+- **No global provider required** - components read tokens from the shipped CSS,
   not a theme context. Load `styles.css` (and its `@import` closure). For toasts,
   mount `<Toaster />` once at the app root.
-- **No router** — the app is a single view-state shell (`App.tsx`).
-- **Frozen wording** — participant-facing trial/rating text is fixed by the
+- **No router** - the app is a single view-state shell (`App.tsx`).
+- **Frozen wording** - participant-facing trial/rating text is fixed by the
   research design; render the components verbatim, never paraphrase their copy.
 
 ## Idiomatic snippet

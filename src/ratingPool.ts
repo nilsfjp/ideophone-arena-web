@@ -6,7 +6,7 @@ import type { RatableWordResponse } from "./api/types";
 // feedback (2AFC anti-leak), and thesis task order (Choosing first) exists so
 // revealed meanings never contaminate naive guessing. Since 27E the backend
 // enforces that rule and serves the pool (GET /api/game/me/ratable-words),
-// already minus rated words, in stable first-encounter order — so the pool
+// already minus rated words, in stable first-encounter order - so the pool
 // follows the account across devices. The former username-scoped localStorage
 // pool ("ideophone-arena-rating-pool") is retired without migration; only
 // pre-deploy test data ever lived in it.

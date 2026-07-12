@@ -1,8 +1,8 @@
-// Authored preview — RatingLab is the Rating Task orchestrator (backend-coupled:
+// Authored preview - RatingLab is the Rating Task orchestrator (backend-coupled:
 // it fetches the rating pool on mount), so instead of the fetching shell we show
 // its real presentational panels, which are exported alongside it on
 // window.IdeophoneArena. All participant-facing copy is the frozen text baked
-// into the components (experimentText.ts) — the preview only supplies data.
+// into the components (experimentText.ts) - the preview only supplies data.
 import {
   RatingInstructionsPanel,
   RatingTrialPanel,

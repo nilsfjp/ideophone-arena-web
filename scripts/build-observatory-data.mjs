@@ -1,6 +1,6 @@
 // Observatory data pipeline (SPEC-stats-dashboard §4.3/§4.6): regenerates the
 // committed JSON in src/data/observatory/ from the licensed research CSVs in
-// data/observatory-sources/. The build graph never fetches anything — sources
+// data/observatory-sources/. The build graph never fetches anything - sources
 // are vendored, outputs are committed, and this script is the only bridge.
 //
 // Contract:
@@ -10,7 +10,7 @@
 //     problem the script prints ALL problems and exits 1 WITHOUT writing.
 //   - Honest joins: arena↔norms matching is strict romaji string equality.
 //     Transliteration/kana derivation is forbidden (experiment invariant 3
-//     adjacent — display strings are received, never computed).
+//     adjacent - display strings are received, never computed).
 //
 // Run: node scripts/build-observatory-data.mjs
 
@@ -20,7 +20,7 @@ import { join } from "node:path";
 const SOURCES = join(process.cwd(), "data", "observatory-sources");
 const OUT = join(process.cwd(), "src", "data", "observatory");
 // The thesis rating trials (participant-level) live here, git-tracked. Only
-// the per-modality counts they aggregate to are emitted — never the rows.
+// the per-modality counts they aggregate to are emitted - never the rows.
 const RESEARCH_DATA = join(process.cwd(), "docs", "research", "data");
 
 // The arena∩norms intersection is pinned. If the pool or the norms file
@@ -29,7 +29,7 @@ const RESEARCH_DATA = join(process.cwd(), "docs", "research", "data");
 const EXPECTED_ARENA_MATCHES = 17;
 
 // Thesis per-modality weighted accuracy, pinned to the published numbers
-// (68.6 / 64.2 / 59.7 — SPEC-stats-dashboard §3.2). Tolerance ±0.001.
+// (68.6 / 64.2 / 59.7 - SPEC-stats-dashboard §3.2). Tolerance ±0.001.
 const EXPECTED_BY_MODALITY = {
   auditory: 0.686,
   visual: 0.642,
@@ -98,7 +98,7 @@ const round = (x, dp) => {
 };
 
 // Strict numeric cell parser: Number("") is 0, which would sail through the
-// range validations and silently write corrupted data — a blank cell is a
+// range validations and silently write corrupted data - a blank cell is a
 // problem, not a zero (the atomicity contract depends on this).
 const num = (value, context) => {
   if (String(value ?? "").trim() === "") {
@@ -110,14 +110,14 @@ const num = (value, context) => {
 
 const mean = (xs) => xs.reduce((a, b) => a + b, 0) / xs.length;
 
-// Sample standard deviation (n−1) — matches the usual convention for
+// Sample standard deviation (n−1) - matches the usual convention for
 // published z-scores; the thesis layer standardizes its 30 pair means.
 function sampleSd(xs) {
   const m = mean(xs);
   return Math.sqrt(xs.reduce((a, x) => a + (x - m) ** 2, 0) / (xs.length - 1));
 }
 
-// Codepoint comparison — never localeCompare (ICU/locale-dependent ordering
+// Codepoint comparison - never localeCompare (ICU/locale-dependent ordering
 // would break the determinism contract across machines).
 const byCodepoint = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -133,7 +133,7 @@ const [thesisCsv, mcleanCsv, normsCsv, poolRaw] = await Promise.all([
 ]);
 
 // ---------------------------------------------------------------------------
-// Arena pool (romaji + gloss, extracted once from the backend seed —
+// Arena pool (romaji + gloss, extracted once from the backend seed -
 // provenance in the file's own meta). Validated and re-emitted so runtime
 // imports only from src/data/observatory/.
 // ---------------------------------------------------------------------------
@@ -184,13 +184,13 @@ const thesisPairs = thesisRows.map((r) => {
   const nCorrect = num(r.n_correct_of36, `thesis ${r.pairing} n_correct`);
   const n = num(r.n, `thesis ${r.pairing} n`);
   const meanRating = num(r.mean_rating, `thesis ${r.pairing} mean_rating`);
-  // target_word_file is e.g. "a9kh-sakutto" — romaji is everything after the
+  // target_word_file is e.g. "a9kh-sakutto" - romaji is everything after the
   // FIRST hyphen (defensive against romaji that itself contains a hyphen).
   const rawRomaji = r.target_word_file.split("-").slice(1).join("-");
   const romaji = THESIS_ROMAJI_CORRECTIONS[rawRomaji] ?? rawRomaji;
   if (!poolByRomaji.has(romaji)) {
     problem(
-      `thesis: target "${romaji}" (from ${r.target_word_file}) is not in the arena pool — spelling drift?`,
+      `thesis: target "${romaji}" (from ${r.target_word_file}) is not in the arena pool - spelling drift?`,
     );
   }
   if (!MODALITY_ORDER.includes(r.modality)) {
@@ -253,7 +253,7 @@ const thesisOut = {
   meta: {
     source: "data/observatory-sources/thesis-per-pair-stats.csv",
     citation:
-      "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach — MA thesis, Cognitive Semiotics, Lund University; per-pair 2AFC guessing and 1–7 rating stats, N = 36 participants, 30 pairs",
+      "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach, MA thesis, Cognitive Semiotics, Lund University; per-pair 2AFC guessing and 1–7 rating stats, N = 36 participants, 30 pairs",
     license: "Author's own data",
     generatedBy: "scripts/build-observatory-data.mjs",
     pairCount: thesisPairs.length,
@@ -267,7 +267,7 @@ const thesisOut = {
 
 // ---------------------------------------------------------------------------
 // Thesis rating trials → thesis-ratings.json (per-modality 1–7 count grid, the
-// raincloud reference layer — SPEC §3.4/§4.3). Aggregated from the
+// raincloud reference layer - SPEC §3.4/§4.3). Aggregated from the
 // participant-level gorilla export; ONLY the counts are emitted (no rows, no
 // participant ids). The CSV is git-tracked at docs/research/data/; if it is
 // ever absent the step is skipped and the committed JSON is left untouched, so
@@ -283,7 +283,7 @@ const gorillaRatingCsv = await readFile(
 let thesisRatingsOut = null;
 if (gorillaRatingCsv === null) {
   console.log(
-    "build-observatory-data: gorilla-tidy-rating.csv absent — leaving committed thesis-ratings.json untouched",
+    "build-observatory-data: gorilla-tidy-rating.csv absent - leaving committed thesis-ratings.json untouched",
   );
 } else {
   const ratingTrials = csvObjects(gorillaRatingCsv);
@@ -320,9 +320,9 @@ if (gorillaRatingCsv === null) {
     meta: {
       source: "docs/research/data/gorilla-tidy-rating.csv",
       citation:
-        "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach — MA thesis, Cognitive Semiotics, Lund University; 1–7 iconicity rating trials, N = 36 participants × 30 words",
+        "Paulsson, N. (2025), Unimodal and Cross-Modal Iconicity in Japanese Ideophones: A Cognitive-Semiotic Approach, MA thesis, Cognitive Semiotics, Lund University; 1–7 iconicity rating trials, N = 36 participants × 30 words",
       license:
-        "Author's own data — pre-aggregated per-modality counts only; participant-level trials never vendored",
+        "Author's own data; pre-aggregated per-modality counts only; participant-level trials never vendored",
       generatedBy: "scripts/build-observatory-data.mjs",
       ratingScale: "1-7",
       totalRatings,
@@ -340,7 +340,7 @@ const mcleanById = new Map();
 for (const r of mcleanRows) {
   const id = r.identifier;
   if (!mcleanById.has(id)) {
-    // word/concept split at the FIRST underscore — concepts contain slashes
+    // word/concept split at the FIRST underscore - concepts contain slashes
     // and parens (e.g. "aburaQkoi_OILY/HEAVY (FOOD)").
     const underscore = id.indexOf("_");
     mcleanById.set(id, {
@@ -390,7 +390,7 @@ const mcleanOut = {
     source: "data/observatory-sources/GuessingRatingScores.csv",
     citation:
       "McLean, B., Dunn, M., & Dingemanse, M. (2023). Two measures are better than one. Language and Cognition.",
-    license: "Source repo MIT; paper data CC BY 4.0 — attribution required",
+    license: "Source repo MIT; paper data CC BY 4.0, attribution required",
     generatedBy: "scripts/build-observatory-data.mjs",
     itemCount: mcleanItems.length,
     ideophoneCount,
@@ -431,7 +431,7 @@ const normsWords = normsRows.map((r) => {
     return round(v, 3);
   });
   // Strict-equality join against the arena pool (Kunrei ≠ Hepburn misses are
-  // expected and honest — 17 matches as of 2026-07-05).
+  // expected and honest - 17 matches as of 2026-07-05).
   const arenaMatch = poolByRomaji.get(r.Word) ?? null;
   return {
     word: r.Word,
@@ -528,7 +528,7 @@ for (const [name, data] of outputs) {
 
 console.log("build-observatory-data: wrote", outputs.map(([n]) => n).join(", "));
 console.log(
-  `  arena∩norms: ${matched.length} words — ${matched.map((w) => w.word).join(" ")}`,
+  `  arena∩norms: ${matched.length} words - ${matched.map((w) => w.word).join(" ")}`,
 );
 console.log(
   `  default radar pair: ${defaultPair.join(" / ")} (L1 ${defaultPairL1}); runner-up ${runnerUp?.join(" / ")} (L1 ${runnerUpL1})`,

@@ -1,8 +1,8 @@
-// The claim — accuracy by modality (SPEC-stats-dashboard §3.2). One dumbbell
+// The claim - accuracy by modality (SPEC-stats-dashboard §3.2). One dumbbell
 // row per thesis modality: thesis mean (ink) vs live arena weighted mean
 // (vermillion), chance hairline at 50%. Low-n honesty: live dots render
 // hollow under 30 guesses, with N printed in the row label. Direct labels and
-// printed values carry the reading — color is never the sole carrier (§4.3).
+// printed values carry the reading - color is never the sole carrier (§4.3).
 
 import type { DivergenceEntry } from "../../api/types";
 import { thesisPairs } from "../../data/observatory";
@@ -24,7 +24,7 @@ type RowSpec = {
   key: TrioModality;
   /** Landing vocabulary + research term (§10.5), uppercased by CSS. */
   label: string;
-  /** Narrow-width label — keeps the row label clear of the N figure. */
+  /** Narrow-width label - keeps the row label clear of the N figure. */
   shortLabel: string;
 };
 
@@ -76,7 +76,7 @@ export default function ModalityDumbbell({ liveRows }: DumbbellProps) {
 
   return (
     <section className="observatory-panel observatory-panel--dumbbell">
-      <h2>The claim — accuracy by modality</h2>
+      <h2>The claim · accuracy by modality</h2>
       <p className="observatory-panel-copy">
         Sound carries furthest. In the thesis, guessing slid 68.6% → 64.2% →
         59.7% as meanings turned inward. The arena record tests that ordering
@@ -127,9 +127,9 @@ export default function ModalityDumbbell({ liveRows }: DumbbellProps) {
                   {width < SHORT_LABEL_WIDTH ? row.shortLabel : row.label}
                 </SpecimenText>
                 <SpecimenText x={width - M_RIGHT} y={labelY} textAnchor="end">
-                  {/* Unreachable record ≠ zero guesses — null is not 0. */}
+                  {/* Unreachable record ≠ zero guesses - null is not 0. */}
                   {liveRows === null
-                    ? "N = —"
+                    ? "N = –"
                     : `N = ${formatCount(row.live.guessCount)}`}
                 </SpecimenText>
                 {liveAccuracy !== null ? (
@@ -214,7 +214,7 @@ export default function ModalityDumbbell({ liveRows }: DumbbellProps) {
           formatPercentPrecise(row.thesis.accuracy),
           formatCount(row.thesis.n),
           row.live.accuracy === null
-            ? "—"
+            ? "–"
             : formatPercentPrecise(row.live.accuracy),
           formatCount(row.live.guessCount),
         ])}

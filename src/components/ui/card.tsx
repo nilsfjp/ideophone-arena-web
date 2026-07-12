@@ -4,7 +4,7 @@ import { cn } from "../../lib/utils";
 
 /**
  * shadcn Card, themed. Per surface grammar (§1) chrome cards sit FLAT on washi
- * with a hairline border and cast NO shadow — elevation is reserved for the
+ * with a hairline border and cast NO shadow - elevation is reserved for the
  * instrument's voice. Mode cards are this component's beachhead (§2.3); the
  * measure chip and status pill stay bespoke primitives rendered inside.
  */

@@ -55,7 +55,7 @@ lives in `src/modes.ts`.
 in hierarchy order (Sound → Sight → Touch → Inner states). A vertical floor
 stack (`src/components/PerceptionLadder.tsx`) shows each floor's progress; a
 floor-intro dialog picks the presentation condition, then the ordinary trial
-board plays the floor (reused unchanged — the ladder only adds a frame). Floor
+board plays the floor (reused unchanged - the ladder only adds a frame). Floor
 ordinals come from the API array position (`GET /api/game/ladder/floors`), never
 persisted; completion shows a "you vs thesis floor mean" benchmark. Copy lives
 in `src/ladderText.ts`.
@@ -63,12 +63,12 @@ in `src/ladderText.ts`.
 **Rating Lab.** The thesis Rating Task as a mode: listen to a word you have
 met, read its meaning, and rate the resemblance on a 1–7 scale (frozen
 Gorilla-verbatim copy in `src/experimentText.ts`). The word pool comes from
-answered Choosing rounds — feedback is the only place the word→meaning mapping
+answered Choosing rounds - feedback is the only place the word→meaning mapping
 is revealed, so unplayed words can never leak meanings into naive guessing.
 The pool is served per account by `GET /api/game/me/ratable-words`
 (`src/ratingPool.ts` is a thin client of it), so it follows the login across
 browsers and devices. Ratings POST
-to `/api/ratings` (one per word — re-rating returns 409 and is shown
+to `/api/ratings` (one per word - re-rating returns 409 and is shown
 read-only); after each submit the mode reveals the word's public "Arena
 record" from `GET /api/research/divergence`, and a Lab record table joins
 your ratings with those aggregates. A "Rate these words" call-to-action also
@@ -77,7 +77,7 @@ appears on the Choosing completion panel.
 **Verbatim rendering.** Each round option carries `displayForm` (the visible
 pre-answer script, already flipped by the backend for mismatch rounds) and
 `canonicalForm` (revealed at feedback together with romaji and meaning). The
-frontend renders both verbatim — no kana conversion or detection is performed
+frontend renders both verbatim - no kana conversion or detection is performed
 client-side. A missing or blank field surfaces the round-problem error state.
 
 **Per-word audio.** Stimulus playback uses per-word audio files
@@ -141,10 +141,10 @@ production build or the player flow.
 ## Landing
 
 The logged-out entry is a public landing page (`src/components/Landing.tsx`,
-`src/styles/landing.css`) — an eight-strip, research-framed composition
+`src/styles/landing.css`) - an eight-strip, research-framed composition
 (`docs/specs/SPEC-view-designs.md` §3): hero, the thesis numbers, how it works,
 the guessing/rating dissociation, the Script Lab teaser, the Observatory, a
-six-mode grid, and provenance. Its primary CTA ("Prove it — play a round") sends
+six-mode grid, and provenance. Its primary CTA ("Prove it - play a round") sends
 visitors through auth (register tab) straight into the Meaning Match
 instructions; the header carries a "Log in" affordance for returning players. It
 is a new public `"landing"` AppView in the `src/App.tsx` view state machine,
@@ -154,7 +154,7 @@ and the Observatory are public; everything else stays behind auth.
 
 ## The Observatory
 
-A read-only research surface — publicly reachable from the landing (plus the
+A read-only research surface - publicly reachable from the landing (plus the
 in-app header link and "See where this session
 lands" from the completion panel) charting the whole arena's record: guessing
 accuracy per modality against the thesis means, the guessing/rating divergence

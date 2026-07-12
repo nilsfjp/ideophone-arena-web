@@ -28,7 +28,7 @@ export function wilsonInterval(
  * The divergence endpoint reports a proportion, not raw successes; reconstruct
  * successes as round(p·n), clamped to [0, n] so a contract-violating p outside
  * [0, 1] degrades to a valid interval instead of a NaN CI in tooltips.
- * Sub-integer float drift is display-only here — the interval feeds tooltips,
+ * Sub-integer float drift is display-only here - the interval feeds tooltips,
  * never analysis.
  */
 export function wilsonFromProportion(p: number, n: number): Interval | null {

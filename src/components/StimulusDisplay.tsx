@@ -12,7 +12,7 @@ type StimulusDisplayProps = {
 // Both faces and all reveal slots stay mounted in every phase so the card
 // keeps one stable size; phases toggle visibility only (no layout shift,
 // CLAUDE.md invariant 5). Pre-answer, the audio-only text face and the
-// romaji/meaning slots render empty — never hidden text — so no script or
+// romaji/meaning slots render empty - never hidden text - so no script or
 // romaji exists in the DOM before feedback (invariants 4 and 7).
 export default function StimulusDisplay({
   meaning,
@@ -56,7 +56,7 @@ export default function StimulusDisplay({
       >
         <span className="card-side-label">{positionLabel}</span>
         {/* lang="ja" (§9.2): a rendering attribute so screen readers pick a
-            Japanese voice for the kana. Zero string manipulation — the display
+            Japanese voice for the kana. Zero string manipulation - the display
             form still arrives from the backend verbatim (invariant 3). */}
         <span className="script-display-text" lang="ja">
           {scriptText}

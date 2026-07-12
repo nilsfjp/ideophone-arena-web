@@ -11,7 +11,7 @@ type AuthMode = "login" | "register";
 type AuthFormProps = {
   onAuthenticated: (response: AuthResponse) => void;
   /** Which tab opens first. Landing CTAs open on "register"; the default and
-      the auth-expiry re-login stay on "login". Read once at mount — the auth
+      the auth-expiry re-login stay on "login". Read once at mount - the auth
       view mounts fresh on each entry, so the initializer re-runs. */
   initialMode?: AuthMode;
 };
@@ -68,7 +68,7 @@ export default function AuthForm({
         Choose the ideophone that best matches the target meaning.
       </p>
 
-      {/* Native wrapping labels keep the input a descendant of its label — the
+      {/* Native wrapping labels keep the input a descendant of its label - the
           browser loop associates fields by label text, not htmlFor. */}
       <form className="auth-form" onSubmit={handleSubmit}>
         <label>
